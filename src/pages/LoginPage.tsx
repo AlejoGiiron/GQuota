@@ -55,8 +55,8 @@ const IconCheck = (
 function Logo({ size, theme }: { size: 'lg' | 'md'; theme: 'light' | 'dark' }) {
   return (
     <div className={`lg-logo lg-logo--${theme}`}>
-      <div className={`lg-mark ${size}`}>G</div>
-      <div className={`lg-word${size === 'md' ? ' md' : ''}`}>
+      <div className={`lg-mark lg-mark--${size}`}>G</div>
+      <div className={`lg-word${size === 'md' ? ' lg-word--md' : ''}`}>
         G<span className="dot">·</span>Quota
       </div>
     </div>

@@ -29,13 +29,13 @@
   letter-spacing: -0.03em;
   box-shadow: 0 8px 20px rgba(217, 119, 6, 0.32);
 }
-.lg-mark.lg {
+.lg-mark--lg {
   width: 60px;
   height: 60px;
   font-size: 31px;
   border-radius: 17px;
 }
-.lg-mark.md {
+.lg-mark--md {
   width: 50px;
   height: 50px;
   font-size: 26px;
@@ -47,7 +47,7 @@
   letter-spacing: -0.025em;
   line-height: 1;
 }
-.lg-word.md {
+.lg-word--md {
   font-size: 23px;
 }
 .lg-logo--light .lg-word {
