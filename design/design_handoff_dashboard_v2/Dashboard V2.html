@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>G-Quota · Dashboard V2 — referencia de handoff</title>
+<link rel="stylesheet" href="gquota.css" />
+<style>
+  html, body { margin: 0; background: #eef0ee; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #16241f; }
+  .wrap { padding: 48px; display: flex; flex-direction: column; gap: 44px; }
+  .ref-row { display: flex; gap: 44px; align-items: flex-start; flex-wrap: wrap; }
+  .ref { display: flex; flex-direction: column; gap: 12px; }
+  .ref-label { font-size: 14px; font-weight: 700; color: #475a53; letter-spacing: -.01em; }
+  .ref-label span { color: #8b9a93; font-weight: 600; }
+  .frame { border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(12,31,26,.12); background: #fff; }
+  .frame.desktop { width: 1440px; height: 840px; }
+  .frame.mobile { width: 390px; height: 844px; }
+  h1.title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 -16px; }
+  p.note { font-size: 13.5px; color: #475a53; max-width: 720px; line-height: 1.5; margin: 4px 0 0; }
+  #desktop, #mobile { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1 class="title">G-Quota · Dashboard V2 — “Operativa del día”</h1>
+    <p class="note">Pantalla aprobada. Estas son las vistas a tamaño real (desktop 1440px · móvil 390px). Es una referencia de diseño en HTML — recréala en tu entorno React siguiendo el README y los design tokens.</p>
+  </div>
+
+  <div class="ref-row">
+    <div class="ref">
+      <div class="ref-label">Escritorio <span>· 1440 × (alto según contenido)</span></div>
+      <div class="frame desktop"><div id="desktop"></div></div>
+    </div>
+    <div class="ref">
+      <div class="ref-label">Móvil <span>· 390 × 844</span></div>
+      <div class="frame mobile"><div id="mobile"></div></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="gq-common.jsx"></script>
+<script type="text/babel" src="gq-desktop.jsx"></script>
+<script type="text/babel" src="gq-mobile.jsx"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById('desktop')).render(<DashboardV2 />);
+  ReactDOM.createRoot(document.getElementById('mobile')).render(<MobileV2 />);
+</script>
+</body>
+</html>

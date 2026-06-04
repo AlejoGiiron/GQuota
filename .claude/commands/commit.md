@@ -1,0 +1,1 @@
+Haz commit de los cambios actuales con un mensaje en formato Conventional Commits (feat, fix, chore, refactor, etc.), en español, breve y descriptivo. Si hay cambios de distinta naturaleza, sepáralos en varios commits.
