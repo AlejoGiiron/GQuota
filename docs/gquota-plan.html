@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G-Quota — Plan de trabajo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sidebar-bg:#0c1f1a; --sidebar-border:#1c3a30; --sidebar-text:#8aa399; --sidebar-hover:#13332a;
+  --main-bg:#faf9f7; --card-bg:#ffffff; --text:#1c2b27; --muted:#6b7770; --border:#e7e5e0;
+  --code-bg:#f4f6f5; --accent:#047857; --accent-dark:#065f46; --amber:#d97706; --red:#dc2626;
+  --radius:12px;
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--main-bg);color:var(--text);display:flex;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+code,pre,.mono{font-family:'JetBrains Mono',monospace}
+.sidebar{width:248px;min-width:248px;background:var(--sidebar-bg);display:flex;flex-direction:column;overflow-y:auto}
+.brand{padding:22px 20px 16px;border-bottom:1px solid var(--sidebar-border)}
+.brand-name{font-size:19px;font-weight:800;color:#fff;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.brand-dot{width:9px;height:9px;border-radius:3px;background:var(--amber)}
+.brand-sub{font-size:11px;color:var(--sidebar-text);margin-top:4px}
+.nav-group{padding:18px 0 4px 20px;font-size:10px;font-weight:700;color:#496055;letter-spacing:.1em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 20px;cursor:pointer;transition:background .12s;border-left:2px solid transparent;color:var(--sidebar-text);font-size:13.5px}
+.nav-item:hover{background:var(--sidebar-hover);color:#dfe9e4}
+.nav-item.active{background:var(--sidebar-hover);border-left-color:var(--amber);color:#fff;font-weight:600}
+.nav-num{font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.7;width:18px}
+.main{flex:1;overflow-y:auto;padding:40px 48px 80px}
+.wrap{max-width:860px;margin:0 auto}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:6px 0 6px}
+h1 .num{color:var(--amber)}
+.lede{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:26px;max-width:640px}
+h2{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:28px 0 12px}
+p{line-height:1.65;color:var(--text);margin-bottom:12px}
+.section-meta{font-size:13.5px;color:var(--muted);margin-bottom:22px}
+.section-meta b{color:var(--text)}
+.pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px}
+.pill{font-size:12px;font-weight:600;padding:5px 11px;border-radius:999px;background:#eef3f1;color:var(--accent-dark);border:1px solid #dde8e3}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;box-shadow:0 1px 2px rgba(12,31,26,.03)}
+.card-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.seq{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 9px;border-radius:6px;background:#eef3f1;color:var(--accent);white-space:nowrap}
+.card-titles{flex:1;min-width:0}
+.card-title{font-size:14.5px;font-weight:700}
+.card-desc{font-size:12.5px;color:var(--muted);margin-top:1px}
+.copy-btn{font-family:'Plus Jakarta Sans';font-size:12px;font-weight:600;padding:6px 13px;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;transition:background .15s;white-space:nowrap}
+.copy-btn:hover{background:var(--accent-dark)}
+.copy-btn.done{background:var(--amber)}
+pre.code{background:var(--code-bg);padding:16px;font-size:12.5px;line-height:1.6;color:var(--text);white-space:pre-wrap;word-break:break-word;overflow-x:auto}
+.note{background:#fff8ee;border:1px solid #f4dcb4;border-left:3px solid var(--amber);border-radius:10px;padding:13px 15px;font-size:13.5px;color:#7a4f12;line-height:1.55;margin-top:8px}
+.note b{color:#5e3c0d}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:6px 0 8px}
+.metric{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px}
+.metric .k{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.metric .v{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;color:var(--text);margin-top:5px}
+.metric .v.accent{color:var(--accent)}
+.map{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.map-row{display:flex;align-items:center;gap:14px;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;transition:border-color .15s}
+.map-row:hover{border-color:var(--accent)}
+.map-num{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:#eef3f1;color:var(--accent)}
+.map-titles{flex:1}
+.map-title{font-size:14px;font-weight:700}
+.map-sub{font-size:12px;color:var(--muted)}
+.map-weeks{font-size:11.5px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+ul.clean{list-style:none;margin:6px 0 14px}
+ul.clean li{position:relative;padding-left:20px;margin-bottom:7px;line-height:1.55;font-size:14px}
+ul.clean li:before{content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+a.inline{color:var(--accent);font-weight:600;text-decoration:none}
+a.inline:hover{text-decoration:underline}
+@media(max-width:720px){.sidebar{display:none}.main{padding:24px 18px 60px}}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="brand">
+    <div class="brand-name"><span class="brand-dot"></span>G-Quota</div>
+    <div class="brand-sub">Plan de trabajo · Claude Code</div>
+  </div>
+  <div class="nav-group">General</div>
+  <div class="nav-item" data-id="overview"><span class="nav-num">·</span>Visión general</div>
+  <div class="nav-item" data-id="diseno"><span class="nav-num">·</span>Flujo Claude Design</div>
+  <div class="nav-group">Fases</div>
+  <div id="phase-nav"></div>
+  <div class="nav-group">Recursos</div>
+  <div class="nav-item" data-id="git"><span class="nav-num">·</span>Git workflow</div>
+  <div class="nav-item" data-id="claudemd"><span class="nav-num">·</span>Archivos CLAUDE.md</div>
+  <div class="nav-item" data-id="comandos"><span class="nav-num">·</span>Comandos /project</div>
+</nav>
+<main class="main"><div class="wrap" id="content"></div></main>
+
+<script>
+const DATA = {
+'p01-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md (si ya existe)
+
+## Objetivo
+Dejar el esqueleto del proyecto listo y compilando. Sin lógica de negocio todavía.
+
+## Tareas
+- Inicializa un proyecto "gquota" con Vite + React + TypeScript.
+- Configura Tailwind CSS v3 con su archivo de configuración.
+- Instala react-router-dom y deja el router base.
+- Estructura dentro de src: components/, pages/, lib/, hooks/, contexts/, types/.
+- Configura el alias @ apuntando a src (en vite.config y tsconfig).
+- Crea src/lib/formatters.ts con dos funciones (fuente única para todo el proyecto):
+  - fmtCOP(n): pesos colombianos sin decimales. Usa Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 }). fmtCOP(1000000) debe dar "$1.000.000".
+  - fmtFecha(d): fecha en formato dd/mm/aaaa.
+- Página de inicio mínima que muestre "G-Quota", importando fmtCOP desde @/lib/formatters para verificar el alias.
+
+## Criterios de aceptación
+- npm run dev levanta sin errores y abre en el navegador.
+- fmtCOP(1000000) devuelve "$1.000.000".
+- El import con alias @ resuelve sin error.
+
+## Convenciones
+- Sin any en TypeScript. UI en español (Colombia). No agregues estilos definitivos ni lógica de negocio.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: chore(setup): init vite react ts tailwind con router y formatters`,
+
+'p01-2':`## Lee primero
+- CLAUDE.md
+- src/lib/formatters.ts (ya existe)
+
+## Objetivo
+Dejar lista la conexión a Supabase. Sin conectar tablas todavía.
+
+## Tareas
+- Instala @supabase/supabase-js.
+- Crea src/lib/supabase.ts que exporte el cliente, leyendo VITE_GQUOTA_SUPABASE_URL y VITE_GQUOTA_SUPABASE_ANON_KEY. Si alguna falta, lanza un error claro al iniciar indicando cuál falta.
+- Crea .env.example documentando esas dos variables (sin valores reales).
+- Agrega .env y .env.local al .gitignore.
+- Crea src/types/database.types.ts como placeholder vacío (lo generamos luego desde el esquema).
+
+## Criterios de aceptación
+- El proyecto compila importando el cliente.
+- Si faltan las variables, el mensaje de error dice cuál falta.
+
+## Convenciones
+- Sin any. Español.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: chore(db): add supabase client and env config`,
+
+'p01-3':`## Lee primero
+- CLAUDE.md
+- supabase/migrations/ (carpeta; créala si no existe)
+
+## Objetivo
+Montar el esquema inicial de base de datos.
+
+## Tareas
+- Crea supabase/migrations/001_schema_inicial.sql con el contenido EXACTO del archivo que adjunto (tablas clientes, prestamos y movimientos, con sus checks, índices y políticas RLS). NO modifiques el SQL.
+- Explícame paso a paso cómo aplicar la migración a mi proyecto de Supabase (por el SQL Editor del dashboard, o por el CLI).
+- Explícame el comando exacto para generar src/types/database.types.ts a partir del esquema ya aplicado (CLI de Supabase, con el project-id).
+
+## Criterios de aceptación
+- El archivo de migración existe con el SQL idéntico al adjunto.
+- Me quedan claros los dos pasos: aplicar la migración y generar los tipos.
+
+## Convenciones
+- No inventes columnas ni cambies el esquema; si crees que falta algo, propónmelo aparte antes de tocarlo.
+
+## Al terminar
+- /project:commit con mensaje: feat(db): add initial schema (clientes, prestamos, movimientos)`,
+
+'p01-4':`## Lee primero
+- CLAUDE.md
+- (adjunto) design-system.md
+
+## Objetivo
+Dejar la guía de diseño dentro del repo y referenciada como fuente de verdad visual.
+
+## Tareas
+- Crea src/design-system.md con el contenido del archivo que adjunto.
+- En el CLAUDE.md raíz, agrega o confirma una sección "Design system" que diga: antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones; no inventar colores, tipografías ni estilos; ese archivo manda.
+- Si ya tengo los design tokens reales que me dio Claude Design (hex y spacing exactos del dashboard aprobado), incorpóralos a src/design-system.md para que sea 100% fiel a las pantallas.
+
+## Criterios de aceptación
+- src/design-system.md existe.
+- El CLAUDE.md raíz referencia el design system como obligatorio.
+
+## Al terminar
+- /project:commit con mensaje: docs: add design system and reference in claude.md`,
+
+'p02-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/lib/supabase.ts
+- src/lib/formatters.ts
+- (adjunto) handoff de la pantalla Login V1 (pantalla dividida, ya aprobada en diseño)
+
+## Objetivo
+Autenticación con Supabase + pantalla de login fiel al diseño + rutas protegidas.
+
+## Tareas
+- Instala sonner y monta el Toaster a nivel de app (lo usaremos para errores y éxitos en todo el proyecto).
+- Crea un AuthContext (o hook useAuth) que exponga: session, user, loading, signIn(email, password), signUp(...), signOut().
+- Expón loading mientras Supabase resuelve la sesión inicial (para no parpadear el login al recargar).
+- Crea LoginPage siguiendo el handoff adjunto (Login V1, pantalla dividida) y src/design-system.md: panel de marca a la izquierda (verde tinta) con titular y beneficios; formulario a la derecha; campo de contraseña con mostrar/ocultar; enlaces "¿Olvidaste tu contraseña?" y "Crear cuenta". En móvil, solo el formulario centrado.
+- Rutas protegidas: sin sesión → redirige a /login; con sesión → no permite volver a /login.
+
+## Criterios de aceptación (pruébalos)
+- Login correcto → entra a la app (a una ruta privada).
+- Login incorrecto → muestra "Correo o contraseña incorrectos. Verifica tus datos" sin romper.
+- Recargar la página estando logueado → la sesión persiste, no te saca.
+- Cerrar sesión → vuelve a /login y el botón "atrás" no entra a rutas privadas.
+- El copy de bienvenida es neutral en género (no "Bienvenida").
+
+## Convenciones
+- Clases exactas de src/design-system.md. Español. Sin any. Errores con toast.error().
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(auth): supabase auth, login screen y rutas protegidas`,
+
+'p02-2':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/contexts/AuthContext.tsx (o el hook useAuth)
+- el router actual
+
+## Objetivo
+Shell de la app, responsive, con las secciones enrutadas dentro del área protegida.
+
+## Tareas
+- Desktop: sidebar izquierdo (verde tinta) con: Inicio, Clientes, Préstamos, Cobros, Configuración. Item activo resaltado (borde de acento).
+- Móvil (<=640px): bottom nav con los 4 principales (Inicio, Clientes, Préstamos, Cobros). Configuración va en el header / menú de perfil.
+- Header: nombre del negocio y acceso a perfil / cerrar sesión.
+- Cada sección como página placeholder por ahora, pero ya enrutada dentro del layout protegido.
+
+## Criterios de aceptación
+- En desktop se ve el sidebar; en móvil el bottom nav. El item activo refleja la ruta actual.
+- Navegar entre secciones mantiene el layout y la sesión.
+
+## Convenciones
+- Clases exactas del design system. Español. Sin any.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(layout): app shell responsive con sidebar y bottom nav`,
+
+'p03-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/lib/supabase.ts
+- src/lib/formatters.ts
+- src/types/database.types.ts (tabla clientes)
+- el layout y el patrón de páginas ya creados
+
+## Objetivo
+Módulo Clientes (deudores) completo sobre la tabla clientes.
+
+## Tareas
+- Hook useClientes: listar (filtrado por usuario; la RLS lo exige), crear, editar, eliminar.
+- ClientesPage: lista con búsqueda por nombre, documento o teléfono. Cada cliente se representa con círculo de iniciales (sin foto), nombre, y teléfono en gris pequeño (igual al dashboard aprobado).
+- Crear/editar en modal: nombre (requerido), documento, teléfono, dirección, notas.
+- Ficha del cliente: sus datos, con un espacio "Préstamos" que conectaremos en la Fase 04.
+- Patrón lista + detalle: desktop 60/40 (lista izquierda, ficha derecha); móvil, la ficha es una vista aparte.
+
+## Criterios de aceptación (pruébalos)
+- La lista carga con skeleton; sin clientes, estado vacío con botón "Nuevo cliente".
+- Crear un cliente lo muestra en la lista sin recargar, con toast de éxito.
+- La búsqueda filtra en vivo por los tres campos.
+- Eliminar pide confirmación.
+- Un usuario no ve clientes de otro (RLS).
+
+## Convenciones
+- Clases del design system. Español. Sin any. Errores con toast.error(), éxito con toast.success().
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(clientes): crud de clientes con busqueda y ficha`,
+
+'p04-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/lib/formatters.ts
+- (adjunto) motor-prestamos.ts y motor-prestamos.test.ts
+
+## Objetivo
+Incorporar el núcleo financiero como lógica pura, con pruebas que pasen. NO toca Supabase ni la UI.
+
+## Contexto del modelo (para entender, no para reescribir)
+G-Quota maneja dos formas de cobro del interés, por préstamo:
+- Sobre saldo: interés del periodo = saldo de capital vigente x tasa mensual (baja al abonar).
+- Sobre capital inicial: interés del periodo = capital inicial x tasa mensual (fijo hasta saldar).
+El interés NO capitaliza: el devengo mensual lo acumula en interesPendiente, nunca al capital. Un pago cubre primero el interés pendiente y el resto abona a capital.
+
+## Tareas
+- Crea src/lib/motor-prestamos.ts y src/lib/motor-prestamos.test.ts con el contenido EXACTO de los archivos que adjunto. No cambies la lógica ni las firmas.
+- Instala vitest y agrega el script "test" (vitest run) en package.json.
+
+## Tabla de casos (ya cubierta por las pruebas; verifícala)
+- Sobre saldo: capital 1.000.000, tasa 10%. Mes 1 interés 100.000; pagan 200.000 -> 100.000 interés + 100.000 capital, saldo 900.000. Mes 2 interés = 90.000 (sobre el saldo).
+- Sobre capital inicial: mismo arranque. Mes 2 interés = 100.000 (sobre el inicial, NO 90.000).
+- Pago solo interés: pagan exactamente el interés -> capital intacto.
+- Interés impago se acumula sin capitalizar: dos meses sin pagar -> interesPendiente suma, capital intacto.
+- Cierre: saldo de capital llega a 0 -> préstamo saldado.
+- Pago de más -> excedente (saldo a favor), capital no baja de 0.
+
+## Criterios de aceptación
+- npm test (vitest run) -> las 6 pruebas pasan.
+- El módulo no importa supabase ni React.
+
+## Convenciones
+- Sin any. Es lógica pura: no metas formato ni UI aquí.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(motor): motor de calculo con dos modos de interes y pruebas`,
+
+'p04-2':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/lib/motor-prestamos.ts (interesDelPeriodo)
+- src/lib/supabase.ts
+- src/lib/formatters.ts
+- src/types/database.types.ts (prestamos, clientes, movimientos)
+- src/hooks/useClientes.ts
+
+## Objetivo
+Módulo Préstamos: crear un préstamo y listarlos.
+
+## Tareas
+- Hook usePrestamos: listar (con datos del cliente y saldo) y crear.
+- Formulario "Nuevo préstamo": cliente, capital (monto), tasa mensual (%), modo de interés (Sobre saldo / Fijo sobre el monto prestado), fecha de desembolso.
+- Tasa efectiva anual (EA): calcúlala y muéstrala en vivo al cambiar la tasa mensual.
+  Fórmula: tasaEA = (1 + tasaMensual)^12 - 1.
+  Ejemplo: 10% mensual -> (1,10)^12 - 1 = 213,8% EA.
+- Alerta de usura: si tasaEA supera un tope (por ahora una constante TOPE_USURA_EA en código, ej. 0,30), muestra una advertencia visible en ámbar. No bloquea el guardado; solo advierte.
+- Al guardar (en una transacción o función de Supabase, para no dejar datos a medias):
+  1. Inserta el préstamo con saldo_capital = capital_inicial y estado 'activo'.
+  2. Inserta un movimiento tipo 'desembolso' con monto_total = capital, saldo_anterior = 0, saldo_posterior = capital.
+- Listado: por préstamo, cliente (iniciales + nombre), capital, saldo actual, modo (badge), estado (badge de color). Patrón lista + detalle 60/40 en desktop.
+
+## Criterios de aceptación (pruébalos)
+- Crear un préstamo de 1.000.000 al 10% mensual, modo "sobre saldo" -> aparece en la lista con saldo 1.000.000 y queda registrado un movimiento 'desembolso'.
+- Al teclear 10% mensual, la pantalla muestra ~213,8% EA y dispara la alerta de usura.
+- Cambiar a "fijo sobre el monto" guarda modo_interes correcto.
+- Montos con fmtCOP. El préstamo solo lo ve su dueño (RLS).
+
+## Convenciones
+- Clases del design system. Español. Sin any. Montos con fmtCOP(). Errores con toast.error().
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(prestamos): crear prestamo con tasa efectiva y alerta de usura, y listado`,
+
+'p05-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/lib/motor-prestamos.ts (aplicarPago)
+- src/hooks/usePrestamos.ts
+- src/lib/supabase.ts
+- src/lib/formatters.ts
+- src/types/database.types.ts (prestamos, movimientos)
+
+## Objetivo
+Registrar pagos usando el motor, sin reimplementar fórmulas.
+
+## Lógica (usa aplicarPago del motor)
+Al registrar un pago de monto P sobre un préstamo:
+- El interés pendiente lo trae el préstamo (lo devengado y no pagado).
+- aplicarPago reparte: cubre interés pendiente primero, el resto abona a capital; devuelve saldo_anterior, saldo_posterior, monto_interes, monto_capital y excedente.
+- Si saldo_posterior llega a 0 -> el préstamo pasa a estado 'pagado'.
+
+## Tareas
+- Acción "Registrar pago" desde la ficha del préstamo: monto y método de pago (efectivo, Nequi, Daviplata, transferencia).
+- Antes de confirmar, muestra el desglose que devuelve el motor: "De tu pago de [P], [interés] van a interés y [capital] a capital. Nuevo saldo: [saldo]". Así el usuario ve a dónde va su plata.
+- Al confirmar (en una transacción):
+  1. Inserta el movimiento (tipo 'cuota' si abona a capital, 'interes' si solo cubre interés) con monto_interes, monto_capital, saldo_anterior, saldo_posterior, metodo_pago.
+  2. Actualiza el préstamo: saldo_capital e interes_pendiente; si saldo 0 -> estado 'pagado'.
+- Comprobante simple del pago, para mostrar o compartir.
+
+## Tabla de casos (verifícalos)
+- Saldo 1.000.000, interés pendiente 100.000, pagan 200.000 -> 100.000 interés + 100.000 capital, saldo 900.000.
+- Pagan exactamente 100.000 -> todo a interés, saldo intacto.
+- Pagan 1.100.000 con saldo 1.000.000 + interés 100.000 -> salda el préstamo, estado 'pagado'.
+- Pagan de más -> excedente reportado; el capital no baja de 0.
+
+## Criterios de aceptación
+- El desglose mostrado coincide con lo que se guarda.
+- El saldo del préstamo y el listado se actualizan sin recargar.
+- Saldar un préstamo lo marca 'pagado'.
+- Montos con fmtCOP.
+
+## Convenciones
+- Clases del design system. Español. Sin any. Errores con toast.error(). Cálculos SOLO vía motor-prestamos.ts.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(pagos): registrar pago con desglose interes/capital y comprobante`,
+
+'p05-2':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/lib/motor-prestamos.ts (interesDelPeriodo, devengarPeriodo)
+- src/hooks/usePrestamos.ts
+- src/types/database.types.ts (prestamos, movimientos)
+
+## Objetivo
+(1) Estado de cuenta del préstamo y (2) devengo mensual automático del interés.
+
+## Parte 1 - Estado de cuenta
+- En la ficha del préstamo: capital inicial, saldo actual, interés del periodo vigente (usa interesDelPeriodo según el modo), interés pendiente y estado.
+- Ledger de movimientos: tabla con fecha, tipo, interés, capital y saldo. Cifras en mono alineadas a la derecha (como en el design system).
+
+## Parte 2 - Devengo mensual
+- Crea una Supabase Edge Function (o un job con pg_cron) que, una vez al mes, recorra los préstamos activos y aplique la lógica de devengarPeriodo a cada uno: suma el interés del periodo (según el modo) al interes_pendiente. NO capitaliza (no toca el capital).
+- Idempotencia: correr el devengo dos veces el mismo mes NO debe duplicar el interés. Para eso, agrega una columna ultimo_devengo (date) a prestamos mediante una migración nueva (002) y úsala como control.
+- Explícame cómo programar el schedule y cómo probarlo manualmente una vez.
+
+## Criterios de aceptación
+- La ficha muestra el interés del periodo correcto según el modo (sobre saldo vs. fijo).
+- El ledger lista todos los movimientos del préstamo en orden.
+- Ejecutar el devengo aumenta interes_pendiente en el interés del periodo, sin tocar el capital.
+- Ejecutarlo dos veces el mismo mes no duplica.
+
+## Convenciones
+- Clases del design system. Español. Sin any. Cálculos vía motor-prestamos.ts. Si agregas la columna, regenera src/types/database.types.ts.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(estado-cuenta): ledger de movimientos y devengo mensual de interes`,
+
+'p06-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- (adjunto) handoff del Dashboard V2 (operativa del día, aprobado)
+- src/hooks/usePrestamos.ts
+- src/lib/motor-prestamos.ts
+- src/lib/formatters.ts
+- src/types/database.types.ts
+
+## Objetivo
+Dashboard / Inicio fiel al diseño aprobado (V2).
+
+## Tareas (según el handoff)
+- 4 métricas arriba, cada una con dato secundario: Total prestado (+ nº activos), Saldo por cobrar (+ nº clientes), Ganancia del mes (intereses cobrados en el mes), Préstamos en mora (+ nº vencidos). En móvil, franja deslizable horizontal con las 4 (incluida En mora).
+- "Cobros de hoy" como protagonista: lista de préstamos con pago que vence hoy (cliente con iniciales, monto a cobrar, botón Registrar pago). Barra de progreso "X de Y cobrados · [monto] por cobrar" (X, Y y la lista deben cuadrar).
+- "Top deudores / activos": lista breve con cliente, saldo y estado.
+- Saludo "Hola, [nombre]" con la fecha.
+
+## Cálculos
+- Total prestado = suma de capital_inicial de préstamos activos.
+- Saldo por cobrar = suma de saldo_capital de activos.
+- Ganancia del mes = suma de monto_interes de los movimientos del mes en curso.
+- En mora = préstamos cuya fecha de cobro ya pasó sin pago.
+
+## Criterios de aceptación
+- Las 4 métricas calculan bien contra datos de prueba.
+- "Cobros de hoy" y la barra de progreso cuadran (X de Y consistente con la lista).
+- En móvil la franja de métricas se desliza e incluye "En mora".
+- Solo datos del usuario (RLS). Montos con fmtCOP.
+
+## Convenciones
+- Clases del design system y el handoff. Español. Sin any.
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(dashboard): inicio con metricas, cobros del dia y top deudores`,
+
+'p07-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/hooks/usePrestamos.ts
+- src/lib/formatters.ts
+- src/types/database.types.ts
+
+## Objetivo
+Módulo Cobros con recordatorios por WhatsApp (sin API, solo enlaces wa.me).
+
+## Tareas
+- Panel con dos secciones: "Cobros de hoy" y "Vencidos".
+- Por cada préstamo pendiente: cliente, monto a cobrar, días de atraso si aplica, y dos acciones: Registrar pago y Recordar por WhatsApp.
+- Recordar por WhatsApp: arma una URL wa.me con el teléfono del cliente (formato internacional, +57) y un mensaje prellenado, cordial y en trato de "usted", con nombre, monto y fecha. Abre en pestaña nueva. No requiere API.
+- Marcar mora: un préstamo cuya fecha de cobro pasó sin pago cambia a estado 'en_mora'. Propón la forma más limpia (acción manual o al cargar) y explícamela.
+
+## Criterios de aceptación
+- El enlace de WhatsApp abre el chat del cliente con el mensaje correcto.
+- Los vencidos se distinguen en rojo y muestran días de atraso.
+- Montos con fmtCOP. Mensajes en español, tono de "usted".
+
+## Convenciones
+- Clases del design system. Español. Sin any. Errores con toast.error().
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(cobros): panel de cobros del dia y recordatorios por whatsapp`,
+
+'p08-1':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+- src/lib/supabase.ts
+- src/types/database.types.ts
+
+## Objetivo
+Pantalla de Configuración + parámetros del negocio.
+
+## Tareas
+- Crea una tabla de configuración por usuario (usa /project:nueva-tabla). Campos: nombre_negocio, metodos_pago, tope_usura_ea (numeric). Migración nueva (003) con RLS por usuario. Regenera src/types/database.types.ts.
+- Pantalla:
+  - Datos del negocio (el nombre aparece en el header y en los comprobantes).
+  - Métodos de pago disponibles (efectivo, Nequi, Daviplata, transferencia) que alimentan los selectores de pago.
+  - Tope de usura (EA): reemplaza la constante TOPE_USURA_EA de la Fase 04 por este valor configurable.
+  - Perfil y cerrar sesión.
+
+## Criterios de aceptación
+- Guardar la configuración persiste y se refleja (el nombre del negocio cambia en el header).
+- El tope de usura configurado es el que usa la alerta al crear préstamos.
+- Solo el dueño ve y edita su configuración (RLS).
+
+## Convenciones
+- Clases del design system. Español. Sin any. Errores con toast.error().
+
+## Al terminar
+- tsc --noEmit sin errores.
+- /project:commit con mensaje: feat(config): configuracion del negocio, metodos de pago y tope de usura`,
+
+'p08-2':`## Lee primero
+- CLAUDE.md
+- src/CLAUDE.md
+- src/design-system.md
+
+## Objetivo
+Revisión completa antes del primer deploy y publicación en Vercel.
+
+## Revisión (reporta y corrige)
+1. TypeScript: corre tsc --noEmit. Cero errores.
+2. Lint: corre eslint. Resuelve lo relevante.
+3. Tests: corre npm test (vitest run). Todas las pruebas del motor pasan.
+4. Build: corre el build de producción. Sin errores ni warnings graves.
+5. Funcional: todas las rutas y pantallas conectadas, sin placeholders "próximamente".
+6. Seguridad: toda consulta a Supabase filtra por usuario y respeta RLS. Ninguna tabla quedó sin RLS.
+7. Consistencia: todos los montos usan fmtCOP; cero textos en inglés en la interfaz; clases según el design system.
+8. Cálculos: motor-prestamos.ts es la única fuente de fórmulas (nadie reimplementó interés/pago en la UI).
+
+Dame un reporte ordenado por prioridad y corrige. Lo que sea decisión de producto, pregúntame antes de cambiarlo.
+
+## Deploy
+- Explícame cómo desplegar en Vercel (framework Vite) y qué variables de entorno configurar allá (VITE_GQUOTA_SUPABASE_URL, VITE_GQUOTA_SUPABASE_ANON_KEY).
+- Recuérdame reactivar la confirmación de correo en Supabase Auth antes de abrir a usuarios reales.
+
+## Al terminar
+- /project:commit con mensaje: chore(release): revision pre-deploy y configuracion de despliegue`,
+
+'claude-root':`# G-Quota — contexto del proyecto
+
+## Descripción
+G-Quota es una app web responsive para personas que prestan dinero de forma informal en Colombia. Permite llevar el control de clientes deudores, préstamos, intereses, cuotas y pagos.
+
+## Stack
+- Vite + React + TypeScript
+- Tailwind CSS
+- React Router
+- Supabase (PostgreSQL, autenticación, Edge Functions, storage)
+- vitest (pruebas) · sonner (toasts)
+
+## Estructura
+- src/components — componentes reutilizables
+- src/pages — pantallas
+- src/contexts — contextos (auth)
+- src/lib — clientes y lógica (supabase.ts, motor-prestamos.ts, formatters.ts)
+- src/hooks — hooks
+- src/types — tipos (database.types.ts)
+- supabase/migrations — esquema SQL
+
+## Convenciones
+- Todo el texto de la interfaz en español (Colombia).
+- Montos SIEMPRE con fmtCOP() de src/lib/formatters.ts (pesos, sin decimales). Fechas con fmtFecha() (dd/mm/aaaa).
+- Toda consulta a Supabase filtra por el usuario autenticado; la RLS lo exige.
+- Sin any en TypeScript.
+- Errores con toast.error(), éxito con toast.success().
+- Pruebas con vitest: npm test.
+- Commits en formato Conventional Commits.
+
+## Núcleo financiero
+Los cálculos de interés y pagos viven SOLO en src/lib/motor-prestamos.ts (lógica pura, con pruebas). Maneja dos modos de interés (sobre saldo y sobre capital inicial) y el interés NO capitaliza. No dupliques fórmulas en la UI ni en las consultas: usa ese módulo.
+
+## Design system
+Antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones. No inventar colores, tipografías ni estilos. Ese archivo es la fuente de verdad visual.`,
+
+'claude-src':`# src — guía de implementación
+
+## Componentes
+- Lee src/design-system.md antes de crear cualquier pantalla o componente.
+- Componentes pequeños y reutilizables en src/components; pantallas en src/pages.
+- Estados obligatorios en toda vista con datos: cargando (skeleton), vacío (con acción), error (mensaje claro).
+- Toast de éxito/error después de cada mutación (sonner).
+
+## Datos
+- Acceso a Supabase vía src/lib/supabase.ts. Filtra siempre por el usuario.
+- Tipos desde src/types/database.types.ts (generados desde el esquema; regéneralos tras cada migración).
+- Mutaciones que tocan varias tablas (ej. registrar pago, crear préstamo) van en una transacción o función de Supabase.
+
+## Dinero y cálculos
+- Todo cálculo de interés/pago usa src/lib/motor-prestamos.ts. No reimplementar fórmulas.
+- Formatear montos con fmtCOP() (es-CO, sin decimales).
+
+## Idioma
+- Interfaz y mensajes en español.`,
+
+'cmd-componente':`Crea un componente nuevo de React + TypeScript para G-Quota.
+
+Antes de empezar, lee src/design-system.md y respeta sus patrones (colores, tipografía, spacing, estados).
+
+Pide el nombre y propósito si no te los doy. El componente debe:
+- Ser tipado (sin any).
+- Usar Tailwind según el design system.
+- Manejar estados de carga/vacío/error si aplica.
+- Tener textos en español y montos con fmtCOP().
+
+Ubícalo en src/components y muéstrame cómo usarlo.`,
+
+'cmd-tabla':`Crea una tabla nueva en Supabase para G-Quota.
+
+Pide el nombre y las columnas si no te los doy. Genera:
+- Un archivo de migración en supabase/migrations con número consecutivo.
+- La columna user_id referenciando auth.users, con RLS habilitada y políticas que permitan al usuario operar solo sus propias filas (igual que clientes, prestamos y movimientos).
+- Índices para las llaves foráneas.
+
+Luego dime cómo aplicarla y recuérdame regenerar src/types/database.types.ts.`,
+
+'cmd-modulo':`Construye un módulo completo (pantalla + lógica de datos) para G-Quota.
+
+Lee src/CLAUDE.md y src/design-system.md primero.
+
+Un módulo incluye: la(s) página(s), las consultas/mutaciones a Supabase (filtrando por usuario), los componentes necesarios y los estados de carga/vacío/error. Los cálculos de dinero siempre vía src/lib/motor-prestamos.ts. Textos en español, montos con fmtCOP(). Al terminar, conéctalo a la navegación.`,
+
+'cmd-revisar':`Haz una revisión del estado actual del proyecto.
+
+Lee CLAUDE.md, src/CLAUDE.md y src/design-system.md.
+1) Corre tsc --noEmit y reporta errores de tipos.
+2) Corre npm test y reporta pruebas que fallen.
+3) Señala componentes que no sigan el design system.
+4) Señala consultas a Supabase que no filtren por usuario.
+5) Señala montos sin fmtCOP() o textos en inglés.
+
+Dame un reporte ordenado por prioridad, sin cambiar nada hasta que te lo confirme.`,
+
+'cmd-commit':`Haz commit de los cambios actuales con un mensaje en formato Conventional Commits (feat, fix, chore, refactor, etc.), en español, breve y descriptivo. Si hay cambios de distinta naturaleza, sepáralos en varios commits.`,
+
+'git-setup':`mkdir gquota
+cd gquota
+git init
+git checkout -b develop
+mkdir -p .claude/commands
+touch CLAUDE.md .gitignore
+
+# pega el .gitignore y el CLAUDE.md raíz, crea src/CLAUDE.md
+# y los 5 archivos de .claude/commands, luego:
+git add .
+git commit -m "chore: init gquota repo with CLAUDE.md and gitignore"`,
+
+'git-fase':`# al empezar cada fase
+git checkout -b feature/01-setup-arquitectura
+
+# ejecutas los prompts de la fase en Claude Code,
+# y después de cada prompt haces commit (o /project:commit)
+
+# al cerrar la fase
+git checkout develop
+git merge --no-ff feature/01-setup-arquitectura -m "feat: setup fase 01"
+git branch -d feature/01-setup-arquitectura`,
+
+'gitignore':`node_modules
+dist
+.env
+.env.local
+.DS_Store
+*.log
+.vite`
+};
+
+const PHASES = [
+ {id:'f01',num:'01',title:'Setup y arquitectura',sub:'Vite + React + Supabase',weeks:'2–3 días',
+  stack:['Vite','React','TypeScript','Tailwind','Supabase','RLS'],
+  prompts:[
+   {seq:'Prompt 1',title:'Inicializar el proyecto',desc:'Vite + React + TS + Tailwind + Router + formatters',key:'p01-1'},
+   {seq:'Prompt 2',title:'Cliente de Supabase',desc:'Conexión, variables de entorno, tipos',key:'p01-2'},
+   {seq:'Prompt 3',title:'Esquema de base de datos',desc:'Migración 001 (clientes, prestamos, movimientos)',key:'p01-3'},
+   {seq:'Prompt 4',title:'Guía de diseño',desc:'design-system.md + referencia en CLAUDE.md',key:'p01-4'}],
+  note:'Adjunta cada archivo cuando el prompt lo pida: 001_schema_inicial.sql (Prompt 3) y design-system.md (Prompt 4). El Prompt 1 crea src/lib/formatters.ts con fmtCOP(), que TODOS los demás prompts usan. La RLS ya viene en el SQL.'},
+ {id:'f02',num:'02',title:'Autenticación y layout',sub:'Login + navegación responsive',weeks:'3–5 días',
+  stack:['Supabase Auth','sonner','React Router','Layout responsive'],
+  prompts:[
+   {seq:'Prompt 1',title:'Autenticación',desc:'Login fiel al handoff, sesión y rutas protegidas',key:'p02-1'},
+   {seq:'Prompt 2',title:'Layout principal',desc:'Sidebar (desktop) + bottom nav (móvil)',key:'p02-2'}],
+  note:'En el Prompt 1 adjunta el handoff-login (Login V1, pantalla dividida). Al inicio de cada sesión de Claude Code, dile primero: "Lee el CLAUDE.md del proyecto y dime en qué estado está el código".'},
+ {id:'f03',num:'03',title:'Clientes (deudores)',sub:'CRUD + búsqueda + ficha',weeks:'4–6 días',
+  stack:['Tabla clientes','Modales','Lista + detalle 60/40'],
+  prompts:[
+   {seq:'Prompt 1',title:'Módulo de clientes',desc:'Listado, búsqueda, alta/edición, ficha',key:'p03-1'}],
+  note:'Primera rebanada de punta a punta: aquí se prueba que la RLS, los estados de carga y los toasts funcionan antes de meter la lógica financiera.'},
+ {id:'f04',num:'04',title:'Préstamos y motor de cálculo',sub:'El corazón del negocio',weeks:'1–2 semanas',
+  stack:['motor-prestamos.ts','vitest','Tabla prestamos','Tasa EA'],
+  prompts:[
+   {seq:'Prompt 1',title:'Motor de cálculo',desc:'motor-prestamos.ts + pruebas (lógica pura)',key:'p04-1'},
+   {seq:'Prompt 2',title:'Crear préstamo',desc:'Form con modo + tasa efectiva + alerta de usura, y listado',key:'p04-2'}],
+  note:'En el Prompt 1 adjunta motor-prestamos.ts y motor-prestamos.test.ts (van a src/lib/) y se instala vitest. Los dos modos de interés y la no-capitalización ya están cubiertos por las 6 pruebas. La fórmula de la tasa EA y la tabla de casos van dentro de los prompts.'},
+ {id:'f05',num:'05',title:'Pagos y estado de cuenta',sub:'Ledger + devengo mensual',weeks:'1–2 semanas',
+  stack:['Tabla movimientos','Edge Functions / pg_cron','Migración 002'],
+  prompts:[
+   {seq:'Prompt 1',title:'Registrar pago',desc:'aplicarPago: interés primero, resto a capital, con desglose',key:'p05-1'},
+   {seq:'Prompt 2',title:'Estado de cuenta + devengo',desc:'Ledger de movimientos y job mensual idempotente',key:'p05-2'}],
+  note:'El interés NUNCA capitaliza. El devengo mensual agrega una columna ultimo_devengo a prestamos (migración 002) para ser idempotente. El pago siempre cubre interés antes que capital.'},
+ {id:'f06',num:'06',title:'Dashboard y reportes',sub:'Cartera de un vistazo',weeks:'4–6 días',
+  stack:['Handoff dashboard','Métricas','es-CO'],
+  prompts:[
+   {seq:'Prompt 1',title:'Dashboard',desc:'Métricas, cobros de hoy, top deudores',key:'p06-1'}],
+  note:'Adjunta el handoff-dashboard (V2, operativa del día). Las fórmulas de cada métrica van dentro del prompt. Ganancia del mes = suma de monto_interes de los movimientos del mes.'},
+ {id:'f07',num:'07',title:'Cobros y WhatsApp',sub:'Recordatorios sin API',weeks:'4–6 días',
+  stack:['wa.me','Estado de mora'],
+  prompts:[
+   {seq:'Prompt 1',title:'Cobros y recordatorios',desc:'Panel del día + recordatorio por WhatsApp',key:'p07-1'}],
+  note:'Enlaces wa.me con mensaje prellenado (trato de "usted"): cero costo, cero certificación. La API oficial de WhatsApp queda para una versión posterior.'},
+ {id:'f08',num:'08',title:'Configuración y deploy',sub:'Cierre del MVP',weeks:'3–5 días',
+  stack:['Migración 003','tsc --noEmit','vitest','Vercel'],
+  prompts:[
+   {seq:'Prompt 1',title:'Configuración',desc:'Negocio, métodos de pago, tope de usura',key:'p08-1'},
+   {seq:'Prompt 2',title:'Revisión y deploy',desc:'Revisión pre-deploy completa + publicación en Vercel',key:'p08-2'}],
+  note:'La configuración agrega una migración (003) para los parámetros del negocio. La revisión pre-deploy es el mismo chequeo de G-Mura (tsc, eslint, tests, build, RLS). Fase futura: app móvil React Native + Expo reutilizando src/lib.'}
+];
+
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function codeBlock(key){return `<div class="card"><div class="card-head"><span class="seq">Bloque</span><div class="card-titles"><div class="card-title">${key}</div></div><button class="copy-btn" onclick="cp(this,'${key}')">Copiar</button></div><pre class="code">${esc(DATA[key])}</pre></div>`;}
+
+const SECTIONS = {};
+
+SECTIONS.overview = `
+<div class="eyebrow">Plan de trabajo</div>
+<h1>G-Quota</h1>
+<p class="lede">Software de gestión de préstamos informales. Cada prompt está listo para ejecutar uno a uno en Claude Code, con "Lee primero", criterios de aceptación y el commit exacto. El flujo: primero diseñas en Claude Design, luego construyes fase por fase.</p>
+<h2>Stack</h2>
+<div class="pills">${['Vite','React','TypeScript','Tailwind CSS','Supabase','React Router','vitest','Vercel'].map(s=>`<span class="pill">${s}</span>`).join('')}</div>
+<h2>El proyecto en números</h2>
+<div class="metrics">
+ <div class="metric"><div class="k">Fases</div><div class="v accent">8</div></div>
+ <div class="metric"><div class="k">Prompts</div><div class="v">14</div></div>
+ <div class="metric"><div class="k">Tablas base</div><div class="v">3</div></div>
+ <div class="metric"><div class="k">Duración MVP</div><div class="v">~3–4 meses</div></div>
+</div>
+<h2>Mapa de fases</h2>
+<div class="map">${PHASES.map(p=>`<div class="map-row" data-go="${p.id}"><div class="map-num">${p.num}</div><div class="map-titles"><div class="map-title">${p.title}</div><div class="map-sub">${p.sub}</div></div><div class="map-weeks">${p.weeks}</div></div>`).join('')}</div>
+<h2>Cómo usar este documento</h2>
+<ul class="clean">
+ <li>Cada prompt trae su <b>"Lee primero"</b>, los <b>criterios de aceptación</b> y el <b>commit exacto</b>: ejecútalo tal cual.</li>
+ <li>Empieza por <b>Flujo Claude Design</b>: diseña las pantallas antes de escribir código.</li>
+ <li>Configura el repo con <b>Git workflow</b> y crea los <b>archivos CLAUDE.md</b> y los <b>comandos /project</b>.</li>
+ <li>Recorre las fases en orden. Una rama por fase, un commit por prompt.</li>
+ <li>Adjunta cuando el prompt lo pida: <span class="mono">001_schema_inicial.sql</span>, <span class="mono">design-system.md</span>, <span class="mono">motor-prestamos.ts</span>, <span class="mono">motor-prestamos.test.ts</span> y los handoffs de Claude Design.</li>
+</ul>`;
+
+SECTIONS.diseno = `
+<div class="eyebrow">Antes de codear</div>
+<h1>Flujo Claude Design</h1>
+<p class="lede">El mismo de G-Vento/G-Mura: diseñas cada pantalla en Claude Design, exportas el handoff, y Claude Code lo implementa con React + Supabase. Una conversación por pantalla.</p>
+<pre class="code mono" style="border:1px solid var(--border);border-radius:12px">Claude Design  →  diseñas la UI
+      ↓
+  handoff bundle
+      ↓
+Claude Code    →  implementa con React + Supabase</pre>
+<div class="note"><b>El prompt para Claude Design se entrega aparte</b> (prompt-claude-design.md): trae el contexto del proyecto, la dirección visual y la primera pantalla lista para pegar, más el orden de pantallas y los tips.</div>
+<h2>Secuencia por pantalla</h2>
+<ul class="clean">
+ <li>Mandas el prompt y revisas las 2 variaciones.</li>
+ <li>Pides ajustes hasta quedar conforme.</li>
+ <li>Si hay estilos nuevos, pides los tokens para actualizar design-system.md.</li>
+ <li>Exportas el handoff de esa pantalla (etiquétalo: handoff-login, handoff-dashboard…).</li>
+ <li>Recién ahí abres una conversación nueva para la siguiente pantalla.</li>
+</ul>
+<h2>Importante sobre la guía de diseño</h2>
+<p>El archivo <span class="mono">design-system.md</span> es la <b>dirección inicial</b>. Cuando Claude Design genere las pantallas reales, extrae de su código los tokens exactos (colores y medidas) y actualiza ese archivo. De ahí en adelante, ese archivo manda y Claude Code no inventa estilos. Los handoffs no se usan en orden: cada uno entra en su fase (login en la 02, dashboard en la 06).</p>`;
+
+PHASES.forEach(p=>{
+ const stack = p.stack.map(s=>`<span class="pill">${s}</span>`).join('');
+ const cards = p.prompts.map(pr=>`<div class="card"><div class="card-head"><span class="seq">${pr.seq}</span><div class="card-titles"><div class="card-title">${pr.title}</div><div class="card-desc">${pr.desc}</div></div><button class="copy-btn" onclick="cp(this,'${pr.key}')">Copiar</button></div><pre class="code">${esc(DATA[pr.key])}</pre></div>`).join('');
+ SECTIONS[p.id]=`
+<div class="eyebrow">Fase ${p.num}</div>
+<h1><span class="num">${p.num}</span> · ${p.title}</h1>
+<p class="section-meta"><b>${p.sub}</b> · ${p.weeks} · ${p.prompts.length} prompt${p.prompts.length>1?'s':''} secuencial${p.prompts.length>1?'es':''}</p>
+<h2>Stack de esta fase</h2>
+<div class="pills">${stack}</div>
+<h2>Prompts para Claude Code</h2>
+${cards}
+<div class="note">${p.note}</div>`;
+});
+
+SECTIONS.git = `
+<div class="eyebrow">Recursos</div>
+<h1>Git workflow</h1>
+<p class="lede">Ramas: <b>main</b> (producción), <b>develop</b> (integración) y <b>feature/0X-nombre</b> (una por fase). Conventional Commits.</p>
+<h2>Inicio del proyecto</h2>
+${codeBlock('git-setup')}
+<h2>Por cada fase</h2>
+${codeBlock('git-fase')}
+<h2>.gitignore</h2>
+${codeBlock('gitignore')}`;
+
+SECTIONS.claudemd = `
+<div class="eyebrow">Recursos</div>
+<h1>Archivos CLAUDE.md</h1>
+<p class="lede">Dan a Claude Code todo el contexto sin que tengas que explicar nada. El raíz va en la carpeta del proyecto; el otro en src/. Se crean en la Fase 01.</p>
+<h2>CLAUDE.md (raíz)</h2>
+${codeBlock('claude-root')}
+<h2>src/CLAUDE.md</h2>
+${codeBlock('claude-src')}`;
+
+SECTIONS.comandos = `
+<div class="eyebrow">Recursos</div>
+<h1>Comandos /project</h1>
+<p class="lede">Van en .claude/commands/ (un archivo .md por comando). Los usas en Claude Code escribiendo, por ejemplo, /project:componente. Aceleran todo de la Fase 02 en adelante.</p>
+${codeBlock('cmd-componente')}
+${codeBlock('cmd-tabla')}
+${codeBlock('cmd-modulo')}
+${codeBlock('cmd-revisar')}
+${codeBlock('cmd-commit')}`;
+
+const phaseNav = document.getElementById('phase-nav');
+phaseNav.innerHTML = PHASES.map(p=>`<div class="nav-item" data-id="${p.id}"><span class="nav-num">${p.num}</span>${p.title}</div>`).join('');
+
+function show(id){
+ document.getElementById('content').innerHTML = SECTIONS[id] || '<p>Sección no encontrada</p>';
+ document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active', el.dataset.id===id));
+ document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',()=>show(el.dataset.go)));
+ document.querySelector('.main').scrollTo(0,0);
+}
+document.querySelectorAll('.nav-item').forEach(el=>el.addEventListener('click',()=>show(el.dataset.id)));
+
+function cp(btn,key){
+ navigator.clipboard.writeText(DATA[key]).then(()=>{
+  const t=btn.textContent; btn.textContent='Copiado'; btn.classList.add('done');
+  setTimeout(()=>{btn.textContent=t; btn.classList.remove('done');},1300);
+ });
+}
+
+show('overview');
+</script>
+</body>
+</html>
