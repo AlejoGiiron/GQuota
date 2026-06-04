@@ -1,3 +1,64 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ───────────────────────────────────────────────────────────
+   G-Quota — tokens del sistema visual (de gquota.css del handoff).
+   Fuente de verdad: src/design-system.md. No inventar tokens nuevos.
+   ─────────────────────────────────────────────────────────── */
+:root {
+  /* Paleta */
+  --green: #047857;
+  --green-700: #036249;
+  --green-600: #047857;
+  --green-tint: #ecfdf5;
+  --green-tint-2: #d1fae5;
+  --ink: #0c1f1a;
+  --ink-2: #112a23;
+  --ink-soft: #1b3a31;
+
+  --bg: #faf9f7;
+  --card: #ffffff;
+  --line: #ece8e1;
+  --line-soft: #f3f0ea;
+
+  --amber: #d97706;
+  --amber-tint: #fef3e2;
+  --red: #dc2626;
+  --red-tint: #fef2f2;
+  --red-tint-2: #fee2e2;
+
+  --text: #16241f;
+  --text-2: #475a53;
+  --muted: #8b9a93;
+
+  --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --r-sm: 9px;
+  --r: 14px;
+  --r-lg: 18px;
+
+  --shadow-card: 0 1px 2px rgba(12, 31, 26, 0.04), 0 4px 14px rgba(12, 31, 26, 0.05);
+  --shadow-pop: 0 12px 36px rgba(12, 31, 26, 0.12);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.02em;
+}
