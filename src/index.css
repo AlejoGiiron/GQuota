@@ -62,3 +62,101 @@ body {
   font-feature-settings: 'tnum' 1;
   letter-spacing: -0.02em;
 }
+
+/* ───────────────────────────────────────────────────────────
+   Primitivos del design system (src/design-system.md).
+   Una sola definición por primitivo, conectada a los tokens.
+   El CSS plano queda solo para lo bespoke de una pantalla.
+   ─────────────────────────────────────────────────────────── */
+@layer components {
+  /* Botón primario — verde esmeralda */
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-green font-bold text-white;
+    height: 46px;
+    padding: 0 20px;
+    gap: 9px;
+    font-size: 14.5px;
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.28);
+    transition: transform 0.12s, box-shadow 0.15s;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 8px 22px rgba(4, 120, 87, 0.36);
+    transform: translateY(-1px);
+  }
+
+  /* Botón secundario — borde gris, fondo blanco */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl bg-card font-bold text-text;
+    height: 46px;
+    padding: 0 20px;
+    gap: 9px;
+    font-size: 14.5px;
+    border: 1px solid var(--line);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-secondary:hover {
+    border-color: #d8d2c8;
+  }
+
+  /* Botón destructivo — rojo */
+  .btn-destructive {
+    @apply inline-flex items-center justify-center rounded-xl bg-red font-bold text-white;
+    height: 46px;
+    padding: 0 20px;
+    gap: 9px;
+    font-size: 14.5px;
+    transition: opacity 0.15s;
+  }
+  .btn-destructive:hover {
+    opacity: 0.92;
+  }
+
+  /* Input de texto */
+  .input {
+    @apply w-full rounded-xl bg-card text-text;
+    height: 52px;
+    padding: 0 16px;
+    font-size: 15px;
+    font-weight: 500;
+    border: 1.5px solid var(--line);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input::placeholder {
+    @apply text-muted;
+    font-weight: 500;
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.12);
+  }
+
+  /* Tarjeta */
+  .card {
+    @apply rounded bg-card shadow-card;
+    border: 1px solid var(--line);
+  }
+
+  /* Badge de estado — al día / por vencer / vencido / pagado */
+  .badge {
+    @apply inline-flex items-center gap-1.5 font-bold;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge--aldia {
+    @apply bg-green-tint text-green-700;
+  }
+  .badge--porvenc {
+    @apply bg-amber-tint;
+    color: #b45309;
+  }
+  .badge--vencido {
+    @apply bg-red-tint text-red;
+  }
+  .badge--pagado {
+    background: #eef2f0;
+    color: #3f5b50;
+  }
+}
