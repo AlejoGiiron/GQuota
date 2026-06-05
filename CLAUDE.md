@@ -35,7 +35,7 @@ Hay dos modos de interés: sobre saldo (interés sobre el saldo de capital vigen
 Antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones. No inventar colores, tipografías ni estilos nuevos. Ese archivo es la fuente de verdad visual.
 
 ## Pendientes técnicos
-- [ ] (Fase 05) Regenerar src/types/database.types.ts con el CLI de Supabase.
+- [ ] (post-MVP) Conectar el CLI de Supabase: link + migration repair (las 9 migraciones están aplicadas a mano, el historial del CLI está vacío) + regenerar database.types.ts real. Los tipos están a mano.
 - [ ] (Fase 08) Revisar consistencia de estilos: el login usa CSS plano (lg-*); confirmar que no divergió de los primitivos de Tailwind.
 - [ ] Definir flujo de "Crear cuenta": abierto, por invitación, o cuentas creadas manualmente (hoy muestra toast de "disponible pronto").
 - [ ] (Fase 08) Añadir vitest.config.ts mínimo sin el plugin de React, para silenciar warnings de esbuild/oxc al correr los tests.
