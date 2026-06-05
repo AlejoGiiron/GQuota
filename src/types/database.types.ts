@@ -1,3 +1,7 @@
+// TODO(fase-05): regenerar con el CLI de Supabase (supabase gen types) en vez de
+// mantenerlo a mano; si una migración cambia el esquema y no se actualiza aquí,
+// el tipo y la base se desincronizan en silencio.
+
 // Tipos de la base de datos de G-Quota.
 // Escritos a mano según supabase/migrations/001_schema_inicial.sql con la misma
 // forma que genera `supabase gen types typescript`. Cuando haya acceso al CLI,
