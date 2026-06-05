@@ -59,6 +59,7 @@ export interface Database {
           dia_cobro: number | null
           estado: string
           notas: string | null
+          ultimo_devengo: string | null
           created_at: string
         }
         Insert: {
@@ -74,6 +75,7 @@ export interface Database {
           dia_cobro?: number | null
           estado?: string
           notas?: string | null
+          ultimo_devengo?: string | null
           created_at?: string
         }
         Update: {
@@ -89,6 +91,7 @@ export interface Database {
           dia_cobro?: number | null
           estado?: string
           notas?: string | null
+          ultimo_devengo?: string | null
           created_at?: string
         }
         Relationships: [
@@ -179,6 +182,7 @@ export interface Database {
           dia_cobro: number | null
           estado: string
           notas: string | null
+          ultimo_devengo: string | null
           created_at: string
         }
       }
@@ -209,6 +213,10 @@ export interface Database {
           nota: string | null
           created_at: string
         }
+      }
+      devengar_intereses: {
+        Args: Record<string, never>
+        Returns: number
       }
     }
     Enums: Record<string, never>

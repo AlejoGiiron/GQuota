@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
+import EstadoDeCuenta from '@/components/EstadoDeCuenta'
 import PagoModal from '@/components/PagoModal'
 import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
@@ -39,6 +40,7 @@ export default function PrestamoFicha() {
   const navigate = useNavigate()
   const { prestamos, loading, clientePorId, registrarPago } = useOutletContext<PrestamosOutletContext>()
   const [pagoAbierto, setPagoAbierto] = useState(false)
+  const [version, setVersion] = useState(0)
   const prestamo = prestamos.find((p) => p.id === prestamoId)
 
   if (loading && !prestamo) {
@@ -73,6 +75,7 @@ export default function PrestamoFicha() {
       return null
     }
     toast.success('Pago registrado.')
+    setVersion((v) => v + 1) // refresca el ledger con el nuevo movimiento
     return resultado
   }
 
@@ -135,13 +138,8 @@ export default function PrestamoFicha() {
         <Dato etiqueta="Desembolso">{fmtFecha(prestamo.fecha_desembolso)}</Dato>
       </div>
 
-      {/* Movimientos (el historial / ledger llega en un prompt siguiente de esta fase) */}
-      <div className="card p-5">
-        <h3 className="text-sm font-bold text-text">Pagos y movimientos</h3>
-        <p className="mt-2 text-sm text-text-2">
-          El historial de pagos de este préstamo se mostrará aquí próximamente.
-        </p>
-      </div>
+      {/* Estado de cuenta + ledger de movimientos */}
+      <EstadoDeCuenta prestamo={prestamo} recargaToken={version} />
 
       <PagoModal
         open={pagoAbierto}
