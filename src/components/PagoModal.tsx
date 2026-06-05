@@ -1,20 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import Modal from '@/components/Modal'
+import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { prestamoDelMotor } from '@/hooks/usePrestamos'
 import { aplicarPago, type ResultadoPago } from '@/lib/motor-prestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { Prestamo } from '@/types/database.types'
 
-const METODOS: ReadonlyArray<{ valor: string; label: string }> = [
-  { valor: 'efectivo', label: 'Efectivo' },
-  { valor: 'nequi', label: 'Nequi' },
-  { valor: 'daviplata', label: 'Daviplata' },
-  { valor: 'transferencia', label: 'Transferencia' },
-]
-
 function metodoLabel(valor: string): string {
-  return METODOS.find((m) => m.valor === valor)?.label ?? valor
+  return METODOS_PAGO.find((m) => m.valor === valor)?.label ?? valor
 }
 
 interface Comprobante {
@@ -38,18 +32,25 @@ export default function PagoModal({
   /** Persiste el pago y devuelve el desglose guardado (o null si falló). */
   onRegistrar: (monto: number, metodo: string) => Promise<ResultadoPago | null>
 }) {
+  const { metodosActivos, nombreNegocio } = useConfiguracion()
+  const metodosDisponibles = useMemo(() => {
+    const filtrados = METODOS_PAGO.filter((m) => metodosActivos.includes(m.valor))
+    return filtrados.length > 0 ? filtrados : METODOS_PAGO
+  }, [metodosActivos])
+  const primerMetodo = metodosDisponibles[0]?.valor ?? 'efectivo'
+
   const [monto, setMonto] = useState('')
-  const [metodo, setMetodo] = useState('efectivo')
+  const [metodo, setMetodo] = useState(primerMetodo)
   const [procesando, setProcesando] = useState(false)
   const [comprobante, setComprobante] = useState<Comprobante | null>(null)
 
   useEffect(() => {
     if (!open) return
     setMonto('')
-    setMetodo('efectivo')
+    setMetodo(primerMetodo)
     setProcesando(false)
     setComprobante(null)
-  }, [open])
+  }, [open, primerMetodo])
 
   const montoNum = Number(monto)
   const montoValido = monto !== '' && !Number.isNaN(montoNum) && montoNum > 0
@@ -72,7 +73,7 @@ export default function PagoModal({
 
   function textoComprobante(c: Comprobante): string {
     const lineas = [
-      'Comprobante de pago · G-Quota',
+      `Comprobante de pago · ${nombreNegocio}`,
       `Cliente: ${clienteNombre}`,
       `Fecha: ${c.fecha}`,
       `Pago: ${fmtCOP(c.monto)} (${metodoLabel(c.metodo)})`,
@@ -202,7 +203,7 @@ export default function PagoModal({
         <div className="flex flex-col gap-2">
           <span className="text-[13px] font-semibold text-text-2">Método de pago</span>
           <div className="flex flex-wrap gap-2">
-            {METODOS.map((m) => (
+            {metodosDisponibles.map((m) => (
               <button
                 key={m.valor}
                 type="button"

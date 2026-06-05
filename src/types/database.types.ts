@@ -12,6 +12,30 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
+      configuracion: {
+        Row: {
+          id: string
+          user_id: string
+          nombre_negocio: string | null
+          metodos_pago: string[]
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          nombre_negocio?: string | null
+          metodos_pago?: string[]
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          nombre_negocio?: string | null
+          metodos_pago?: string[]
+          created_at?: string
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           id: string
@@ -235,3 +259,4 @@ export type ClienteUpdate = Database['public']['Tables']['clientes']['Update']
 
 export type Prestamo = Database['public']['Tables']['prestamos']['Row']
 export type Movimiento = Database['public']['Tables']['movimientos']['Row']
+export type Configuracion = Database['public']['Tables']['configuracion']['Row']

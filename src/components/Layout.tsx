@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
+import { useConfiguracion } from '@/contexts/ConfiguracionContext'
 
 /* Íconos de línea (mismo set y trazo del dashboard V2 aprobado). */
 type IconProps = { className?: string }
@@ -83,6 +84,7 @@ const bottomItemClass = ({ isActive }: { isActive: boolean }) =>
 
 export default function Layout() {
   const { user, signOut } = useAuth()
+  const { nombreNegocio } = useConfiguracion()
   const [menuOpen, setMenuOpen] = useState(false)
 
   const inicialaes = (user?.email?.split('@')[0]?.slice(0, 2) || 'U').toUpperCase()
@@ -142,7 +144,9 @@ export default function Layout() {
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Header */}
         <header className="flex shrink-0 items-center justify-between border-b border-line bg-card px-5 py-3">
-          <div className="text-base font-extrabold tracking-tight text-text">G-Quota</div>
+          <div className="truncate text-base font-extrabold tracking-tight text-text">
+            {nombreNegocio}
+          </div>
 
           <div className="relative">
             <button
