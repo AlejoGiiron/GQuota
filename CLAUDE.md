@@ -38,3 +38,4 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] (Fase 05) Regenerar src/types/database.types.ts con el CLI de Supabase.
 - [ ] (Fase 08) Revisar consistencia de estilos: el login usa CSS plano (lg-*); confirmar que no divergió de los primitivos de Tailwind.
 - [ ] Definir flujo de "Crear cuenta": abierto, por invitación, o cuentas creadas manualmente (hoy muestra toast de "disponible pronto").
+- [ ] (Fase 08) Añadir vitest.config.ts mínimo sin el plugin de React, para silenciar warnings de esbuild/oxc al correr los tests.
