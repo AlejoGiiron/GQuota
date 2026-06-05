@@ -1,7 +1,23 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { ModoInteres } from '@/lib/motor-prestamos'
+import { aplicarPago, type ModoInteres, type ResultadoPago } from '@/lib/motor-prestamos'
 import type { Prestamo } from '@/types/database.types'
+
+/** Construye el préstamo del motor a partir de la fila de la BD. */
+export function prestamoDelMotor(p: Prestamo) {
+  return {
+    capitalInicial: p.capital_inicial,
+    saldoCapital: p.saldo_capital,
+    tasaMensual: p.tasa_mensual,
+    modoInteres: p.modo_interes as ModoInteres,
+    interesPendiente: p.interes_pendiente,
+  }
+}
+
+/** Tipo del movimiento según el desglose: 'interes' si no abonó capital, 'cuota' si sí. */
+export function tipoMovimiento(resultado: ResultadoPago): 'interes' | 'cuota' {
+  return resultado.montoCapital > 0 ? 'cuota' : 'interes'
+}
 
 /** Datos que captura el formulario de "Nuevo préstamo". */
 export interface PrestamoInput {
@@ -66,5 +82,52 @@ export function usePrestamos(clienteId?: string) {
     return { data, error: null }
   }, [])
 
-  return { prestamos, loading, error, crear, recargar: cargar }
+  /**
+   * Registra un pago. El desglose lo calcula el motor (aplicarPago) a partir
+   * del préstamo actual; la RPC solo persiste ese resultado, de forma atómica.
+   */
+  const registrarPago = useCallback(
+    async (
+      prestamoId: string,
+      monto: number,
+      metodoPago: string,
+    ): Promise<{ resultado: ResultadoPago | null; error: string | null }> => {
+      const p = prestamos.find((x) => x.id === prestamoId)
+      if (!p) return { resultado: null, error: 'No encontramos el préstamo.' }
+
+      const { resultado } = aplicarPago(prestamoDelMotor(p), monto)
+
+      const { error } = await supabase.rpc('registrar_pago', {
+        p_prestamo_id: prestamoId,
+        p_monto: monto,
+        p_metodo_pago: metodoPago,
+        p_tipo: tipoMovimiento(resultado),
+        p_monto_interes: resultado.montoInteres,
+        p_monto_capital: resultado.montoCapital,
+        p_saldo_anterior: resultado.saldoAnterior,
+        p_saldo_posterior: resultado.saldoPosterior,
+        p_interes_pendiente_restante: resultado.interesPendienteRestante,
+      })
+      if (error) {
+        return { resultado: null, error: 'No pudimos registrar el pago. Intenta de nuevo.' }
+      }
+
+      setPrestamos((prev) =>
+        prev.map((x) =>
+          x.id === prestamoId
+            ? {
+                ...x,
+                saldo_capital: resultado.saldoPosterior,
+                interes_pendiente: resultado.interesPendienteRestante,
+                estado: resultado.prestamoSaldado ? 'pagado' : x.estado,
+              }
+            : x,
+        ),
+      )
+      return { resultado, error: null }
+    },
+    [prestamos],
+  )
+
+  return { prestamos, loading, error, crear, registrarPago, recargar: cargar }
 }

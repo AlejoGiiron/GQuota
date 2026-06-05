@@ -1,14 +1,23 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
+import EstadoDeCuenta from '@/components/EstadoDeCuenta'
+import PagoModal from '@/components/PagoModal'
 import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
+import type { ResultadoPago } from '@/lib/motor-prestamos'
 import type { Cliente, Prestamo } from '@/types/database.types'
 
 export interface PrestamosOutletContext {
   prestamos: Prestamo[]
   loading: boolean
   clientePorId: Map<string, Cliente>
+  registrarPago: (
+    prestamoId: string,
+    monto: number,
+    metodo: string,
+  ) => Promise<{ resultado: ResultadoPago | null; error: string | null }>
 }
 
 const IconAtras = (
@@ -29,7 +38,9 @@ function Dato({ etiqueta, children }: { etiqueta: string; children: ReactNode })
 export default function PrestamoFicha() {
   const { prestamoId } = useParams()
   const navigate = useNavigate()
-  const { prestamos, loading, clientePorId } = useOutletContext<PrestamosOutletContext>()
+  const { prestamos, loading, clientePorId, registrarPago } = useOutletContext<PrestamosOutletContext>()
+  const [pagoAbierto, setPagoAbierto] = useState(false)
+  const [version, setVersion] = useState(0)
   const prestamo = prestamos.find((p) => p.id === prestamoId)
 
   if (loading && !prestamo) {
@@ -54,6 +65,19 @@ export default function PrestamoFicha() {
 
   const cliente = clientePorId.get(prestamo.cliente_id)
   const nombre = cliente?.nombre ?? 'Cliente'
+  const pagable = prestamo.estado === 'activo' || prestamo.estado === 'en_mora'
+  const idPrestamo = prestamo.id
+
+  async function handleRegistrar(monto: number, metodo: string): Promise<ResultadoPago | null> {
+    const { resultado, error } = await registrarPago(idPrestamo, monto, metodo)
+    if (error) {
+      toast.error(error)
+      return null
+    }
+    toast.success('Pago registrado.')
+    setVersion((v) => v + 1) // refresca el ledger con el nuevo movimiento
+    return resultado
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -78,6 +102,15 @@ export default function PrestamoFicha() {
             </div>
           </div>
         </div>
+        {pagable && (
+          <button
+            type="button"
+            className="btn-primary mt-4 w-full sm:w-auto"
+            onClick={() => setPagoAbierto(true)}
+          >
+            Registrar pago
+          </button>
+        )}
       </div>
 
       {/* Saldo destacado */}
@@ -105,13 +138,16 @@ export default function PrestamoFicha() {
         <Dato etiqueta="Desembolso">{fmtFecha(prestamo.fecha_desembolso)}</Dato>
       </div>
 
-      {/* Movimientos (se conecta en la fase de pagos) */}
-      <div className="card p-5">
-        <h3 className="text-sm font-bold text-text">Pagos y movimientos</h3>
-        <p className="mt-2 text-sm text-text-2">
-          El historial de pagos de este préstamo se mostrará aquí en una fase siguiente.
-        </p>
-      </div>
+      {/* Estado de cuenta + ledger de movimientos */}
+      <EstadoDeCuenta prestamo={prestamo} recargaToken={version} />
+
+      <PagoModal
+        open={pagoAbierto}
+        prestamo={prestamo}
+        clienteNombre={nombre}
+        onClose={() => setPagoAbierto(false)}
+        onRegistrar={handleRegistrar}
+      />
     </div>
   )
 }
