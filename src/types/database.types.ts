@@ -154,7 +154,31 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      crear_prestamo: {
+        Args: {
+          p_cliente_id: string
+          p_capital: number
+          p_tasa_mensual: number
+          p_modo_interes: string
+          p_fecha_desembolso: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          cliente_id: string
+          capital_inicial: number
+          saldo_capital: number
+          tasa_mensual: number
+          modo_interes: string
+          fecha_desembolso: string
+          dia_cobro: number | null
+          estado: string
+          notas: string | null
+          created_at: string
+        }
+      }
+    }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>
   }

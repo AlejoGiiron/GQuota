@@ -7,6 +7,7 @@ import InicioPage from '@/pages/InicioPage'
 import ClientesPage from '@/pages/ClientesPage'
 import ClienteFicha from '@/components/ClienteFicha'
 import PrestamosPage from '@/pages/PrestamosPage'
+import PrestamoFicha from '@/components/PrestamoFicha'
 import CobrosPage from '@/pages/CobrosPage'
 import ConfiguracionPage from '@/pages/ConfiguracionPage'
 
@@ -27,7 +28,11 @@ export const router = createBrowserRouter([
             element: <ClientesPage />,
             children: [{ path: ':clienteId', element: <ClienteFicha /> }],
           },
-          { path: 'prestamos', element: <PrestamosPage /> },
+          {
+            path: 'prestamos',
+            element: <PrestamosPage />,
+            children: [{ path: ':prestamoId', element: <PrestamoFicha /> }],
+          },
           { path: 'cobros', element: <CobrosPage /> },
           { path: 'configuracion', element: <ConfiguracionPage /> },
         ],

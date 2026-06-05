@@ -1,6 +1,8 @@
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Avatar from '@/components/Avatar'
-import { fmtFecha } from '@/lib/formatters'
+import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
+import { usePrestamos } from '@/hooks/usePrestamos'
+import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { Cliente } from '@/types/database.types'
 
 export interface ClientesOutletContext {
@@ -92,13 +94,44 @@ export default function ClienteFicha() {
         <Dato etiqueta="Notas" valor={cliente.notas} />
       </div>
 
-      {/* Préstamos (se conecta en la Fase 04) */}
+      {/* Préstamos del cliente */}
       <div className="card p-5">
-        <h3 className="text-sm font-bold text-text">Préstamos</h3>
-        <p className="mt-2 text-sm text-text-2">
-          Los préstamos de este cliente se mostrarán aquí en una fase siguiente.
-        </p>
+        <h3 className="mb-3 text-sm font-bold text-text">Préstamos</h3>
+        <PrestamosDelCliente clienteId={cliente.id} />
       </div>
+    </div>
+  )
+}
+
+function PrestamosDelCliente({ clienteId }: { clienteId: string }) {
+  const { prestamos, loading } = usePrestamos(clienteId)
+
+  if (loading) {
+    return <div className="h-16 animate-pulse rounded-xl bg-line-soft" />
+  }
+  if (prestamos.length === 0) {
+    return <p className="text-sm text-text-2">Este cliente aún no tiene préstamos.</p>
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      {prestamos.map((p) => (
+        <Link
+          key={p.id}
+          to={`/prestamos/${p.id}`}
+          className="flex items-center justify-between gap-3 rounded-xl border border-line px-4 py-3 transition-colors hover:bg-bg"
+        >
+          <div className="min-w-0">
+            <div className="mono text-sm font-bold text-text">{fmtCOP(p.saldo_capital)}</div>
+            <div className="text-xs text-muted">
+              de {fmtCOP(p.capital_inicial)} · {tasaMensualTexto(p.tasa_mensual)}
+            </div>
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              <ModoBadge modo={p.modo_interes} />
+              <EstadoBadge estado={p.estado} />
+            </div>
+          </div>
+        </Link>
+      ))}
     </div>
   )
 }
