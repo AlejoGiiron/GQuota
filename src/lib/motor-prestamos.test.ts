@@ -36,8 +36,9 @@ test("modo sobre_capital_inicial: el interés se mantiene fijo (caso del usuario
   // Mes 1: interés = 100.000; pagan 200.000 -> 100.000 interés + 100.000 capital
   p = devengarPeriodo(p);
   assert.equal(p.interesPendiente, 100_000);
-  let res;
-  ({ prestamo: p, resultado: res } = aplicarPago(p, 200_000));
+  const pago = aplicarPago(p, 200_000);
+  p = pago.prestamo;
+  const res = pago.resultado;
   assert.equal(res.montoInteres, 100_000);
   assert.equal(res.montoCapital, 100_000);
   assert.equal(p.saldoCapital, 900_000);
@@ -49,8 +50,9 @@ test("modo sobre_capital_inicial: el interés se mantiene fijo (caso del usuario
 test("pagar solo el interés: el capital no cambia", () => {
   let p = nuevoPrestamo({ modoInteres: "sobre_saldo" });
   p = devengarPeriodo(p); // interés pendiente = 100.000
-  let res;
-  ({ prestamo: p, resultado: res } = aplicarPago(p, 100_000));
+  const pago = aplicarPago(p, 100_000);
+  p = pago.prestamo;
+  const res = pago.resultado;
   assert.equal(res.montoInteres, 100_000);
   assert.equal(res.montoCapital, 0);
   assert.equal(p.saldoCapital, 1_000_000);
@@ -72,8 +74,9 @@ test("el préstamo se cierra cuando el capital llega a cero", () => {
     saldoCapital: 50_000,
   });
   p = devengarPeriodo(p); // interés = 100.000 (sobre capital inicial)
-  let res;
-  ({ prestamo: p, resultado: res } = aplicarPago(p, 150_000));
+  const pago = aplicarPago(p, 150_000);
+  p = pago.prestamo;
+  const res = pago.resultado;
   assert.equal(res.montoInteres, 100_000);
   assert.equal(res.montoCapital, 50_000);
   assert.equal(p.saldoCapital, 0);
@@ -82,8 +85,9 @@ test("el préstamo se cierra cuando el capital llega a cero", () => {
 
 test("pago de más genera excedente (saldo a favor)", () => {
   let p = nuevoPrestamo({ saldoCapital: 50_000, interesPendiente: 0 });
-  let res;
-  ({ prestamo: p, resultado: res } = aplicarPago(p, 80_000));
+  const pago = aplicarPago(p, 80_000);
+  p = pago.prestamo;
+  const res = pago.resultado;
   assert.equal(res.montoCapital, 50_000);
   assert.equal(res.excedente, 30_000);
   assert.equal(p.saldoCapital, 0);

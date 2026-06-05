@@ -41,3 +41,4 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] (Fase 08) Añadir vitest.config.ts mínimo sin el plugin de React, para silenciar warnings de esbuild/oxc al correr los tests.
 - [ ] (Fase 07) Transición a 'en_mora': definir quién/cuándo marca un préstamo como vencido (job diario tipo devengo, o cálculo al vuelo). Hoy nada lo marca, así que la métrica de mora del dashboard es 0 fija.
 - [ ] (Fase 07/08) Capturar dia_cobro / frecuencia en el préstamo; hoy se deriva del aniversario del desembolso.
+- [ ] (post-MVP, menor) 3 warnings de eslint react-refresh/only-export-components en PrestamoBadges.tsx y ConfiguracionContext.tsx (exportan constantes/funciones junto a componentes). Inofensivos (solo afectan Fast Refresh en dev); si se quiere silenciar, mover esos exports a un archivo aparte.

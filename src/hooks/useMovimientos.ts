@@ -28,6 +28,8 @@ export function useMovimientos(prestamoId: string, recargaToken = 0) {
       setMovimientos(data ?? [])
     }
     setLoading(false)
+    // recargaToken no se usa en el cuerpo: se incluye a propósito para forzar la recarga.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prestamoId, recargaToken])
 
   useEffect(() => {
