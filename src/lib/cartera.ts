@@ -85,15 +85,39 @@ export interface ResumenCobrosHoy {
   porCobrar: number
 }
 
-/** Día de cobro efectivo del mes: dia_cobro si está, si no el día del desembolso. */
-function diaDeCobro(p: Prestamo, diasEnMes: number): number {
-  const base = p.dia_cobro ?? (Number(p.fecha_desembolso.slice(8, 10)) || 1)
-  return Math.min(base, diasEnMes)
+// ── Criterio de "día de cobro" y "vencido" ──
+// IMPORTANTE: este es el MISMO criterio que replica la función SQL
+// public.marcar_mora() (migración 007). Si cambia aquí, cambiar allá.
+
+/** Fecha de cobro del mes en curso (aaaa-mm-dd): dia_cobro o el día del desembolso, acotado al mes. */
+function fechaCobroDelMes(p: Prestamo, hoy: Date): string {
+  const diasEnMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate()
+  const dia = Math.min(p.dia_cobro ?? (Number(p.fecha_desembolso.slice(8, 10)) || 1), diasEnMes)
+  const mm = String(hoy.getMonth() + 1).padStart(2, '0')
+  const dd = String(dia).padStart(2, '0')
+  return `${hoy.getFullYear()}-${mm}-${dd}`
+}
+
+/** ¿Hay un pago (interés/cuota) en este ciclo, es decir con fecha >= la de cobro? */
+function pagadoEnCiclo(movimientos: Movimiento[], prestamoId: string, desdeISO: string): boolean {
+  return movimientos.some(
+    (m) =>
+      m.prestamo_id === prestamoId &&
+      (m.tipo === 'interes' || m.tipo === 'cuota') &&
+      m.fecha >= desdeISO,
+  )
+}
+
+function diasDeAtraso(cobroISO: string, hoy: Date): number {
+  const [y, m, d] = cobroISO.split('-').map(Number)
+  const cobro = new Date(y, m - 1, d)
+  const hoySolo = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())
+  return Math.round((hoySolo.getTime() - cobro.getTime()) / 86_400_000)
 }
 
 /**
- * Cobros que vencen hoy: préstamos vigentes cuyo día de cobro cae hoy.
- * `cobrado` = ya hay un pago (interés/cuota) registrado hoy para ese préstamo.
+ * Cobros que vencen hoy: préstamos vigentes cuya fecha de cobro del mes es hoy.
+ * `cobrado` = ya hay un pago (interés/cuota) registrado en este ciclo.
  * El monto a cobrar es el interés del periodo (vía motor).
  */
 export function calcularCobrosHoy(
@@ -101,22 +125,14 @@ export function calcularCobrosHoy(
   movimientos: Movimiento[],
   hoy: Date,
 ): ResumenCobrosHoy {
-  const dia = hoy.getDate()
-  const diasEnMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate()
   const hoyISO = isoLocal(hoy)
 
-  const pagadosHoy = new Set(
-    movimientos
-      .filter((m) => m.fecha === hoyISO && (m.tipo === 'interes' || m.tipo === 'cuota'))
-      .map((m) => m.prestamo_id),
-  )
-
   const items: CobroHoy[] = prestamos
-    .filter((p) => esVigente(p) && diaDeCobro(p, diasEnMes) === dia)
+    .filter((p) => esVigente(p) && fechaCobroDelMes(p, hoy) === hoyISO)
     .map((p) => ({
       prestamo: p,
       montoACobrar: interesVigente(p),
-      cobrado: pagadosHoy.has(p.id),
+      cobrado: pagadoEnCiclo(movimientos, p.id, hoyISO),
     }))
     .sort((a, b) => Number(a.cobrado) - Number(b.cobrado)) // pendientes primero
 
@@ -129,6 +145,33 @@ export function calcularCobrosHoy(
       (i) => i.montoACobrar,
     ),
   }
+}
+
+export interface CobroVencido {
+  prestamo: Prestamo
+  montoACobrar: number
+  diasAtraso: number
+}
+
+/**
+ * Vencidos: préstamos vigentes cuya fecha de cobro del mes YA pasó y sin pago
+ * en el ciclo. Mismo criterio que marcar_mora() en SQL. Ordenados por atraso.
+ */
+export function calcularVencidos(
+  prestamos: Prestamo[],
+  movimientos: Movimiento[],
+  hoy: Date,
+): CobroVencido[] {
+  const hoyISO = isoLocal(hoy)
+  return prestamos
+    .filter(esVigente)
+    .flatMap((p) => {
+      const cobroISO = fechaCobroDelMes(p, hoy)
+      if (cobroISO >= hoyISO) return [] // aún no vence (o vence hoy)
+      if (pagadoEnCiclo(movimientos, p.id, cobroISO)) return [] // pagó en el ciclo
+      return [{ prestamo: p, montoACobrar: interesVigente(p), diasAtraso: diasDeAtraso(cobroISO, hoy) }]
+    })
+    .sort((a, b) => b.diasAtraso - a.diasAtraso)
 }
 
 /** Préstamos vigentes ordenados por saldo descendente (top deudores). */
