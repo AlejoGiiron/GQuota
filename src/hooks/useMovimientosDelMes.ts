@@ -27,6 +27,8 @@ export function useMovimientosDelMes(recargaToken = 0) {
       setMovimientos(data ?? [])
     }
     setLoading(false)
+    // recargaToken no se usa en el cuerpo: se incluye a propósito para forzar la recarga.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recargaToken])
 
   useEffect(() => {
