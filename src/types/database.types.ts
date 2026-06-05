@@ -1,5 +1,165 @@
-// Tipos de la base de datos generados por Supabase.
-// Por ahora es un marcador de posición vacío; se regenerará con la CLI de Supabase
-// cuando exista el esquema:
-//   npx supabase gen types typescript --project-id <id> > src/types/database.types.ts
-export type Database = Record<string, never>
+// Tipos de la base de datos de G-Quota.
+// Escritos a mano según supabase/migrations/001_schema_inicial.sql con la misma
+// forma que genera `supabase gen types typescript`. Cuando haya acceso al CLI,
+// regenerar este archivo para mantenerlo 100% fiel al esquema.
+
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      clientes: {
+        Row: {
+          id: string
+          user_id: string
+          nombre: string
+          documento: string | null
+          telefono: string | null
+          direccion: string | null
+          notas: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          nombre: string
+          documento?: string | null
+          telefono?: string | null
+          direccion?: string | null
+          notas?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          nombre?: string
+          documento?: string | null
+          telefono?: string | null
+          direccion?: string | null
+          notas?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      prestamos: {
+        Row: {
+          id: string
+          user_id: string
+          cliente_id: string
+          capital_inicial: number
+          saldo_capital: number
+          tasa_mensual: number
+          modo_interes: string
+          fecha_desembolso: string
+          dia_cobro: number | null
+          estado: string
+          notas: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          cliente_id: string
+          capital_inicial: number
+          saldo_capital: number
+          tasa_mensual: number
+          modo_interes?: string
+          fecha_desembolso: string
+          dia_cobro?: number | null
+          estado?: string
+          notas?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          cliente_id?: string
+          capital_inicial?: number
+          saldo_capital?: number
+          tasa_mensual?: number
+          modo_interes?: string
+          fecha_desembolso?: string
+          dia_cobro?: number | null
+          estado?: string
+          notas?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'prestamos_cliente_id_fkey'
+            columns: ['cliente_id']
+            referencedRelation: 'clientes'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      movimientos: {
+        Row: {
+          id: string
+          user_id: string
+          prestamo_id: string
+          fecha: string
+          tipo: string
+          monto_total: number
+          monto_interes: number
+          monto_capital: number
+          saldo_anterior: number
+          saldo_posterior: number
+          metodo_pago: string | null
+          nota: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          prestamo_id: string
+          fecha?: string
+          tipo: string
+          monto_total: number
+          monto_interes?: number
+          monto_capital?: number
+          saldo_anterior: number
+          saldo_posterior: number
+          metodo_pago?: string | null
+          nota?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          prestamo_id?: string
+          fecha?: string
+          tipo?: string
+          monto_total?: number
+          monto_interes?: number
+          monto_capital?: number
+          saldo_anterior?: number
+          saldo_posterior?: number
+          metodo_pago?: string | null
+          nota?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'movimientos_prestamo_id_fkey'
+            columns: ['prestamo_id']
+            referencedRelation: 'prestamos'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+    }
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
+  }
+}
+
+// ── Alias de conveniencia ──
+export type Cliente = Database['public']['Tables']['clientes']['Row']
+export type ClienteInsert = Database['public']['Tables']['clientes']['Insert']
+export type ClienteUpdate = Database['public']['Tables']['clientes']['Update']
+
+export type Prestamo = Database['public']['Tables']['prestamos']['Row']
+export type Movimiento = Database['public']['Tables']['movimientos']['Row']
