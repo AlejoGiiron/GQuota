@@ -1,0 +1,123 @@
+import type { ReactNode } from 'react'
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import Avatar from '@/components/Avatar'
+import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
+import { fmtCOP, fmtFecha } from '@/lib/formatters'
+import type { Cliente, Prestamo } from '@/types/database.types'
+
+export interface PrestamosOutletContext {
+  prestamos: Prestamo[]
+  loading: boolean
+  clientePorId: Map<string, Cliente>
+}
+
+const IconAtras = (
+  <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 6l-6 6 6 6" />
+  </svg>
+)
+
+function Dato({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-t border-line-soft py-3 first:border-t-0 first:pt-0">
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted">{etiqueta}</span>
+      <span className="text-right text-sm font-semibold text-text">{children}</span>
+    </div>
+  )
+}
+
+export default function PrestamoFicha() {
+  const { prestamoId } = useParams()
+  const navigate = useNavigate()
+  const { prestamos, loading, clientePorId } = useOutletContext<PrestamosOutletContext>()
+  const prestamo = prestamos.find((p) => p.id === prestamoId)
+
+  if (loading && !prestamo) {
+    return (
+      <div className="flex flex-col gap-3 p-1">
+        <div className="h-16 animate-pulse rounded-xl bg-line-soft" />
+        <div className="h-48 animate-pulse rounded-xl bg-line-soft" />
+      </div>
+    )
+  }
+
+  if (!prestamo) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+        <p className="text-sm font-semibold text-text">No encontramos este préstamo.</p>
+        <button type="button" className="btn-secondary" onClick={() => navigate('/prestamos')}>
+          Volver a la lista
+        </button>
+      </div>
+    )
+  }
+
+  const cliente = clientePorId.get(prestamo.cliente_id)
+  const nombre = cliente?.nombre ?? 'Cliente'
+
+  return (
+    <div className="flex flex-col gap-4">
+      <button
+        type="button"
+        onClick={() => navigate('/prestamos')}
+        className="flex items-center gap-1 self-start text-sm font-semibold text-green-700 md:hidden"
+      >
+        {IconAtras} Volver
+      </button>
+
+      {/* Encabezado */}
+      <div className="card p-5">
+        <div className="flex items-start gap-4">
+          <Avatar nombre={nombre} size={56} />
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-xl font-extrabold tracking-tight text-text">{nombre}</h2>
+            <p className="mt-0.5 text-sm text-text-2">Desembolsado el {fmtFecha(prestamo.fecha_desembolso)}</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <EstadoBadge estado={prestamo.estado} />
+              <ModoBadge modo={prestamo.modo_interes} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Saldo destacado */}
+      <div className="card flex items-end justify-between p-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Saldo de capital</p>
+          <p className="mono mt-1 text-3xl font-bold text-text">{fmtCOP(prestamo.saldo_capital)}</p>
+        </div>
+        <p className="text-sm text-text-2">
+          de <span className="mono font-semibold text-text">{fmtCOP(prestamo.capital_inicial)}</span>
+        </p>
+      </div>
+
+      {/* Datos */}
+      <div className="card p-5">
+        <h3 className="mb-2 text-sm font-bold text-text">Condiciones</h3>
+        <Dato etiqueta="Capital inicial">
+          <span className="mono">{fmtCOP(prestamo.capital_inicial)}</span>
+        </Dato>
+        <Dato etiqueta="Saldo actual">
+          <span className="mono">{fmtCOP(prestamo.saldo_capital)}</span>
+        </Dato>
+        <Dato etiqueta="Tasa mensual">{tasaMensualTexto(prestamo.tasa_mensual)}</Dato>
+        <Dato etiqueta="Modo de interés">{MODO_TEXTO(prestamo.modo_interes)}</Dato>
+        <Dato etiqueta="Desembolso">{fmtFecha(prestamo.fecha_desembolso)}</Dato>
+      </div>
+
+      {/* Movimientos (se conecta en la fase de pagos) */}
+      <div className="card p-5">
+        <h3 className="text-sm font-bold text-text">Pagos y movimientos</h3>
+        <p className="mt-2 text-sm text-text-2">
+          El historial de pagos de este préstamo se mostrará aquí en una fase siguiente.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function MODO_TEXTO(modo: string): string {
+  if (modo === 'sobre_saldo') return 'Sobre saldo'
+  if (modo === 'sobre_capital_inicial') return 'Fijo sobre el monto'
+  return modo
+}
