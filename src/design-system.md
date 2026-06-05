@@ -32,7 +32,7 @@ G-Quota es una app de dinero usada por prestamistas, muchas veces personas no t�
 ## Componentes establecidos
 
 - **Tarjeta de préstamo:** nombre del cliente, saldo en mono grande, badge del modo de interés (Sobre saldo / Fijo), badge de estado con color, y el próximo cobro.
-- **Sidebar:** fondo verde tinta, items en gris claro; activo en blanco con fondo translúcido y borde de acento.
+- **Sidebar:** fondo verde tinta, items en gris claro; activo en verde esmeralda sólido con texto blanco y sombra (igual al Dashboard V2 aprobado).
 - **Botón primario:** verde esmeralda, texto blanco, `rounded-lg`, hover más oscuro.
 - **Botón secundario:** borde gris, fondo blanco. **Destructivo:** rojo.
 - **Inputs:** borde gris, `focus` con ring verde. Los inputs de dinero van alineados a la derecha y en mono.

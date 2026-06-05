@@ -1,8 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import PublicOnlyRoute from '@/components/PublicOnlyRoute'
+import Layout from '@/components/Layout'
 import LoginPage from '@/pages/LoginPage'
-import DashboardPage from '@/pages/DashboardPage'
+import InicioPage from '@/pages/InicioPage'
+import ClientesPage from '@/pages/ClientesPage'
+import PrestamosPage from '@/pages/PrestamosPage'
+import CobrosPage from '@/pages/CobrosPage'
+import ConfiguracionPage from '@/pages/ConfiguracionPage'
 
 export const router = createBrowserRouter([
   {
@@ -11,6 +16,17 @@ export const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute />,
-    children: [{ path: '/', element: <DashboardPage /> }],
+    children: [
+      {
+        element: <Layout />,
+        children: [
+          { index: true, element: <InicioPage /> },
+          { path: 'clientes', element: <ClientesPage /> },
+          { path: 'prestamos', element: <PrestamosPage /> },
+          { path: 'cobros', element: <CobrosPage /> },
+          { path: 'configuracion', element: <ConfiguracionPage /> },
+        ],
+      },
+    ],
   },
 ])
