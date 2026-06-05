@@ -218,6 +218,10 @@ export interface Database {
         Args: Record<string, never>
         Returns: number
       }
+      marcar_mora: {
+        Args: Record<string, never>
+        Returns: number
+      }
     }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>
