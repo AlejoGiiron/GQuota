@@ -22,10 +22,17 @@ G-Quota es una app de dinero usada por prestamistas, muchas veces personas no t�
 - **Montos y cifras:** JetBrains Mono (tabular, para que las columnas de dinero alineen)
 - **Pesos:** títulos 600–700, cuerpo 400–500
 
+## Implementación (Tailwind + tokens)
+
+- Los tokens viven en `:root` (src/index.css) y son la **única fuente de verdad**. Tailwind está conectado a esas variables en `tailwind.config.js` (no duplica valores).
+- **Usa utilidades de Tailwind** conectadas a los tokens: colores (`bg-green`, `text-ink`, `text-text-2`, `border-line`, `bg-card`…), radios (`rounded` = `--r`, `rounded-lg` = `--r-lg`, `rounded-sm` = `--r-sm`), sombras (`shadow-card`, `shadow-pop`) y fuentes (`font-ui`, `font-mono`).
+- Los **primitivos** del design system son clases compartidas (en `@layer components`, src/index.css), una sola definición por primitivo: `.btn-primary` · `.btn-secondary` · `.btn-destructive` · `.input` · `.card` · `.badge` con `.badge--aldia` / `.badge--porvenc` / `.badge--vencido` / `.badge--pagado`. Reutilízalos; no redefinas un botón o input por pantalla.
+- El **CSS plano queda solo para lo bespoke** de una pantalla concreta (p. ej. el panel de marca del login en src/pages/login.css). No inventes tokens ni valores nuevos.
+
 ## Componentes establecidos
 
 - **Tarjeta de préstamo:** nombre del cliente, saldo en mono grande, badge del modo de interés (Sobre saldo / Fijo), badge de estado con color, y el próximo cobro.
-- **Sidebar:** fondo verde tinta, items en gris claro; activo en blanco con fondo translúcido y borde de acento.
+- **Sidebar:** fondo verde tinta, items en gris claro; activo en verde esmeralda sólido con texto blanco y sombra (igual al Dashboard V2 aprobado).
 - **Botón primario:** verde esmeralda, texto blanco, `rounded-lg`, hover más oscuro.
 - **Botón secundario:** borde gris, fondo blanco. **Destructivo:** rojo.
 - **Inputs:** borde gris, `focus` con ring verde. Los inputs de dinero van alineados a la derecha y en mono.

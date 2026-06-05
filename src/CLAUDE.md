@@ -6,6 +6,11 @@
 - Estados obligatorios en toda vista con datos: cargando (skeleton), vacío (con acción), error (mensaje claro).
 - Toast de éxito/error después de cada mutación.
 
+## Estilos
+- Los tokens viven en :root (src/index.css) y son la única fuente de verdad; Tailwind apunta a esas variables en tailwind.config.js (no duplicar valores).
+- Los primitivos (botón primario/secundario/destructivo, input, badge de estado, tarjeta) van como clases/utilidades de Tailwind conectadas a los tokens, definidos una sola vez en @layer components. Reutilízalos; no redefinas por pantalla.
+- El CSS plano queda solo para lo bespoke de una pantalla (ej. el panel de marca del login). No inventes tokens ni estilos nuevos.
+
 ## Datos
 - Acceso a Supabase vía src/lib/supabase.ts.
 - Tipos desde src/types/database.types.ts (generados desde el esquema).
