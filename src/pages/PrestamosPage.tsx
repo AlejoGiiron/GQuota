@@ -34,7 +34,7 @@ function FilaSkeleton() {
 }
 
 export default function PrestamosPage() {
-  const { prestamos, loading, error, crear } = usePrestamos()
+  const { prestamos, loading, error, crear, registrarPago } = usePrestamos()
   const { clientes } = useClientes()
   const detalle = useMatch('/prestamos/:prestamoId')
 
@@ -55,7 +55,7 @@ export default function PrestamosPage() {
     return true
   }
 
-  const ctx: PrestamosOutletContext = { prestamos, loading, clientePorId }
+  const ctx: PrestamosOutletContext = { prestamos, loading, clientePorId, registrarPago }
 
   return (
     <div className="flex h-full flex-col md:flex-row md:gap-6">

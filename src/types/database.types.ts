@@ -52,6 +52,7 @@ export interface Database {
           cliente_id: string
           capital_inicial: number
           saldo_capital: number
+          interes_pendiente: number
           tasa_mensual: number
           modo_interes: string
           fecha_desembolso: string
@@ -66,6 +67,7 @@ export interface Database {
           cliente_id: string
           capital_inicial: number
           saldo_capital: number
+          interes_pendiente?: number
           tasa_mensual: number
           modo_interes?: string
           fecha_desembolso: string
@@ -80,6 +82,7 @@ export interface Database {
           cliente_id?: string
           capital_inicial?: number
           saldo_capital?: number
+          interes_pendiente?: number
           tasa_mensual?: number
           modo_interes?: string
           fecha_desembolso?: string
@@ -169,12 +172,41 @@ export interface Database {
           cliente_id: string
           capital_inicial: number
           saldo_capital: number
+          interes_pendiente: number
           tasa_mensual: number
           modo_interes: string
           fecha_desembolso: string
           dia_cobro: number | null
           estado: string
           notas: string | null
+          created_at: string
+        }
+      }
+      registrar_pago: {
+        Args: {
+          p_prestamo_id: string
+          p_monto: number
+          p_metodo_pago: string
+          p_tipo: string
+          p_monto_interes: number
+          p_monto_capital: number
+          p_saldo_anterior: number
+          p_saldo_posterior: number
+          p_interes_pendiente_restante: number
+        }
+        Returns: {
+          id: string
+          user_id: string
+          prestamo_id: string
+          fecha: string
+          tipo: string
+          monto_total: number
+          monto_interes: number
+          monto_capital: number
+          saldo_anterior: number
+          saldo_posterior: number
+          metodo_pago: string | null
+          nota: string | null
           created_at: string
         }
       }
