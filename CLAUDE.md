@@ -31,6 +31,16 @@ Los cálculos de interés y pagos viven SOLO en src/lib/motor-prestamos.ts (lóg
 
 Hay dos modos de interés: sobre saldo (interés sobre el saldo de capital vigente) y sobre capital inicial (interés fijo calculado sobre el capital desembolsado). En ambos modos el interés NO capitaliza: nunca se suma al capital ni genera interés sobre interés.
 
+## Decisiones de arquitectura
+
+### 2026-06-06 — Modelo de préstamos por cuotas
+Al mostrar el MVP se descubrió que el negocio NO opera con "interés mensual flexible / paga cuando quiere" (supuesto original), sino con CUOTAS pactadas. Decisión: conviven DOS tipos de préstamo (campo `tipo` en prestamos):
+
+- **abierto**: el modelo actual (interés sobre saldo, pago flexible, devengo mensual). Intacto, no se toca.
+- **cuotas** (nuevo): cronograma fijo de N cuotas (semanal/quincenal/mensual). Interés plano pactado al inicio (capital × tasa mensual × meses; 4 semanas = 1 mes, quincena = ½ mes), repartido parejo; el redondeo de capital lo absorbe la última cuota. El interés pactado NO baja. Abono de más baja solo capital de cuotas siguientes (interés intacto); el total no baja. Pago de solo-interés: la cuota se da por pagada de interés y su capital se corre a una cuota nueva al final que REPITE el mismo interés (penalización); el total sube. Mora: cuota vencida + 5 días de gracia, sin recargo aún.
+
+Implementación: el motor (src/lib/motor-prestamos.ts) NO se reescribe; se le AGREGA la lógica de cronograma de cuotas (generar + aplicar pago + solo-interés), con pruebas nuevas. Las 6 pruebas actuales siguen válidas (cubren "abierto"). Esquema: tabla `cuotas` nueva + campo `tipo` en prestamos. Como no hay datos reales en producción, se reemplaza limpio sin convivencia de datos viejos.
+
 ## Design system
 Antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones. No inventar colores, tipografías ni estilos nuevos. Ese archivo es la fuente de verdad visual.
 
