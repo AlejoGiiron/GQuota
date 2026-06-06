@@ -26,3 +26,9 @@ export function ModoBadge({ modo }: { modo: string }) {
   const label = MODO_LABEL[modo as ModoInteres] ?? modo
   return <span className="badge bg-bg text-text-2">{label}</span>
 }
+
+/** Badge según el tipo de préstamo: "Cuotas" si es de cuotas, si no el modo de interés. */
+export function TipoOModoBadge({ tipo, modo }: { tipo: string; modo: string }) {
+  if (tipo === 'cuotas') return <span className="badge bg-green-tint text-green-700">Cuotas</span>
+  return <ModoBadge modo={modo} />
+}

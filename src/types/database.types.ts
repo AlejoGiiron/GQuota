@@ -257,6 +257,33 @@ export interface Database {
           created_at: string
         }
       }
+      crear_prestamo_cuotas: {
+        Args: {
+          p_cliente_id: string
+          p_capital: number
+          p_tasa_mensual: number
+          p_frecuencia: string
+          p_n_cuotas: number
+          p_fecha_desembolso: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          cliente_id: string
+          capital_inicial: number
+          saldo_capital: number
+          interes_pendiente: number
+          tasa_mensual: number
+          modo_interes: string
+          fecha_desembolso: string
+          dia_cobro: number | null
+          estado: string
+          tipo: string
+          notas: string | null
+          ultimo_devengo: string | null
+          created_at: string
+        }
+      }
       registrar_pago: {
         Args: {
           p_prestamo_id: string
