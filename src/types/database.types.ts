@@ -82,6 +82,7 @@ export interface Database {
           fecha_desembolso: string
           dia_cobro: number | null
           estado: string
+          tipo: string
           notas: string | null
           ultimo_devengo: string | null
           created_at: string
@@ -98,6 +99,7 @@ export interface Database {
           fecha_desembolso: string
           dia_cobro?: number | null
           estado?: string
+          tipo?: string
           notas?: string | null
           ultimo_devengo?: string | null
           created_at?: string
@@ -114,6 +116,7 @@ export interface Database {
           fecha_desembolso?: string
           dia_cobro?: number | null
           estado?: string
+          tipo?: string
           notas?: string | null
           ultimo_devengo?: string | null
           created_at?: string
@@ -182,6 +185,49 @@ export interface Database {
           },
         ]
       }
+      cuotas: {
+        Row: {
+          id: string
+          user_id: string
+          prestamo_id: string
+          numero: number
+          fecha_vence: string
+          capital: number
+          interes: number
+          estado: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          prestamo_id: string
+          numero: number
+          fecha_vence: string
+          capital: number
+          interes: number
+          estado?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          prestamo_id?: string
+          numero?: number
+          fecha_vence?: string
+          capital?: number
+          interes?: number
+          estado?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'cuotas_prestamo_id_fkey'
+            columns: ['prestamo_id']
+            referencedRelation: 'prestamos'
+            referencedColumns: ['id']
+          },
+        ]
+      }
     }
     Views: Record<string, never>
     Functions: {
@@ -205,6 +251,7 @@ export interface Database {
           fecha_desembolso: string
           dia_cobro: number | null
           estado: string
+          tipo: string
           notas: string | null
           ultimo_devengo: string | null
           created_at: string
@@ -260,3 +307,5 @@ export type ClienteUpdate = Database['public']['Tables']['clientes']['Update']
 export type Prestamo = Database['public']['Tables']['prestamos']['Row']
 export type Movimiento = Database['public']['Tables']['movimientos']['Row']
 export type Configuracion = Database['public']['Tables']['configuracion']['Row']
+// Fila de la tabla cuotas (distinta del tipo Cuota del motor, que es lógica pura).
+export type CuotaDB = Database['public']['Tables']['cuotas']['Row']
