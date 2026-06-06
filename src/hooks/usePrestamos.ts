@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { aplicarPago, type ModoInteres, type ResultadoPago } from '@/lib/motor-prestamos'
+import {
+  aplicarPago,
+  type FrecuenciaCuota,
+  type ModoInteres,
+  type ResultadoPago,
+} from '@/lib/motor-prestamos'
 import type { Prestamo } from '@/types/database.types'
 
 /** Construye el préstamo del motor a partir de la fila de la BD. */
@@ -27,6 +32,17 @@ export interface PrestamoInput {
   tasa_mensual: number
   modo_interes: ModoInteres
   /** Fecha de desembolso en formato aaaa-mm-dd. */
+  fecha_desembolso: string
+}
+
+/** Datos del formulario de "Nuevo préstamo" tipo cuotas. */
+export interface PrestamoCuotasInput {
+  cliente_id: string
+  capital_inicial: number
+  /** Tasa mensual en decimal: 0.10 = 10%. */
+  tasa_mensual: number
+  frecuencia: FrecuenciaCuota
+  n_cuotas: number
   fecha_desembolso: string
 }
 
@@ -83,6 +99,29 @@ export function usePrestamos(clienteId?: string) {
   }, [])
 
   /**
+   * Crea un préstamo tipo 'cuotas' de forma atómica: la RPC genera el préstamo,
+   * el desembolso y todas las filas del cronograma (mismo reparto que el motor).
+   */
+  const crearCuotas = useCallback(
+    async (input: PrestamoCuotasInput): Promise<PrestamoMutacion> => {
+      const { data, error } = await supabase.rpc('crear_prestamo_cuotas', {
+        p_cliente_id: input.cliente_id,
+        p_capital: input.capital_inicial,
+        p_tasa_mensual: input.tasa_mensual,
+        p_frecuencia: input.frecuencia,
+        p_n_cuotas: input.n_cuotas,
+        p_fecha_desembolso: input.fecha_desembolso,
+      })
+      if (error || !data) {
+        return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
+      }
+      setPrestamos((prev) => [data, ...prev])
+      return { data, error: null }
+    },
+    [],
+  )
+
+  /**
    * Registra un pago. El desglose lo calcula el motor (aplicarPago) a partir
    * del préstamo actual; la RPC solo persiste ese resultado, de forma atómica.
    */
@@ -129,5 +168,5 @@ export function usePrestamos(clienteId?: string) {
     [prestamos],
   )
 
-  return { prestamos, loading, error, crear, registrarPago, recargar: cargar }
+  return { prestamos, loading, error, crear, crearCuotas, registrarPago, recargar: cargar }
 }

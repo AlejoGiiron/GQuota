@@ -2,9 +2,10 @@ import { useState, type ReactNode } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
+import CronogramaCuotas from '@/components/CronogramaCuotas'
 import EstadoDeCuenta from '@/components/EstadoDeCuenta'
 import PagoModal from '@/components/PagoModal'
-import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
+import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { ResultadoPago } from '@/lib/motor-prestamos'
 import type { Cliente, Prestamo } from '@/types/database.types'
@@ -65,7 +66,10 @@ export default function PrestamoFicha() {
 
   const cliente = clientePorId.get(prestamo.cliente_id)
   const nombre = cliente?.nombre ?? 'Cliente'
-  const pagable = prestamo.estado === 'activo' || prestamo.estado === 'en_mora'
+  const esCuotas = prestamo.tipo === 'cuotas'
+  // El pago flexible (PagoModal) es solo del producto "abierto". El pago contra
+  // cuotas llega en la Fase C; por ahora la ficha de cuotas solo muestra el cronograma.
+  const pagable = !esCuotas && (prestamo.estado === 'activo' || prestamo.estado === 'en_mora')
   const idPrestamo = prestamo.id
 
   async function handleRegistrar(monto: number, metodo: string): Promise<ResultadoPago | null> {
@@ -98,7 +102,7 @@ export default function PrestamoFicha() {
             <p className="mt-0.5 text-sm text-text-2">Desembolsado el {fmtFecha(prestamo.fecha_desembolso)}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <EstadoBadge estado={prestamo.estado} />
-              <ModoBadge modo={prestamo.modo_interes} />
+              <TipoOModoBadge tipo={prestamo.tipo} modo={prestamo.modo_interes} />
             </div>
           </div>
         </div>
@@ -113,41 +117,48 @@ export default function PrestamoFicha() {
         )}
       </div>
 
-      {/* Saldo destacado */}
-      <div className="card flex items-end justify-between p-5">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Saldo de capital</p>
-          <p className="mono mt-1 text-3xl font-bold text-text">{fmtCOP(prestamo.saldo_capital)}</p>
-        </div>
-        <p className="text-sm text-text-2">
-          de <span className="mono font-semibold text-text">{fmtCOP(prestamo.capital_inicial)}</span>
-        </p>
-      </div>
+      {esCuotas ? (
+        /* Préstamo de cuotas: el estado de cuenta es el cronograma. */
+        <CronogramaCuotas prestamo={prestamo} recargaToken={version} />
+      ) : (
+        <>
+          {/* Saldo destacado */}
+          <div className="card flex items-end justify-between p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted">Saldo de capital</p>
+              <p className="mono mt-1 text-3xl font-bold text-text">{fmtCOP(prestamo.saldo_capital)}</p>
+            </div>
+            <p className="text-sm text-text-2">
+              de <span className="mono font-semibold text-text">{fmtCOP(prestamo.capital_inicial)}</span>
+            </p>
+          </div>
 
-      {/* Datos */}
-      <div className="card p-5">
-        <h3 className="mb-2 text-sm font-bold text-text">Condiciones</h3>
-        <Dato etiqueta="Capital inicial">
-          <span className="mono">{fmtCOP(prestamo.capital_inicial)}</span>
-        </Dato>
-        <Dato etiqueta="Saldo actual">
-          <span className="mono">{fmtCOP(prestamo.saldo_capital)}</span>
-        </Dato>
-        <Dato etiqueta="Tasa mensual">{tasaMensualTexto(prestamo.tasa_mensual)}</Dato>
-        <Dato etiqueta="Modo de interés">{MODO_TEXTO(prestamo.modo_interes)}</Dato>
-        <Dato etiqueta="Desembolso">{fmtFecha(prestamo.fecha_desembolso)}</Dato>
-      </div>
+          {/* Datos */}
+          <div className="card p-5">
+            <h3 className="mb-2 text-sm font-bold text-text">Condiciones</h3>
+            <Dato etiqueta="Capital inicial">
+              <span className="mono">{fmtCOP(prestamo.capital_inicial)}</span>
+            </Dato>
+            <Dato etiqueta="Saldo actual">
+              <span className="mono">{fmtCOP(prestamo.saldo_capital)}</span>
+            </Dato>
+            <Dato etiqueta="Tasa mensual">{tasaMensualTexto(prestamo.tasa_mensual)}</Dato>
+            <Dato etiqueta="Modo de interés">{MODO_TEXTO(prestamo.modo_interes)}</Dato>
+            <Dato etiqueta="Desembolso">{fmtFecha(prestamo.fecha_desembolso)}</Dato>
+          </div>
 
-      {/* Estado de cuenta + ledger de movimientos */}
-      <EstadoDeCuenta prestamo={prestamo} recargaToken={version} />
+          {/* Estado de cuenta + ledger de movimientos */}
+          <EstadoDeCuenta prestamo={prestamo} recargaToken={version} />
 
-      <PagoModal
-        open={pagoAbierto}
-        prestamo={prestamo}
-        clienteNombre={nombre}
-        onClose={() => setPagoAbierto(false)}
-        onRegistrar={handleRegistrar}
-      />
+          <PagoModal
+            open={pagoAbierto}
+            prestamo={prestamo}
+            clienteNombre={nombre}
+            onClose={() => setPagoAbierto(false)}
+            onRegistrar={handleRegistrar}
+          />
+        </>
+      )}
     </div>
   )
 }

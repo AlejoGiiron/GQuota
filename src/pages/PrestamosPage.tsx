@@ -3,10 +3,10 @@ import { NavLink, Outlet, useMatch } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PrestamoFormModal from '@/components/PrestamoFormModal'
-import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
+import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import type { PrestamosOutletContext } from '@/components/PrestamoFicha'
 import { useClientes } from '@/hooks/useClientes'
-import { usePrestamos, type PrestamoInput } from '@/hooks/usePrestamos'
+import { usePrestamos, type PrestamoCuotasInput, type PrestamoInput } from '@/hooks/usePrestamos'
 import { fmtCOP } from '@/lib/formatters'
 
 const IconMas = (
@@ -34,7 +34,7 @@ function FilaSkeleton() {
 }
 
 export default function PrestamosPage() {
-  const { prestamos, loading, error, crear, registrarPago } = usePrestamos()
+  const { prestamos, loading, error, crear, crearCuotas, registrarPago } = usePrestamos()
   const { clientes } = useClientes()
   const detalle = useMatch('/prestamos/:prestamoId')
 
@@ -52,6 +52,16 @@ export default function PrestamosPage() {
       return false
     }
     toast.success('Préstamo creado.')
+    return true
+  }
+
+  async function handleGuardarCuotas(input: PrestamoCuotasInput): Promise<boolean> {
+    const { error } = await crearCuotas(input)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Préstamo de cuotas creado.')
     return true
   }
 
@@ -119,7 +129,7 @@ export default function PrestamosPage() {
                       {fmtCOP(p.capital_inicial)} · {tasaMensualTexto(p.tasa_mensual)}
                     </div>
                     <div className="mt-1 flex flex-wrap gap-1.5">
-                      <ModoBadge modo={p.modo_interes} />
+                      <TipoOModoBadge tipo={p.tipo} modo={p.modo_interes} />
                       <EstadoBadge estado={p.estado} />
                     </div>
                   </div>
@@ -153,6 +163,7 @@ export default function PrestamosPage() {
         clientes={clientes}
         onClose={() => setModalAbierto(false)}
         onGuardar={handleGuardar}
+        onGuardarCuotas={handleGuardarCuotas}
       />
     </div>
   )
