@@ -48,9 +48,12 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 ### Arquitectura y modelo de datos
 - [ ] (Opción C del cronograma) Las cuotas pierden su historia al pagarse: la RPC pone capital e interes en 0 y estado='pagada'. El monto real solo queda en `movimientos`, que NO tiene vínculo a la cuota (sin cuota_id ni numero). Arreglo de fondo: agregar numero/cuota_id a movimientos, o NO vaciar la cuota (guardar "monto pactado" aparte de "monto pagado/saldo"). Permitiría mostrar el detalle pactado por cuota y distinguir a nivel de fila una cuota pagada normal de una pagada por solo-interés. Toca esquema + RPC + motor + UI.
+  - **Opción de fondo (estructurada):** columna `numero`/`cuota_id` en `movimientos` (o no vaciar la cuota). Es lo correcto a largo plazo.
+  - **Opción intermedia (barata, trazabilidad legible):** que `registrar_pago_cuotas` escriba en `movimientos.nota` el/los número(s) de cuota afectados — da trazabilidad por cuota tocando solo la RPC, sin migración de esquema. Advertencia honesta: `nota` es texto libre, así que es trazabilidad para LEER, no para consultar/calcular de forma estructurada (si mañana hay que calcular algo por cuota, un texto no sirve como un `cuota_id` real). Buen puente barato; NO reemplaza la opción de fondo.
 - [ ] El préstamo de cuotas no guarda `frecuencia` ni el `nCuotas` original, así que el cronograma no es reconstruible vía generarCronograma una vez hay pagos (sobre todo con solo-interés, que agrega cuotas). Considerar persistir frecuencia/nCuotas.
 - [ ] Conectar el CLI de Supabase: link + migration repair (las migraciones están aplicadas a mano, el historial del CLI está vacío) + regenerar database.types.ts real. Hoy los tipos están escritos a mano (riesgo de desincronización con la BD).
 - [ ] Doble fuente de fórmulas (deuda estructural conocida): la lógica de cálculo vive en motor-prestamos.ts (TS) y replicada en SQL en varias RPC/funciones (devengar_intereses, marcar_mora, crear_prestamo_cuotas, registrar_pago_cuotas, marcar_cuotas_vencidas). Cada una lleva comentario apuntando al motor como referencia. Si una fórmula cambia, hay que tocar ambos lados. No hay test que detecte la desincronización; vive en la disciplina.
+- [ ] (prioridad media-alta) Test de integración de las RPC/funciones SQL contra una BD de prueba, comparando su resultado con el motor (motor-prestamos.ts). Es lo único que cazaría la desincronización de la doble fuente de fórmulas; hoy "vive en la disciplina" (= nadie la vigila). Es trabajo real (montar BD de prueba, sembrar datos, correr las RPC, comparar con el motor). Prioridad media-alta porque cada RPC nueva que se replica del motor aumenta la superficie donde algo puede divergir sin que nadie note, hasta que un cliente reclama.
 
 ### Funcionalidad pendiente (pedida por el negocio, aplazada)
 - [ ] Codeudor opcional en el préstamo (fácil; datos/relación, no toca cálculos).
@@ -94,5 +97,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - INVARIANTES COMO PRUEBA EXPLÍCITA. Ej. en cuotas: "el total solo sube (por solo-interés), nunca baja (por adelantar)". Está como test. Es la mejor red contra bugs futuros de cálculo.
 
 - HONESTIDAD SOBRE LO QUE NO SE PUEDE. Cuando el esquema perdió el vínculo movimiento-cuota, la decisión correcta fue mostrar "—" honesto en vez de reconstruir cifras que serían falsas en algunos casos. En un sistema de plata, un dato real o un "—", nunca un número inventado que se ve bien.
+
+- REVISAR git status ANTES DE COMMITEAR. Un `git add -A` a ciegas se llevó una vez un .docx suelto al repo. Mirar qué se está por incluir; no usar `add -A` sin revisar el estado.
 
 - Convención del repo: ningún commit lleva trailer Co-Authored-By ni menciones a Claude.
