@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PagoModal from '@/components/PagoModal'
+import PagoCuotasModal from '@/components/PagoCuotasModal'
 import { useClientes } from '@/hooks/useClientes'
 import { usePrestamos } from '@/hooks/usePrestamos'
 import { useMovimientosDelMes } from '@/hooks/useMovimientosDelMes'
+import { useCuotasActivas } from '@/hooks/useCuotasActivas'
 import { calcularCobrosHoy, calcularVencidos } from '@/lib/cartera'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import { enlaceWhatsApp } from '@/lib/whatsapp'
@@ -106,9 +108,10 @@ function CobroRow({
 }
 
 export default function CobrosPage() {
-  const { prestamos, registrarPago } = usePrestamos()
+  const { prestamos, registrarPago, registrarPagoCuotas } = usePrestamos()
   const { clientes } = useClientes()
   const { movimientos, recargar: recargarMovs } = useMovimientosDelMes()
+  const { cuotas, recargar: recargarCuotas } = useCuotasActivas()
 
   const [pagoPrestamo, setPagoPrestamo] = useState<Prestamo | null>(null)
 
@@ -118,12 +121,12 @@ export default function CobrosPage() {
     [clientes],
   )
   const cobros = useMemo(
-    () => calcularCobrosHoy(prestamos, movimientos, hoy),
-    [prestamos, movimientos, hoy],
+    () => calcularCobrosHoy(prestamos, movimientos, cuotas, hoy),
+    [prestamos, movimientos, cuotas, hoy],
   )
   const vencidos = useMemo(
-    () => calcularVencidos(prestamos, movimientos, hoy),
-    [prestamos, movimientos, hoy],
+    () => calcularVencidos(prestamos, movimientos, cuotas, hoy),
+    [prestamos, movimientos, cuotas, hoy],
   )
 
   async function onRegistrar(monto: number, metodo: string) {
@@ -136,6 +139,19 @@ export default function CobrosPage() {
     toast.success('Pago registrado.')
     recargarMovs()
     return resultado
+  }
+
+  async function onRegistrarCuotas(abono: number, metodo: string, soloInteres: boolean) {
+    if (!pagoPrestamo) return false
+    const { error } = await registrarPagoCuotas(pagoPrestamo.id, abono, metodo, soloInteres)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Pago registrado.')
+    recargarMovs()
+    recargarCuotas()
+    return true
   }
 
   // Evita que un préstamo aparezca a la vez en "hoy" y "vencidos" (no debería por fechas).
@@ -195,7 +211,15 @@ export default function CobrosPage() {
         )}
       </section>
 
-      {pagoPrestamo && (
+      {pagoPrestamo && pagoPrestamo.tipo === 'cuotas' ? (
+        <PagoCuotasModal
+          open
+          prestamo={pagoPrestamo}
+          clienteNombre={clientePorId.get(pagoPrestamo.cliente_id)?.nombre ?? 'Cliente'}
+          onClose={() => setPagoPrestamo(null)}
+          onRegistrar={onRegistrarCuotas}
+        />
+      ) : pagoPrestamo ? (
         <PagoModal
           open
           prestamo={pagoPrestamo}
@@ -203,7 +227,7 @@ export default function CobrosPage() {
           onClose={() => setPagoPrestamo(null)}
           onRegistrar={onRegistrar}
         />
-      )}
+      ) : null}
     </div>
   )
 }

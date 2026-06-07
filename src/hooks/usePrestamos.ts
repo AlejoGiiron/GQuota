@@ -168,5 +168,39 @@ export function usePrestamos(clienteId?: string) {
     [prestamos],
   )
 
-  return { prestamos, loading, error, crear, crearCuotas, registrarPago, recargar: cargar }
+  /**
+   * Registra un pago contra el cronograma de un préstamo de cuotas (RPC atómica
+   * que replica aplicarPagoACuotas / pagarSoloInteres del motor). Refresca el
+   * préstamo (saldo/estado) al terminar.
+   */
+  const registrarPagoCuotas = useCallback(
+    async (
+      prestamoId: string,
+      abono: number,
+      metodo: string,
+      soloInteres: boolean,
+    ): Promise<{ error: string | null }> => {
+      const { error } = await supabase.rpc('registrar_pago_cuotas', {
+        p_prestamo_id: prestamoId,
+        p_abono: abono,
+        p_metodo_pago: metodo,
+        p_solo_interes: soloInteres,
+      })
+      if (error) return { error: 'No pudimos registrar el pago. Intenta de nuevo.' }
+      await cargar()
+      return { error: null }
+    },
+    [cargar],
+  )
+
+  return {
+    prestamos,
+    loading,
+    error,
+    crear,
+    crearCuotas,
+    registrarPago,
+    registrarPagoCuotas,
+    recargar: cargar,
+  }
 }
