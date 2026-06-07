@@ -1,4 +1,6 @@
+import { METODOS_PAGO } from '@/contexts/ConfiguracionContext'
 import { useCuotas } from '@/hooks/useCuotas'
+import { useMovimientos } from '@/hooks/useMovimientos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { CuotaDB, Prestamo } from '@/types/database.types'
 
@@ -17,6 +19,11 @@ function EstadoCuotaBadge({ estado }: { estado: string }) {
   )
 }
 
+function metodoLabel(valor: string | null): string {
+  if (!valor) return '—'
+  return METODOS_PAGO.find((m) => m.valor === valor)?.label ?? valor
+}
+
 function Resumen({ etiqueta, children }: { etiqueta: string; children: string }) {
   return (
     <div className="flex flex-col">
@@ -26,7 +33,13 @@ function Resumen({ etiqueta, children }: { etiqueta: string; children: string })
   )
 }
 
-/** Estado de cuenta de un préstamo tipo 'cuotas': resumen + cronograma. */
+/**
+ * Estado de cuenta de un préstamo tipo 'cuotas'.
+ * Nota: al pagar una cuota, la RPC vacía su capital/interés a 0; el monto real
+ * pagado vive en `movimientos`. Por eso el "Pagado" del resumen y la lista de
+ * pagos se leen de movimientos (fuente de verdad), y las cuotas pagadas se
+ * muestran como saldadas (no como $0). Ver "Pendientes técnicos (v2)" en CLAUDE.md.
+ */
 export default function CronogramaCuotas({
   prestamo,
   recargaToken = 0,
@@ -34,12 +47,16 @@ export default function CronogramaCuotas({
   prestamo: Prestamo
   recargaToken?: number
 }) {
-  const { cuotas, loading, error } = useCuotas(prestamo.id, recargaToken)
+  const { cuotas, loading: cargandoCuotas, error: errorCuotas } = useCuotas(prestamo.id, recargaToken)
+  const { movimientos, loading: cargandoMovs } = useMovimientos(prestamo.id, recargaToken)
 
-  const monto = (c: CuotaDB) => c.capital + c.interes
-  const total = cuotas.reduce((s, c) => s + monto(c), 0)
-  const pagado = cuotas.filter((c) => c.estado === 'pagada').reduce((s, c) => s + monto(c), 0)
-  const saldo = total - pagado
+  // Pagos reales (excluye el desembolso). Más reciente arriba (ya viene ordenado).
+  const pagos = movimientos.filter((m) => m.tipo === 'interes' || m.tipo === 'cuota')
+
+  const montoCuota = (c: CuotaDB) => c.capital + c.interes
+  const pagado = pagos.reduce((s, m) => s + m.monto_total, 0)
+  const saldo = cuotas.filter((c) => c.estado !== 'pagada').reduce((s, c) => s + montoCuota(c), 0)
+  const total = pagado + saldo // cuadra por construcción
 
   return (
     <div className="flex flex-col gap-4">
@@ -54,14 +71,14 @@ export default function CronogramaCuotas({
       {/* Cronograma */}
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-bold text-text">Cronograma de cuotas</h3>
-        {loading ? (
+        {cargandoCuotas ? (
           <div className="flex flex-col gap-2">
             <div className="h-8 animate-pulse rounded bg-line-soft" />
             <div className="h-8 animate-pulse rounded bg-line-soft" />
             <div className="h-8 animate-pulse rounded bg-line-soft" />
           </div>
-        ) : error ? (
-          <p className="text-sm font-semibold text-text">{error}</p>
+        ) : errorCuotas ? (
+          <p className="text-sm font-semibold text-text">{errorCuotas}</p>
         ) : cuotas.length === 0 ? (
           <p className="text-sm text-text-2">Este préstamo no tiene cuotas registradas.</p>
         ) : (
@@ -78,18 +95,79 @@ export default function CronogramaCuotas({
                 </tr>
               </thead>
               <tbody>
-                {cuotas.map((c) => (
-                  <tr key={c.id} className="border-t border-line-soft">
-                    <td className="px-1 py-2.5 text-text-2">{c.numero}</td>
-                    <td className="whitespace-nowrap px-1 py-2.5 text-text-2">{fmtFecha(c.fecha_vence)}</td>
-                    <td className="mono whitespace-nowrap px-1 py-2.5 text-right text-text">{fmtCOP(c.capital)}</td>
-                    <td className="mono whitespace-nowrap px-1 py-2.5 text-right text-text">{fmtCOP(c.interes)}</td>
-                    <td className="mono whitespace-nowrap px-1 py-2.5 text-right font-bold text-text">{fmtCOP(monto(c))}</td>
-                    <td className="px-1 py-2.5 text-right">
-                      <EstadoCuotaBadge estado={c.estado} />
-                    </td>
-                  </tr>
-                ))}
+                {cuotas.map((c) => {
+                  const pagada = c.estado === 'pagada'
+                  // Cuota saldada: la RPC vació sus montos; se muestra atenuada y con "—".
+                  return (
+                    <tr key={c.id} className={`border-t border-line-soft ${pagada ? 'text-muted' : ''}`}>
+                      <td className="px-1 py-2.5">{c.numero}</td>
+                      <td className="whitespace-nowrap px-1 py-2.5">{fmtFecha(c.fecha_vence)}</td>
+                      <td className="mono whitespace-nowrap px-1 py-2.5 text-right">
+                        {pagada ? '—' : <span className="text-text">{fmtCOP(c.capital)}</span>}
+                      </td>
+                      <td className="mono whitespace-nowrap px-1 py-2.5 text-right">
+                        {pagada ? '—' : <span className="text-text">{fmtCOP(c.interes)}</span>}
+                      </td>
+                      <td className="mono whitespace-nowrap px-1 py-2.5 text-right font-bold">
+                        {pagada ? '—' : <span className="text-text">{fmtCOP(montoCuota(c))}</span>}
+                      </td>
+                      <td className="px-1 py-2.5 text-right">
+                        <EstadoCuotaBadge estado={c.estado} />
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Pagos realizados (desde movimientos: lo que realmente se pagó) */}
+      <div className="card p-5">
+        <h3 className="mb-3 text-sm font-bold text-text">Pagos realizados</h3>
+        {cargandoMovs ? (
+          <div className="flex flex-col gap-2">
+            <div className="h-8 animate-pulse rounded bg-line-soft" />
+            <div className="h-8 animate-pulse rounded bg-line-soft" />
+          </div>
+        ) : pagos.length === 0 ? (
+          <p className="text-sm text-text-2">Aún no hay pagos registrados.</p>
+        ) : (
+          <div className="-mx-1 overflow-x-auto">
+            <table className="w-full min-w-[520px] border-collapse text-sm">
+              <thead>
+                <tr className="text-left text-xs font-semibold uppercase tracking-wide text-muted">
+                  <th className="px-1 pb-2 font-semibold">Fecha</th>
+                  <th className="px-1 pb-2 font-semibold">Tipo</th>
+                  <th className="px-1 pb-2 text-right font-semibold">A interés</th>
+                  <th className="px-1 pb-2 text-right font-semibold">A capital</th>
+                  <th className="px-1 pb-2 text-right font-semibold">Monto</th>
+                  <th className="px-1 pb-2 font-semibold">Método</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pagos.map((m) => {
+                  const soloInteres = m.tipo === 'interes'
+                  return (
+                    <tr key={m.id} className="border-t border-line-soft">
+                      <td className="whitespace-nowrap px-1 py-2.5 text-text-2">{fmtFecha(m.fecha)}</td>
+                      <td className="px-1 py-2.5">
+                        <span
+                          className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                            soloInteres ? 'bg-amber-tint text-[#b45309]' : 'bg-green-tint text-green-700'
+                          }`}
+                        >
+                          {soloInteres ? 'Solo interés' : 'Cuota'}
+                        </span>
+                      </td>
+                      <td className="mono whitespace-nowrap px-1 py-2.5 text-right text-text">{fmtCOP(m.monto_interes)}</td>
+                      <td className="mono whitespace-nowrap px-1 py-2.5 text-right text-text">{fmtCOP(m.monto_capital)}</td>
+                      <td className="mono whitespace-nowrap px-1 py-2.5 text-right font-bold text-text">{fmtCOP(m.monto_total)}</td>
+                      <td className="whitespace-nowrap px-1 py-2.5 text-text-2">{metodoLabel(m.metodo_pago)}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
