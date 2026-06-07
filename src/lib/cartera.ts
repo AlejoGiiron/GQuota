@@ -3,7 +3,7 @@
 // delegan al motor (src/lib/motor-prestamos.ts); aquí no se reimplementan.
 
 import { interesDelPeriodo, type ModoInteres } from '@/lib/motor-prestamos'
-import type { Movimiento, Prestamo } from '@/types/database.types'
+import type { CuotaDB, Movimiento, Prestamo } from '@/types/database.types'
 
 const ESTADO_ACTIVO = 'activo'
 const ESTADO_MORA = 'en_mora'
@@ -115,26 +115,48 @@ function diasDeAtraso(cobroISO: string, hoy: Date): number {
   return Math.round((hoySolo.getTime() - cobro.getTime()) / 86_400_000)
 }
 
+/** Próxima cuota pendiente (menor número) por préstamo, de un set de cuotas no pagadas. */
+function proximaCuotaPorPrestamo(cuotas: CuotaDB[]): Map<string, CuotaDB> {
+  const map = new Map<string, CuotaDB>()
+  for (const c of cuotas) {
+    const actual = map.get(c.prestamo_id)
+    if (!actual || c.numero < actual.numero) map.set(c.prestamo_id, c)
+  }
+  return map
+}
+
 /**
- * Cobros que vencen hoy: préstamos vigentes cuya fecha de cobro del mes es hoy.
- * `cobrado` = ya hay un pago (interés/cuota) registrado en este ciclo.
- * El monto a cobrar es el interés del periodo (vía motor).
+ * Cobros que vencen hoy. Para préstamos 'abierto' es la fecha de cobro del mes;
+ * para préstamos de 'cuotas' es la fecha_vence de su PRÓXIMA cuota pendiente
+ * (su monto a cobrar = capital + interés de esa cuota).
  */
 export function calcularCobrosHoy(
   prestamos: Prestamo[],
   movimientos: Movimiento[],
+  cuotas: CuotaDB[],
   hoy: Date,
 ): ResumenCobrosHoy {
   const hoyISO = isoLocal(hoy)
+  const proxima = proximaCuotaPorPrestamo(cuotas)
+  const items: CobroHoy[] = []
 
-  const items: CobroHoy[] = prestamos
-    .filter((p) => esVigente(p) && fechaCobroDelMes(p, hoy) === hoyISO)
-    .map((p) => ({
-      prestamo: p,
-      montoACobrar: interesVigente(p),
-      cobrado: pagadoEnCiclo(movimientos, p.id, hoyISO),
-    }))
-    .sort((a, b) => Number(a.cobrado) - Number(b.cobrado)) // pendientes primero
+  for (const p of prestamos) {
+    if (!esVigente(p)) continue
+    if (p.tipo === 'cuotas') {
+      const c = proxima.get(p.id)
+      if (c && c.fecha_vence === hoyISO) {
+        items.push({ prestamo: p, montoACobrar: c.capital + c.interes, cobrado: false })
+      }
+    } else if (fechaCobroDelMes(p, hoy) === hoyISO) {
+      items.push({
+        prestamo: p,
+        montoACobrar: interesVigente(p),
+        cobrado: pagadoEnCiclo(movimientos, p.id, hoyISO),
+      })
+    }
+  }
+
+  items.sort((a, b) => Number(a.cobrado) - Number(b.cobrado)) // pendientes primero
 
   return {
     items,
@@ -160,18 +182,37 @@ export interface CobroVencido {
 export function calcularVencidos(
   prestamos: Prestamo[],
   movimientos: Movimiento[],
+  cuotas: CuotaDB[],
   hoy: Date,
 ): CobroVencido[] {
   const hoyISO = isoLocal(hoy)
-  return prestamos
-    .filter(esVigente)
-    .flatMap((p) => {
+  const proxima = proximaCuotaPorPrestamo(cuotas)
+  const items: CobroVencido[] = []
+
+  for (const p of prestamos) {
+    if (!esVigente(p)) continue
+    if (p.tipo === 'cuotas') {
+      const c = proxima.get(p.id)
+      if (c && c.fecha_vence < hoyISO) {
+        items.push({
+          prestamo: p,
+          montoACobrar: c.capital + c.interes,
+          diasAtraso: diasDeAtraso(c.fecha_vence, hoy),
+        })
+      }
+    } else {
       const cobroISO = fechaCobroDelMes(p, hoy)
-      if (cobroISO >= hoyISO) return [] // aún no vence (o vence hoy)
-      if (pagadoEnCiclo(movimientos, p.id, cobroISO)) return [] // pagó en el ciclo
-      return [{ prestamo: p, montoACobrar: interesVigente(p), diasAtraso: diasDeAtraso(cobroISO, hoy) }]
-    })
-    .sort((a, b) => b.diasAtraso - a.diasAtraso)
+      if (cobroISO < hoyISO && !pagadoEnCiclo(movimientos, p.id, cobroISO)) {
+        items.push({
+          prestamo: p,
+          montoACobrar: interesVigente(p),
+          diasAtraso: diasDeAtraso(cobroISO, hoy),
+        })
+      }
+    }
+  }
+
+  return items.sort((a, b) => b.diasAtraso - a.diasAtraso)
 }
 
 /** Préstamos vigentes ordenados por saldo descendente (top deudores). */

@@ -312,11 +312,38 @@ export interface Database {
           created_at: string
         }
       }
+      registrar_pago_cuotas: {
+        Args: {
+          p_prestamo_id: string
+          p_abono: number
+          p_metodo_pago: string
+          p_solo_interes: boolean
+        }
+        Returns: {
+          id: string
+          user_id: string
+          prestamo_id: string
+          fecha: string
+          tipo: string
+          monto_total: number
+          monto_interes: number
+          monto_capital: number
+          saldo_anterior: number
+          saldo_posterior: number
+          metodo_pago: string | null
+          nota: string | null
+          created_at: string
+        }
+      }
       devengar_intereses: {
         Args: Record<string, never>
         Returns: number
       }
       marcar_mora: {
+        Args: Record<string, never>
+        Returns: number
+      }
+      marcar_cuotas_vencidas: {
         Args: Record<string, never>
         Returns: number
       }

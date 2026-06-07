@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PagoModal from '@/components/PagoModal'
+import PagoCuotasModal from '@/components/PagoCuotasModal'
 import { EstadoBadge } from '@/components/PrestamoBadges'
 import { useAuth } from '@/contexts/AuthContext'
 import { useClientes } from '@/hooks/useClientes'
 import { usePrestamos } from '@/hooks/usePrestamos'
 import { useMovimientosDelMes } from '@/hooks/useMovimientosDelMes'
+import { useCuotasActivas } from '@/hooks/useCuotasActivas'
 import { calcularCobrosHoy, calcularMetricas, topDeudores } from '@/lib/cartera'
 import { fmtCOP } from '@/lib/formatters'
 import type { Cliente, Prestamo } from '@/types/database.types'
@@ -86,9 +88,10 @@ function MetricCard({
 
 export default function InicioPage() {
   const { user } = useAuth()
-  const { prestamos, registrarPago } = usePrestamos()
+  const { prestamos, registrarPago, registrarPagoCuotas } = usePrestamos()
   const { clientes } = useClientes()
   const { movimientos, recargar: recargarMovs } = useMovimientosDelMes()
+  const { cuotas, recargar: recargarCuotas } = useCuotasActivas()
 
   const [pagoPrestamo, setPagoPrestamo] = useState<Prestamo | null>(null)
 
@@ -99,8 +102,8 @@ export default function InicioPage() {
   )
   const metricas = useMemo(() => calcularMetricas(prestamos, movimientos), [prestamos, movimientos])
   const cobros = useMemo(
-    () => calcularCobrosHoy(prestamos, movimientos, hoy),
-    [prestamos, movimientos, hoy],
+    () => calcularCobrosHoy(prestamos, movimientos, cuotas, hoy),
+    [prestamos, movimientos, cuotas, hoy],
   )
   const deudores = useMemo(() => topDeudores(prestamos), [prestamos])
 
@@ -118,6 +121,19 @@ export default function InicioPage() {
     toast.success('Pago registrado.')
     recargarMovs() // refresca ganancia del mes y "cobrado"
     return resultado
+  }
+
+  async function onRegistrarCuotas(abono: number, metodo: string, soloInteres: boolean) {
+    if (!pagoPrestamo) return false
+    const { error } = await registrarPagoCuotas(pagoPrestamo.id, abono, metodo, soloInteres)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Pago registrado.')
+    recargarMovs()
+    recargarCuotas()
+    return true
   }
 
   return (
@@ -262,7 +278,15 @@ export default function InicioPage() {
         </div>
       </div>
 
-      {pagoPrestamo && (
+      {pagoPrestamo && pagoPrestamo.tipo === 'cuotas' ? (
+        <PagoCuotasModal
+          open
+          prestamo={pagoPrestamo}
+          clienteNombre={nombreDe(pagoPrestamo)}
+          onClose={() => setPagoPrestamo(null)}
+          onRegistrar={onRegistrarCuotas}
+        />
+      ) : pagoPrestamo ? (
         <PagoModal
           open
           prestamo={pagoPrestamo}
@@ -270,7 +294,7 @@ export default function InicioPage() {
           onClose={() => setPagoPrestamo(null)}
           onRegistrar={onRegistrar}
         />
-      )}
+      ) : null}
     </div>
   )
 }

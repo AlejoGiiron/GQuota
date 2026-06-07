@@ -5,6 +5,7 @@ import Avatar from '@/components/Avatar'
 import CronogramaCuotas from '@/components/CronogramaCuotas'
 import EstadoDeCuenta from '@/components/EstadoDeCuenta'
 import PagoModal from '@/components/PagoModal'
+import PagoCuotasModal from '@/components/PagoCuotasModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { ResultadoPago } from '@/lib/motor-prestamos'
@@ -19,6 +20,12 @@ export interface PrestamosOutletContext {
     monto: number,
     metodo: string,
   ) => Promise<{ resultado: ResultadoPago | null; error: string | null }>
+  registrarPagoCuotas: (
+    prestamoId: string,
+    abono: number,
+    metodo: string,
+    soloInteres: boolean,
+  ) => Promise<{ error: string | null }>
 }
 
 const IconAtras = (
@@ -39,8 +46,10 @@ function Dato({ etiqueta, children }: { etiqueta: string; children: ReactNode })
 export default function PrestamoFicha() {
   const { prestamoId } = useParams()
   const navigate = useNavigate()
-  const { prestamos, loading, clientePorId, registrarPago } = useOutletContext<PrestamosOutletContext>()
+  const { prestamos, loading, clientePorId, registrarPago, registrarPagoCuotas } =
+    useOutletContext<PrestamosOutletContext>()
   const [pagoAbierto, setPagoAbierto] = useState(false)
+  const [pagoCuotasAbierto, setPagoCuotasAbierto] = useState(false)
   const [version, setVersion] = useState(0)
   const prestamo = prestamos.find((p) => p.id === prestamoId)
 
@@ -67,9 +76,9 @@ export default function PrestamoFicha() {
   const cliente = clientePorId.get(prestamo.cliente_id)
   const nombre = cliente?.nombre ?? 'Cliente'
   const esCuotas = prestamo.tipo === 'cuotas'
-  // El pago flexible (PagoModal) es solo del producto "abierto". El pago contra
-  // cuotas llega en la Fase C; por ahora la ficha de cuotas solo muestra el cronograma.
-  const pagable = !esCuotas && (prestamo.estado === 'activo' || prestamo.estado === 'en_mora')
+  const cobrable = prestamo.estado === 'activo' || prestamo.estado === 'en_mora'
+  const pagable = !esCuotas && cobrable // pago flexible (producto "abierto")
+  const pagableCuotas = esCuotas && cobrable // pago contra el cronograma
   const idPrestamo = prestamo.id
 
   async function handleRegistrar(monto: number, metodo: string): Promise<ResultadoPago | null> {
@@ -81,6 +90,21 @@ export default function PrestamoFicha() {
     toast.success('Pago registrado.')
     setVersion((v) => v + 1) // refresca el ledger con el nuevo movimiento
     return resultado
+  }
+
+  async function handleRegistrarCuotas(
+    abono: number,
+    metodo: string,
+    soloInteres: boolean,
+  ): Promise<boolean> {
+    const { error } = await registrarPagoCuotas(idPrestamo, abono, metodo, soloInteres)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Pago registrado.')
+    setVersion((v) => v + 1) // refresca el cronograma
+    return true
   }
 
   return (
@@ -115,11 +139,31 @@ export default function PrestamoFicha() {
             Registrar pago
           </button>
         )}
+        {pagableCuotas && (
+          <button
+            type="button"
+            className="btn-primary mt-4 w-full sm:w-auto"
+            onClick={() => setPagoCuotasAbierto(true)}
+          >
+            Registrar pago
+          </button>
+        )}
       </div>
 
       {esCuotas ? (
         /* Préstamo de cuotas: el estado de cuenta es el cronograma. */
-        <CronogramaCuotas prestamo={prestamo} recargaToken={version} />
+        <>
+          <CronogramaCuotas prestamo={prestamo} recargaToken={version} />
+          {pagoCuotasAbierto && (
+            <PagoCuotasModal
+              open
+              prestamo={prestamo}
+              clienteNombre={nombre}
+              onClose={() => setPagoCuotasAbierto(false)}
+              onRegistrar={handleRegistrarCuotas}
+            />
+          )}
+        </>
       ) : (
         <>
           {/* Saldo destacado */}
