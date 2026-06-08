@@ -71,7 +71,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] Capturar dia_cobro/frecuencia explícito en el préstamo abierto (hoy se deriva del aniversario del desembolso).
 
 ## Operación (antes de abrir a usuarios reales)
-- [ ] Aplicar en Supabase, en orden, las migraciones 011–015 ANTES de avanzar `main` a producción: el código de cuotas y el fix del primer periodo las asumen (hoy `main` = MVP Fase 08, sin cuotas).
+- Estado del release (2026-06-08): `main` = `develop` = origin en `72ffcc6`, desplegado a producción. `main` ya NO es la Fase 08: incluye cuotas (011–015), el codeudor (016–017) y el comprobante como imagen. Las migraciones 011–017 están aplicadas en la base de producción (confirmado por el dueño). Próximo release: avanzar `main` con lo que entre a `develop`.
 - [ ] Préstamos 'abierto' creados ANTES de aplicar la 015 nacieron con interes_pendiente = 0 (no se les cargó el primer periodo). Si se quieren corregir retroactivamente, UPDATE puntual (con cuidado de no pisar los que ya devengaron este mes).
 - [ ] Reactivar "Confirm email" en Supabase Auth (se desactivó para pruebas).
 - [ ] Programar los cron en Supabase: devengar_intereses (mensual), marcar_mora (diario), marcar_cuotas_vencidas (diario). Orden: devengo antes que moras.
