@@ -1,8 +1,17 @@
-import { METODOS_PAGO } from '@/contexts/ConfiguracionContext'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { useCuotas } from '@/hooks/useCuotas'
 import { useMovimientos } from '@/hooks/useMovimientos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
-import type { CuotaDB, Prestamo } from '@/types/database.types'
+import {
+  compartirODescargarComprobante,
+  nombreArchivoComprobante,
+  referenciaPrestamo,
+  type DatosComprobante,
+  type FilaComprobante,
+} from '@/lib/comprobante'
+import type { CuotaDB, Movimiento, Prestamo } from '@/types/database.types'
 
 const ESTADO_CUOTA: Record<string, { label: string; cls: string }> = {
   pendiente: { label: 'Pendiente', cls: 'bg-bg text-text-2' },
@@ -42,21 +51,68 @@ function Resumen({ etiqueta, children }: { etiqueta: string; children: string })
  */
 export default function CronogramaCuotas({
   prestamo,
+  clienteNombre,
   recargaToken = 0,
 }: {
   prestamo: Prestamo
+  clienteNombre: string
   recargaToken?: number
 }) {
+  const { nombreNegocio } = useConfiguracion()
   const { cuotas, loading: cargandoCuotas, error: errorCuotas } = useCuotas(prestamo.id, recargaToken)
   const { movimientos, loading: cargandoMovs } = useMovimientos(prestamo.id, recargaToken)
+  const [enviandoId, setEnviandoId] = useState<string | null>(null)
 
   // Pagos reales (excluye el desembolso). Más reciente arriba (ya viene ordenado).
   const pagos = movimientos.filter((m) => m.tipo === 'interes' || m.tipo === 'cuota')
 
   const montoCuota = (c: CuotaDB) => c.capital + c.interes
   const pagado = pagos.reduce((s, m) => s + m.monto_total, 0)
-  const saldo = cuotas.filter((c) => c.estado !== 'pagada').reduce((s, c) => s + montoCuota(c), 0)
+  const pendientes = cuotas.filter((c) => c.estado !== 'pagada')
+  const saldo = pendientes.reduce((s, c) => s + montoCuota(c), 0)
   const total = pagado + saldo // cuadra por construcción
+
+  // Reenvío de comprobante desde el historial: usa el estado ACTUAL del crédito
+  // (reconstruir el exacto al momento del pago no sería fiable), distinguiendo
+  // fecha del pago (del movimiento) de la fecha de emisión (hoy).
+  async function enviarComprobante(m: Movimiento) {
+    const proxima = pendientes[0] ?? null
+    const saldado = pendientes.length === 0
+    const estado: FilaComprobante[] = saldado
+      ? []
+      : [
+          { etiqueta: 'Cuotas restantes', valor: String(pendientes.length) },
+          { etiqueta: 'Total restante', valor: fmtCOP(saldo) },
+          ...(proxima
+            ? [
+                {
+                  etiqueta: 'Próxima cuota',
+                  valor: `N.º ${proxima.numero} · ${fmtFecha(proxima.fecha_vence)}`,
+                },
+              ]
+            : []),
+        ]
+    const datos: DatosComprobante = {
+      negocio: nombreNegocio,
+      cliente: clienteNombre,
+      referencia: referenciaPrestamo(prestamo.id),
+      fechaEmision: fmtFecha(new Date()),
+      monto: m.monto_total,
+      fechaPago: fmtFecha(m.fecha),
+      metodo: metodoLabel(m.metodo_pago),
+      estado,
+      mensajeEstado: saldado ? 'Su crédito quedó al día. ¡Gracias!' : null,
+      pie: 'Gracias por su pago. Conserve este comprobante como soporte.',
+    }
+    setEnviandoId(m.id)
+    try {
+      await compartirODescargarComprobante(datos, nombreArchivoComprobante(clienteNombre))
+    } catch {
+      toast.error('No pudimos generar el comprobante.')
+    } finally {
+      setEnviandoId(null)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -144,6 +200,7 @@ export default function CronogramaCuotas({
                   <th className="px-1 pb-2 text-right font-semibold">A capital</th>
                   <th className="px-1 pb-2 text-right font-semibold">Monto</th>
                   <th className="px-1 pb-2 font-semibold">Método</th>
+                  <th className="px-1 pb-2 text-right font-semibold">Comprobante</th>
                 </tr>
               </thead>
               <tbody>
@@ -165,6 +222,16 @@ export default function CronogramaCuotas({
                       <td className="mono whitespace-nowrap px-1 py-2.5 text-right text-text">{fmtCOP(m.monto_capital)}</td>
                       <td className="mono whitespace-nowrap px-1 py-2.5 text-right font-bold text-text">{fmtCOP(m.monto_total)}</td>
                       <td className="whitespace-nowrap px-1 py-2.5 text-text-2">{metodoLabel(m.metodo_pago)}</td>
+                      <td className="whitespace-nowrap px-1 py-2.5 text-right">
+                        <button
+                          type="button"
+                          className="text-xs font-semibold text-green-700 hover:underline disabled:opacity-50"
+                          onClick={() => enviarComprobante(m)}
+                          disabled={enviandoId === m.id}
+                        >
+                          {enviandoId === m.id ? 'Generando…' : 'Enviar'}
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}

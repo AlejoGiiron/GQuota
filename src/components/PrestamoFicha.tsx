@@ -167,7 +167,7 @@ export default function PrestamoFicha() {
       {esCuotas ? (
         /* Préstamo de cuotas: el estado de cuenta es el cronograma. */
         <>
-          <CronogramaCuotas prestamo={prestamo} recargaToken={version} />
+          <CronogramaCuotas prestamo={prestamo} clienteNombre={nombre} recargaToken={version} />
           {pagoCuotasAbierto && (
             <PagoCuotasModal
               open
@@ -206,7 +206,7 @@ export default function PrestamoFicha() {
           </div>
 
           {/* Estado de cuenta + ledger de movimientos */}
-          <EstadoDeCuenta prestamo={prestamo} recargaToken={version} />
+          <EstadoDeCuenta prestamo={prestamo} clienteNombre={nombre} recargaToken={version} />
 
           <PagoModal
             open={pagoAbierto}
