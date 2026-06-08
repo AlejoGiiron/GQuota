@@ -1,16 +1,29 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
+import { toast } from 'sonner'
 import { EstadoBadge } from '@/components/PrestamoBadges'
+import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { useMovimientos } from '@/hooks/useMovimientos'
 import { prestamoDelMotor } from '@/hooks/usePrestamos'
 import { interesDelPeriodo } from '@/lib/motor-prestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
-import type { Prestamo } from '@/types/database.types'
+import {
+  compartirODescargarComprobante,
+  nombreArchivoComprobante,
+  referenciaPrestamo,
+  type DatosComprobante,
+} from '@/lib/comprobante'
+import type { Movimiento, Prestamo } from '@/types/database.types'
 
 const TIPO_LABEL: Record<string, string> = {
   desembolso: 'Desembolso',
   interes: 'Interés',
   abono_capital: 'Abono a capital',
   cuota: 'Cuota',
+}
+
+function metodoLabel(valor: string | null): string {
+  if (!valor) return '—'
+  return METODOS_PAGO.find((m) => m.valor === valor)?.label ?? valor
 }
 
 function Resumen({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
@@ -24,14 +37,48 @@ function Resumen({ etiqueta, children }: { etiqueta: string; children: ReactNode
 
 export default function EstadoDeCuenta({
   prestamo,
+  clienteNombre,
   recargaToken = 0,
 }: {
   prestamo: Prestamo
+  clienteNombre: string
   recargaToken?: number
 }) {
+  const { nombreNegocio } = useConfiguracion()
   const { movimientos, loading, error } = useMovimientos(prestamo.id, recargaToken)
+  const [enviandoId, setEnviandoId] = useState<string | null>(null)
   // Interés del periodo vigente: misma lógica del motor según el modo.
   const interesPeriodo = interesDelPeriodo(prestamoDelMotor(prestamo))
+
+  // Un movimiento es un PAGO del cliente si tiene método de pago (el desembolso
+  // y el devengo de interés no lo tienen). Solo esos llevan comprobante.
+  const esPago = (m: Movimiento) => Boolean(m.metodo_pago) && m.tipo !== 'desembolso'
+
+  // Reenvío desde el historial: estado ACTUAL del crédito (saldo de hoy),
+  // distinguiendo fecha del pago (del movimiento) de la fecha de emisión (hoy).
+  async function enviarComprobante(m: Movimiento) {
+    const saldado = prestamo.estado === 'pagado'
+    const datos: DatosComprobante = {
+      negocio: nombreNegocio,
+      cliente: clienteNombre,
+      referencia: referenciaPrestamo(prestamo.id),
+      fechaEmision: fmtFecha(new Date()),
+      monto: m.monto_total,
+      fechaPago: fmtFecha(m.fecha),
+      metodo: metodoLabel(m.metodo_pago),
+      estado: [{ etiqueta: 'Saldo pendiente', valor: fmtCOP(prestamo.saldo_capital) }],
+      mensajeEstado: saldado ? 'Su préstamo quedó al día. ¡Gracias!' : null,
+      pie: 'Gracias por su pago. Conserve este comprobante como soporte.',
+    }
+    setEnviandoId(m.id)
+    try {
+      await compartirODescargarComprobante(datos, nombreArchivoComprobante(clienteNombre))
+    } catch {
+      toast.error('No pudimos generar el comprobante.')
+    } finally {
+      setEnviandoId(null)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -78,6 +125,7 @@ export default function EstadoDeCuenta({
                   <th className="px-1 pb-2 text-right font-semibold">Interés</th>
                   <th className="px-1 pb-2 text-right font-semibold">Capital</th>
                   <th className="px-1 pb-2 text-right font-semibold">Saldo</th>
+                  <th className="px-1 pb-2 text-right font-semibold">Comprobante</th>
                 </tr>
               </thead>
               <tbody>
@@ -95,6 +143,20 @@ export default function EstadoDeCuenta({
                     </td>
                     <td className="mono whitespace-nowrap px-1 py-2.5 text-right font-bold text-text">
                       {fmtCOP(m.saldo_posterior)}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-2.5 text-right">
+                      {esPago(m) ? (
+                        <button
+                          type="button"
+                          className="text-xs font-semibold text-green-700 hover:underline disabled:opacity-50"
+                          onClick={() => enviarComprobante(m)}
+                          disabled={enviandoId === m.id}
+                        >
+                          {enviandoId === m.id ? 'Generando…' : 'Enviar'}
+                        </button>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

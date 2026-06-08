@@ -10,6 +10,14 @@ import {
   type EstadoCuota,
 } from '@/lib/motor-prestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
+import {
+  compartirODescargarComprobante,
+  nombreArchivoComprobante,
+  puedeCompartirImagen,
+  referenciaPrestamo,
+  type DatosComprobante,
+  type FilaComprobante,
+} from '@/lib/comprobante'
 import type { Prestamo } from '@/types/database.types'
 
 function metodoLabel(valor: string): string {
@@ -26,6 +34,12 @@ interface Comprobante {
   capital: number
   soloInteres: boolean
   fecha: string
+  // Estado del cronograma tras el pago (para el comprobante del cliente).
+  cuotasRestantes: number
+  totalRestante: number
+  proximaNumero: number | null
+  proximaFecha: string | null
+  saldado: boolean
 }
 
 export default function PagoCuotasModal({
@@ -66,6 +80,7 @@ export default function PagoCuotasModal({
   const [metodo, setMetodo] = useState(primerMetodo)
   const [soloInteres, setSoloInteres] = useState(false)
   const [procesando, setProcesando] = useState(false)
+  const [enviando, setEnviando] = useState(false)
   const [comprobante, setComprobante] = useState<Comprobante | null>(null)
 
   useEffect(() => {
@@ -113,6 +128,11 @@ export default function PagoCuotasModal({
     const ok = await onRegistrar(previo.abono, metodo, esSoloInteres)
     setProcesando(false)
     if (ok) {
+      // Estado del cronograma tras el pago: lo da el motor (previo.resultado),
+      // exacto al momento. La fecha de la próxima cuota se busca en las cuotas
+      // cargadas; para una cuota agregada por solo-interés aún no existe -> null.
+      const restantes = previo.resultado.filter((c) => c.estado !== 'pagada')
+      const proxima = restantes[0] ?? null
       setComprobante({
         monto: previo.abono,
         metodo,
@@ -120,7 +140,54 @@ export default function PagoCuotasModal({
         capital: previo.capital,
         soloInteres: esSoloInteres,
         fecha: fmtFecha(new Date()),
+        cuotasRestantes: restantes.length,
+        totalRestante: restantes.reduce((s, c) => s + c.capital + c.interes, 0),
+        proximaNumero: proxima?.numero ?? null,
+        proximaFecha: proxima
+          ? (cuotas.find((c) => c.numero === proxima.numero)?.fecha_vence ?? null)
+          : null,
+        saldado: restantes.length === 0,
       })
+    }
+  }
+
+  // Comprobante como IMAGEN para el cliente: cuotas restantes / próxima, sin desglose.
+  async function enviarComprobante(c: Comprobante) {
+    const estado: FilaComprobante[] = c.saldado
+      ? []
+      : [
+          { etiqueta: 'Cuotas restantes', valor: String(c.cuotasRestantes) },
+          { etiqueta: 'Total restante', valor: fmtCOP(c.totalRestante) },
+          ...(c.proximaNumero !== null
+            ? [
+                {
+                  etiqueta: 'Próxima cuota',
+                  valor: c.proximaFecha
+                    ? `N.º ${c.proximaNumero} · ${fmtFecha(c.proximaFecha)}`
+                    : `N.º ${c.proximaNumero}`,
+                },
+              ]
+            : []),
+        ]
+    const datos: DatosComprobante = {
+      negocio: nombreNegocio,
+      cliente: clienteNombre,
+      referencia: referenciaPrestamo(prestamo.id),
+      fechaEmision: fmtFecha(new Date()),
+      monto: c.monto,
+      fechaPago: c.fecha,
+      metodo: metodoLabel(c.metodo),
+      estado,
+      mensajeEstado: c.saldado ? 'Su crédito quedó al día. ¡Gracias!' : null,
+      pie: 'Gracias por su pago. Conserve este comprobante como soporte.',
+    }
+    setEnviando(true)
+    try {
+      await compartirODescargarComprobante(datos, nombreArchivoComprobante(clienteNombre))
+    } catch {
+      toast.error('No pudimos generar el comprobante.')
+    } finally {
+      setEnviando(false)
     }
   }
 
@@ -181,6 +248,24 @@ export default function PagoCuotasModal({
               Pago de solo interés: se agregó una cuota al final con el mismo interés.
             </p>
           )}
+
+          <button
+            type="button"
+            className="btn-primary w-full"
+            onClick={() => enviarComprobante(comprobante)}
+            disabled={enviando}
+          >
+            {enviando
+              ? 'Generando…'
+              : puedeCompartirImagen()
+                ? 'Enviar comprobante'
+                : 'Descargar comprobante'}
+          </button>
+          <p className="text-center text-xs text-muted">
+            {puedeCompartirImagen()
+              ? 'Se comparte como imagen (puedes enviarlo por WhatsApp).'
+              : 'Se descarga como imagen para compartir.'}
+          </p>
         </div>
       </Modal>
     )

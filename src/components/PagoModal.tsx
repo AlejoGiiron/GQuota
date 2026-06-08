@@ -5,6 +5,13 @@ import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { prestamoDelMotor } from '@/hooks/usePrestamos'
 import { aplicarPago, type ResultadoPago } from '@/lib/motor-prestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
+import {
+  compartirODescargarComprobante,
+  nombreArchivoComprobante,
+  puedeCompartirImagen,
+  referenciaPrestamo,
+  type DatosComprobante,
+} from '@/lib/comprobante'
 import type { Prestamo } from '@/types/database.types'
 
 function metodoLabel(valor: string): string {
@@ -42,6 +49,7 @@ export default function PagoModal({
   const [monto, setMonto] = useState('')
   const [metodo, setMetodo] = useState(primerMetodo)
   const [procesando, setProcesando] = useState(false)
+  const [enviando, setEnviando] = useState(false)
   const [comprobante, setComprobante] = useState<Comprobante | null>(null)
 
   useEffect(() => {
@@ -95,15 +103,27 @@ export default function PagoModal({
     }
   }
 
-  async function compartir(c: Comprobante) {
-    if (!navigator.share) {
-      void copiar(c)
-      return
+  // Comprobante como IMAGEN para el cliente: simple, sin desglose interés/capital.
+  async function enviarComprobante(c: Comprobante) {
+    const datos: DatosComprobante = {
+      negocio: nombreNegocio,
+      cliente: clienteNombre,
+      referencia: referenciaPrestamo(prestamo.id),
+      fechaEmision: fmtFecha(new Date()),
+      monto: c.monto,
+      fechaPago: c.fecha,
+      metodo: metodoLabel(c.metodo),
+      estado: [{ etiqueta: 'Saldo pendiente', valor: fmtCOP(c.resultado.saldoPosterior) }],
+      mensajeEstado: c.resultado.prestamoSaldado ? 'Su préstamo quedó al día. ¡Gracias!' : null,
+      pie: 'Gracias por su pago. Conserve este comprobante como soporte.',
     }
+    setEnviando(true)
     try {
-      await navigator.share({ title: 'Comprobante de pago', text: textoComprobante(c) })
+      await compartirODescargarComprobante(datos, nombreArchivoComprobante(clienteNombre))
     } catch {
-      /* el usuario canceló: sin acción */
+      toast.error('No pudimos generar el comprobante.')
+    } finally {
+      setEnviando(false)
     }
   }
 
@@ -145,15 +165,23 @@ export default function PagoModal({
             </p>
           )}
 
-          {typeof navigator !== 'undefined' && 'share' in navigator && (
-            <button
-              type="button"
-              className="text-sm font-semibold text-green-700 hover:underline"
-              onClick={() => compartir(comprobante)}
-            >
-              Compartir comprobante
-            </button>
-          )}
+          <button
+            type="button"
+            className="btn-primary w-full"
+            onClick={() => enviarComprobante(comprobante)}
+            disabled={enviando}
+          >
+            {enviando
+              ? 'Generando…'
+              : puedeCompartirImagen()
+                ? 'Enviar comprobante'
+                : 'Descargar comprobante'}
+          </button>
+          <p className="text-center text-xs text-muted">
+            {puedeCompartirImagen()
+              ? 'Se comparte como imagen (puedes enviarlo por WhatsApp).'
+              : 'Se descarga como imagen para compartir.'}
+          </p>
         </div>
       </Modal>
     )
