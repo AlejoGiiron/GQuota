@@ -84,6 +84,9 @@ export interface Database {
           estado: string
           tipo: string
           notas: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          codeudor_documento: string | null
           ultimo_devengo: string | null
           created_at: string
         }
@@ -101,6 +104,9 @@ export interface Database {
           estado?: string
           tipo?: string
           notas?: string | null
+          codeudor_nombre?: string | null
+          codeudor_telefono?: string | null
+          codeudor_documento?: string | null
           ultimo_devengo?: string | null
           created_at?: string
         }
@@ -118,6 +124,9 @@ export interface Database {
           estado?: string
           tipo?: string
           notas?: string | null
+          codeudor_nombre?: string | null
+          codeudor_telefono?: string | null
+          codeudor_documento?: string | null
           ultimo_devengo?: string | null
           created_at?: string
         }
@@ -238,6 +247,9 @@ export interface Database {
           p_tasa_mensual: number
           p_modo_interes: string
           p_fecha_desembolso: string
+          p_codeudor_nombre?: string | null
+          p_codeudor_telefono?: string | null
+          p_codeudor_documento?: string | null
         }
         Returns: {
           id: string
@@ -253,6 +265,9 @@ export interface Database {
           estado: string
           tipo: string
           notas: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          codeudor_documento: string | null
           ultimo_devengo: string | null
           created_at: string
         }
@@ -265,6 +280,9 @@ export interface Database {
           p_frecuencia: string
           p_n_cuotas: number
           p_fecha_desembolso: string
+          p_codeudor_nombre?: string | null
+          p_codeudor_telefono?: string | null
+          p_codeudor_documento?: string | null
         }
         Returns: {
           id: string
@@ -280,6 +298,9 @@ export interface Database {
           estado: string
           tipo: string
           notas: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          codeudor_documento: string | null
           ultimo_devengo: string | null
           created_at: string
         }

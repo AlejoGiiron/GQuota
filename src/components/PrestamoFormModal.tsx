@@ -71,6 +71,9 @@ export default function PrestamoFormModal({
   const [frecuencia, setFrecuencia] = useState<FrecuenciaCuota>('mensual')
   const [nCuotas, setNCuotas] = useState('')
   const [fecha, setFecha] = useState(hoyLocal())
+  const [codeudorNombre, setCodeudorNombre] = useState('')
+  const [codeudorTelefono, setCodeudorTelefono] = useState('')
+  const [codeudorDocumento, setCodeudorDocumento] = useState('')
   const [errores, setErrores] = useState<Record<string, string>>({})
   const [guardando, setGuardando] = useState(false)
 
@@ -84,6 +87,9 @@ export default function PrestamoFormModal({
     setFrecuencia('mensual')
     setNCuotas('')
     setFecha(hoyLocal())
+    setCodeudorNombre('')
+    setCodeudorTelefono('')
+    setCodeudorDocumento('')
     setErrores({})
     setGuardando(false)
   }, [open])
@@ -116,8 +122,25 @@ export default function PrestamoFormModal({
     if (!fecha) nuevos.fecha = 'Selecciona la fecha de desembolso.'
     if (tipo === 'cuotas' && (!Number.isInteger(nNum) || nNum < 1))
       nuevos.nCuotas = 'Ingresa un número de cuotas válido.'
+
+    // Codeudor opcional: si llenaron algún dato, el nombre es obligatorio.
+    const codNombre = codeudorNombre.trim()
+    const codTelefono = codeudorTelefono.trim()
+    const codDocumento = codeudorDocumento.trim()
+    if ((codTelefono || codDocumento) && !codNombre)
+      nuevos.codeudor = 'Ingresa el nombre del codeudor.'
+
     setErrores(nuevos)
     if (Object.keys(nuevos).length > 0) return
+
+    // Sin nombre = sin codeudor: no guardamos teléfono/documento sueltos.
+    const codeudor = codNombre
+      ? {
+          codeudor_nombre: codNombre,
+          codeudor_telefono: codTelefono || null,
+          codeudor_documento: codDocumento || null,
+        }
+      : { codeudor_nombre: null, codeudor_telefono: null, codeudor_documento: null }
 
     setGuardando(true)
     let ok: boolean
@@ -129,6 +152,7 @@ export default function PrestamoFormModal({
         frecuencia,
         n_cuotas: nNum,
         fecha_desembolso: fecha,
+        ...codeudor,
       })
     } else {
       ok = await onGuardar({
@@ -137,6 +161,7 @@ export default function PrestamoFormModal({
         tasa_mensual: tasaNum / 100,
         modo_interes: modo,
         fecha_desembolso: fecha,
+        ...codeudor,
       })
     }
     setGuardando(false)
@@ -334,6 +359,41 @@ export default function PrestamoFormModal({
               onChange={(e) => setFecha(e.target.value)}
             />
             {errores.fecha && <p className="text-xs font-semibold text-red">{errores.fecha}</p>}
+          </div>
+
+          {/* Codeudor (opcional) — datos sueltos del préstamo, no un cliente. */}
+          <div className="flex flex-col gap-2 rounded-xl border border-line bg-bg p-4">
+            <span className="text-[13px] font-semibold text-text-2">Codeudor (opcional)</span>
+            <input
+              id="pr-codeudor-nombre"
+              className="input"
+              type="text"
+              placeholder="Nombre del codeudor"
+              value={codeudorNombre}
+              onChange={(e) => setCodeudorNombre(e.target.value)}
+            />
+            <div className="flex gap-3">
+              <input
+                id="pr-codeudor-telefono"
+                className="input flex-1"
+                type="tel"
+                inputMode="tel"
+                placeholder="Teléfono"
+                value={codeudorTelefono}
+                onChange={(e) => setCodeudorTelefono(e.target.value)}
+              />
+              <input
+                id="pr-codeudor-documento"
+                className="input flex-1"
+                type="text"
+                placeholder="Documento"
+                value={codeudorDocumento}
+                onChange={(e) => setCodeudorDocumento(e.target.value)}
+              />
+            </div>
+            {errores.codeudor && (
+              <p className="text-xs font-semibold text-red">{errores.codeudor}</p>
+            )}
           </div>
 
           {/* Previsualización del cronograma (tipo cuotas) */}
