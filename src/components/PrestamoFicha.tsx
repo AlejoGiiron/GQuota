@@ -150,6 +150,20 @@ export default function PrestamoFicha() {
         )}
       </div>
 
+      {/* Codeudor (opcional): solo si el préstamo lo tiene. */}
+      {prestamo.codeudor_nombre && (
+        <div className="card p-5">
+          <h3 className="mb-2 text-sm font-bold text-text">Codeudor</h3>
+          <Dato etiqueta="Nombre">{prestamo.codeudor_nombre}</Dato>
+          {prestamo.codeudor_telefono && (
+            <Dato etiqueta="Teléfono">{prestamo.codeudor_telefono}</Dato>
+          )}
+          {prestamo.codeudor_documento && (
+            <Dato etiqueta="Documento">{prestamo.codeudor_documento}</Dato>
+          )}
+        </div>
+      )}
+
       {esCuotas ? (
         /* Préstamo de cuotas: el estado de cuenta es el cronograma. */
         <>

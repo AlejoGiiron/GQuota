@@ -24,8 +24,15 @@ export function tipoMovimiento(resultado: ResultadoPago): 'interes' | 'cuota' {
   return resultado.montoCapital > 0 ? 'cuota' : 'interes'
 }
 
+/** Datos del codeudor opcional del préstamo (datos sueltos, no una entidad/cliente). */
+export interface CodeudorInput {
+  codeudor_nombre?: string | null
+  codeudor_telefono?: string | null
+  codeudor_documento?: string | null
+}
+
 /** Datos que captura el formulario de "Nuevo préstamo". */
-export interface PrestamoInput {
+export interface PrestamoInput extends CodeudorInput {
   cliente_id: string
   capital_inicial: number
   /** Tasa mensual en decimal: 0.10 = 10%. */
@@ -36,7 +43,7 @@ export interface PrestamoInput {
 }
 
 /** Datos del formulario de "Nuevo préstamo" tipo cuotas. */
-export interface PrestamoCuotasInput {
+export interface PrestamoCuotasInput extends CodeudorInput {
   cliente_id: string
   capital_inicial: number
   /** Tasa mensual en decimal: 0.10 = 10%. */
@@ -90,6 +97,9 @@ export function usePrestamos(clienteId?: string) {
       p_tasa_mensual: input.tasa_mensual,
       p_modo_interes: input.modo_interes,
       p_fecha_desembolso: input.fecha_desembolso,
+      p_codeudor_nombre: input.codeudor_nombre ?? null,
+      p_codeudor_telefono: input.codeudor_telefono ?? null,
+      p_codeudor_documento: input.codeudor_documento ?? null,
     })
     if (error || !data) {
       return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
@@ -111,6 +121,9 @@ export function usePrestamos(clienteId?: string) {
         p_frecuencia: input.frecuencia,
         p_n_cuotas: input.n_cuotas,
         p_fecha_desembolso: input.fecha_desembolso,
+        p_codeudor_nombre: input.codeudor_nombre ?? null,
+        p_codeudor_telefono: input.codeudor_telefono ?? null,
+        p_codeudor_documento: input.codeudor_documento ?? null,
       })
       if (error || !data) {
         return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
