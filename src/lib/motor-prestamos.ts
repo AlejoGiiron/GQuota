@@ -103,7 +103,7 @@ export function aplicarPago(
 //  NO toca nada del modelo "abierto".
 // ============================================================
 
-export type FrecuenciaCuota = "semanal" | "quincenal" | "mensual";
+export type FrecuenciaCuota = "diaria" | "semanal" | "quincenal" | "mensual";
 export type EstadoCuota = "pendiente" | "pagada" | "vencida";
 
 /** Una cuota del cronograma. capital e interés van por separado; monto = capital + interes. */
@@ -119,8 +119,10 @@ export interface ResultadoPagoCuotas {
   sobrante: number; // saldo a favor si pagó más que todo lo pendiente
 }
 
-// Cuántos meses representa cada cuota según la frecuencia (4 semanas = 1 mes, quincena = ½ mes).
+// Cuántos meses representa cada cuota según la frecuencia (30 días = 1 mes,
+// 4 semanas = 1 mes, quincena = ½ mes; un día = 1/30 de mes).
 const MESES_POR_CUOTA: Record<FrecuenciaCuota, number> = {
+  diaria: 1 / 30,
   semanal: 1 / 4,
   quincenal: 1 / 2,
   mensual: 1,
