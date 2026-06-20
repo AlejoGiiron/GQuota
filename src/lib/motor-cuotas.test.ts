@@ -50,6 +50,34 @@ test("generarCronograma semanal: 4 semanas = 1 mes (tasa 20% -> total 1.200.000)
   assert.equal(total(c), 1_200_000);
 });
 
+test("generarCronograma diaria: 30 cuotas = 1 mes (30% -> interés 300.000, total 1.300.000)", () => {
+  const c = generarCronograma(1_000_000, 0.3, "diaria", 30);
+  assert.equal(c.length, 30);
+  const interesTotal = c.reduce((s, x) => s + x.interes, 0);
+  assert.equal(interesTotal, 300_000); // 30 días = 1 mes -> 1.000.000 × 30%
+  assert.equal(
+    c.reduce((s, x) => s + x.capital, 0),
+    1_000_000
+  ); // capital cuadra exacto (la última absorbe el redondeo)
+  assert.equal(total(c), 1_300_000);
+});
+
+test("generarCronograma diaria: la última cuota absorbe el redondeo (suma exacta)", () => {
+  // 100.000 / 7 no es entero: las primeras 6 cuotas redondean y la 7.ª cuadra.
+  const c = generarCronograma(100_000, 0.3, "diaria", 7);
+  assert.equal(c.length, 7);
+  assert.equal(
+    c.reduce((s, x) => s + x.capital, 0),
+    100_000
+  );
+  // interés total = round(100.000 × 0,3 × 7/30) = round(7.000) = 7.000
+  assert.equal(
+    c.reduce((s, x) => s + x.interes, 0),
+    7_000
+  );
+  assert.equal(total(c), 107_000);
+});
+
 test("aplicarPagoACuotas: el excedente baja solo el capital de las cuotas siguientes", () => {
   const base = generarCronograma(1_000_000, 0.1, "quincenal", 4); // 4 × {250.000, 50.000}
   const { cuotas, sobrante } = aplicarPagoACuotas(base, 400_000);

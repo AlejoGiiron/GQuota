@@ -11,6 +11,7 @@ const selectClass =
   'w-full h-[52px] rounded-xl border-[1.5px] border-line bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)]'
 
 const FRECUENCIAS: ReadonlyArray<{ valor: FrecuenciaCuota; label: string }> = [
+  { valor: 'diaria', label: 'Diaria' },
   { valor: 'semanal', label: 'Semanal' },
   { valor: 'quincenal', label: 'Quincenal' },
   { valor: 'mensual', label: 'Mensual' },
@@ -40,7 +41,8 @@ function fechasCronograma(fechaISO: string, frecuencia: FrecuenciaCuota, nCuotas
   const fechas: string[] = []
   for (let i = 1; i <= nCuotas; i++) {
     let f: Date
-    if (frecuencia === 'semanal') f = new Date(y, m - 1, d + i * 7)
+    if (frecuencia === 'diaria') f = new Date(y, m - 1, d + i)
+    else if (frecuencia === 'semanal') f = new Date(y, m - 1, d + i * 7)
     else if (frecuencia === 'quincenal') f = new Date(y, m - 1, d + i * 15)
     else f = sumarMeses(base, i)
     fechas.push(isoLocal(f))
