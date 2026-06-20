@@ -6,7 +6,12 @@ import PrestamoFormModal from '@/components/PrestamoFormModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import type { PrestamosOutletContext } from '@/components/PrestamoFicha'
 import { useClientes } from '@/hooks/useClientes'
-import { usePrestamos, type PrestamoCuotasInput, type PrestamoInput } from '@/hooks/usePrestamos'
+import {
+  usePrestamos,
+  type PrestamoCuotasInput,
+  type PrestamoCuotaFijaInput,
+  type PrestamoInput,
+} from '@/hooks/usePrestamos'
 import { fmtCOP } from '@/lib/formatters'
 
 const IconMas = (
@@ -34,8 +39,17 @@ function FilaSkeleton() {
 }
 
 export default function PrestamosPage() {
-  const { prestamos, loading, error, crear, crearCuotas, registrarPago, registrarPagoCuotas } =
-    usePrestamos()
+  const {
+    prestamos,
+    loading,
+    error,
+    crear,
+    crearCuotas,
+    crearCuotaFija,
+    registrarPago,
+    registrarPagoCuotas,
+    registrarPagoCuotaFija,
+  } = usePrestamos()
   const { clientes } = useClientes()
   const detalle = useMatch('/prestamos/:prestamoId')
 
@@ -66,12 +80,23 @@ export default function PrestamosPage() {
     return true
   }
 
+  async function handleGuardarCuotaFija(input: PrestamoCuotaFijaInput): Promise<boolean> {
+    const { error } = await crearCuotaFija(input)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Préstamo de cuota fija creado.')
+    return true
+  }
+
   const ctx: PrestamosOutletContext = {
     prestamos,
     loading,
     clientePorId,
     registrarPago,
     registrarPagoCuotas,
+    registrarPagoCuotaFija,
   }
 
   return (
@@ -133,7 +158,10 @@ export default function PrestamosPage() {
                   <div className="min-w-0 flex-1 leading-tight">
                     <div className="truncate text-[14.5px] font-bold text-text">{nombre}</div>
                     <div className="truncate text-[12.5px] font-medium text-muted">
-                      {fmtCOP(p.capital_inicial)} · {tasaMensualTexto(p.tasa_mensual)}
+                      {fmtCOP(p.capital_inicial)} ·{' '}
+                      {p.tipo === 'cuota_fija'
+                        ? `cuota ${fmtCOP(p.valor_cuota ?? 0)}`
+                        : tasaMensualTexto(p.tasa_mensual)}
                     </div>
                     <div className="mt-1 flex flex-wrap gap-1.5">
                       <TipoOModoBadge tipo={p.tipo} modo={p.modo_interes} />
@@ -171,6 +199,7 @@ export default function PrestamosPage() {
         onClose={() => setModalAbierto(false)}
         onGuardar={handleGuardar}
         onGuardarCuotas={handleGuardarCuotas}
+        onGuardarCuotaFija={handleGuardarCuotaFija}
       />
     </div>
   )

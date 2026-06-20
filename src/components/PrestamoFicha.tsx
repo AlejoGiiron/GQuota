@@ -3,9 +3,11 @@ import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import CronogramaCuotas from '@/components/CronogramaCuotas'
+import CronogramaCuotaFija from '@/components/CronogramaCuotaFija'
 import EstadoDeCuenta from '@/components/EstadoDeCuenta'
 import PagoModal from '@/components/PagoModal'
 import PagoCuotasModal from '@/components/PagoCuotasModal'
+import PagoCuotaFijaModal from '@/components/PagoCuotaFijaModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { ResultadoPago } from '@/lib/motor-prestamos'
@@ -25,6 +27,11 @@ export interface PrestamosOutletContext {
     abono: number,
     metodo: string,
     soloInteres: boolean,
+  ) => Promise<{ error: string | null }>
+  registrarPagoCuotaFija: (
+    prestamoId: string,
+    monto: number,
+    metodo: string,
   ) => Promise<{ error: string | null }>
 }
 
@@ -46,10 +53,17 @@ function Dato({ etiqueta, children }: { etiqueta: string; children: ReactNode })
 export default function PrestamoFicha() {
   const { prestamoId } = useParams()
   const navigate = useNavigate()
-  const { prestamos, loading, clientePorId, registrarPago, registrarPagoCuotas } =
-    useOutletContext<PrestamosOutletContext>()
+  const {
+    prestamos,
+    loading,
+    clientePorId,
+    registrarPago,
+    registrarPagoCuotas,
+    registrarPagoCuotaFija,
+  } = useOutletContext<PrestamosOutletContext>()
   const [pagoAbierto, setPagoAbierto] = useState(false)
   const [pagoCuotasAbierto, setPagoCuotasAbierto] = useState(false)
+  const [pagoCuotaFijaAbierto, setPagoCuotaFijaAbierto] = useState(false)
   const [version, setVersion] = useState(0)
   const prestamo = prestamos.find((p) => p.id === prestamoId)
 
@@ -76,9 +90,11 @@ export default function PrestamoFicha() {
   const cliente = clientePorId.get(prestamo.cliente_id)
   const nombre = cliente?.nombre ?? 'Cliente'
   const esCuotas = prestamo.tipo === 'cuotas'
+  const esCuotaFija = prestamo.tipo === 'cuota_fija'
   const cobrable = prestamo.estado === 'activo' || prestamo.estado === 'en_mora'
-  const pagable = !esCuotas && cobrable // pago flexible (producto "abierto")
+  const pagable = !esCuotas && !esCuotaFija && cobrable // pago flexible (producto "abierto")
   const pagableCuotas = esCuotas && cobrable // pago contra el cronograma
+  const pagableCuotaFija = esCuotaFija && cobrable // pago contra las cuotas de monto fijo
   const idPrestamo = prestamo.id
 
   async function handleRegistrar(monto: number, metodo: string): Promise<ResultadoPago | null> {
@@ -98,6 +114,17 @@ export default function PrestamoFicha() {
     soloInteres: boolean,
   ): Promise<boolean> {
     const { error } = await registrarPagoCuotas(idPrestamo, abono, metodo, soloInteres)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Pago registrado.')
+    setVersion((v) => v + 1) // refresca el cronograma
+    return true
+  }
+
+  async function handleRegistrarCuotaFija(monto: number, metodo: string): Promise<boolean> {
+    const { error } = await registrarPagoCuotaFija(idPrestamo, monto, metodo)
     if (error) {
       toast.error(error)
       return false
@@ -148,6 +175,15 @@ export default function PrestamoFicha() {
             Registrar pago
           </button>
         )}
+        {pagableCuotaFija && (
+          <button
+            type="button"
+            className="btn-primary mt-4 w-full sm:w-auto"
+            onClick={() => setPagoCuotaFijaAbierto(true)}
+          >
+            Registrar pago
+          </button>
+        )}
       </div>
 
       {/* Codeudor (opcional): solo si el préstamo lo tiene. */}
@@ -164,7 +200,21 @@ export default function PrestamoFicha() {
         </div>
       )}
 
-      {esCuotas ? (
+      {esCuotaFija ? (
+        /* Préstamo de cuota fija: el estado de cuenta son las cuotas de monto fijo. */
+        <>
+          <CronogramaCuotaFija prestamo={prestamo} clienteNombre={nombre} recargaToken={version} />
+          {pagoCuotaFijaAbierto && (
+            <PagoCuotaFijaModal
+              open
+              prestamo={prestamo}
+              clienteNombre={nombre}
+              onClose={() => setPagoCuotaFijaAbierto(false)}
+              onRegistrar={handleRegistrarCuotaFija}
+            />
+          )}
+        </>
+      ) : esCuotas ? (
         /* Préstamo de cuotas: el estado de cuenta es el cronograma. */
         <>
           <CronogramaCuotas prestamo={prestamo} clienteNombre={nombre} recargaToken={version} />

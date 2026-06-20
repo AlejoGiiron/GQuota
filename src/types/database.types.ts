@@ -362,6 +362,62 @@ export interface Database {
           created_at: string
         }
       }
+      crear_prestamo_cuota_fija: {
+        Args: {
+          p_cliente_id: string
+          p_capital: number
+          p_frecuencia: string
+          p_n_cuotas: number
+          p_valor_cuota: number
+          p_fecha_desembolso: string
+          p_codeudor_nombre?: string | null
+          p_codeudor_telefono?: string | null
+          p_codeudor_documento?: string | null
+        }
+        Returns: {
+          id: string
+          user_id: string
+          cliente_id: string
+          capital_inicial: number
+          saldo_capital: number
+          interes_pendiente: number
+          tasa_mensual: number
+          modo_interes: string
+          fecha_desembolso: string
+          dia_cobro: number | null
+          estado: string
+          tipo: string
+          valor_cuota: number | null
+          notas: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          codeudor_documento: string | null
+          ultimo_devengo: string | null
+          created_at: string
+        }
+      }
+      registrar_pago_cuota_fija: {
+        Args: {
+          p_prestamo_id: string
+          p_monto: number
+          p_metodo_pago: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          prestamo_id: string
+          fecha: string
+          tipo: string
+          monto_total: number
+          monto_interes: number
+          monto_capital: number
+          saldo_anterior: number
+          saldo_posterior: number
+          metodo_pago: string | null
+          nota: string | null
+          created_at: string
+        }
+      }
       devengar_intereses: {
         Args: Record<string, never>
         Returns: number

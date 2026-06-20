@@ -53,6 +53,17 @@ export interface PrestamoCuotasInput extends CodeudorInput {
   fecha_desembolso: string
 }
 
+/** Datos del formulario de "Nuevo préstamo" tipo cuota fija (sin tasa). */
+export interface PrestamoCuotaFijaInput extends CodeudorInput {
+  cliente_id: string
+  capital_inicial: number
+  frecuencia: FrecuenciaCuota
+  n_cuotas: number
+  /** Monto fijo de cada cuota (en pesos). */
+  valor_cuota: number
+  fecha_desembolso: string
+}
+
 export interface PrestamoMutacion {
   data: Prestamo | null
   error: string | null
@@ -120,6 +131,33 @@ export function usePrestamos(clienteId?: string) {
         p_tasa_mensual: input.tasa_mensual,
         p_frecuencia: input.frecuencia,
         p_n_cuotas: input.n_cuotas,
+        p_fecha_desembolso: input.fecha_desembolso,
+        p_codeudor_nombre: input.codeudor_nombre ?? null,
+        p_codeudor_telefono: input.codeudor_telefono ?? null,
+        p_codeudor_documento: input.codeudor_documento ?? null,
+      })
+      if (error || !data) {
+        return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
+      }
+      setPrestamos((prev) => [data, ...prev])
+      return { data, error: null }
+    },
+    [],
+  )
+
+  /**
+   * Crea un préstamo tipo 'cuota_fija' de forma atómica: la RPC genera el
+   * préstamo (con valor_cuota), el desembolso y las N cuotas de monto fijo
+   * (valor en `capital`, abonado 0). Sin tasa ni interés aparte.
+   */
+  const crearCuotaFija = useCallback(
+    async (input: PrestamoCuotaFijaInput): Promise<PrestamoMutacion> => {
+      const { data, error } = await supabase.rpc('crear_prestamo_cuota_fija', {
+        p_cliente_id: input.cliente_id,
+        p_capital: input.capital_inicial,
+        p_frecuencia: input.frecuencia,
+        p_n_cuotas: input.n_cuotas,
+        p_valor_cuota: input.valor_cuota,
         p_fecha_desembolso: input.fecha_desembolso,
         p_codeudor_nombre: input.codeudor_nombre ?? null,
         p_codeudor_telefono: input.codeudor_telefono ?? null,
@@ -206,14 +244,39 @@ export function usePrestamos(clienteId?: string) {
     [cargar],
   )
 
+  /**
+   * Registra un pago contra un préstamo de cuota fija (RPC atómica que replica
+   * aplicarPagoFijo del motor: llena cuotas en orden con el abono). Refresca el
+   * préstamo (saldo/estado) al terminar.
+   */
+  const registrarPagoCuotaFija = useCallback(
+    async (
+      prestamoId: string,
+      monto: number,
+      metodo: string,
+    ): Promise<{ error: string | null }> => {
+      const { error } = await supabase.rpc('registrar_pago_cuota_fija', {
+        p_prestamo_id: prestamoId,
+        p_monto: monto,
+        p_metodo_pago: metodo,
+      })
+      if (error) return { error: 'No pudimos registrar el pago. Intenta de nuevo.' }
+      await cargar()
+      return { error: null }
+    },
+    [cargar],
+  )
+
   return {
     prestamos,
     loading,
     error,
     crear,
     crearCuotas,
+    crearCuotaFija,
     registrarPago,
     registrarPagoCuotas,
+    registrarPagoCuotaFija,
     recargar: cargar,
   }
 }

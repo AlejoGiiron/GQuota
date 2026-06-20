@@ -147,6 +147,12 @@ export function calcularCobrosHoy(
       if (c && c.fecha_vence === hoyISO) {
         items.push({ prestamo: p, montoACobrar: c.capital + c.interes, cobrado: false })
       }
+    } else if (p.tipo === 'cuota_fija') {
+      // Cuota fija: la próxima cuota no saldada; a cobrar = lo que le falta (valor − abonado).
+      const c = proxima.get(p.id)
+      if (c && c.fecha_vence === hoyISO) {
+        items.push({ prestamo: p, montoACobrar: c.capital - c.abonado, cobrado: false })
+      }
     } else if (fechaCobroDelMes(p, hoy) === hoyISO) {
       items.push({
         prestamo: p,
@@ -197,6 +203,17 @@ export function calcularVencidos(
         items.push({
           prestamo: p,
           montoACobrar: c.capital + c.interes,
+          diasAtraso: diasDeAtraso(c.fecha_vence, hoy),
+        })
+      }
+    } else if (p.tipo === 'cuota_fija') {
+      // Cuota fija: vencida si su próxima cuota no saldada quedó atrás. Sin recargo
+      // por mora (Luis la maneja aparte): es solo el recordatorio de cobro.
+      const c = proxima.get(p.id)
+      if (c && c.fecha_vence < hoyISO) {
+        items.push({
+          prestamo: p,
+          montoACobrar: c.capital - c.abonado,
           diasAtraso: diasDeAtraso(c.fecha_vence, hoy),
         })
       }
