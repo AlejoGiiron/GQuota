@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Configuracion } from '@/types/database.types'
+import type { Configuracion } from '@/types/db'
 
 /** Métodos de pago soportados por la app (catálogo maestro). */
 export const METODOS_PAGO: ReadonlyArray<{ valor: string; label: string }> = [

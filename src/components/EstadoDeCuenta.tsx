@@ -12,7 +12,7 @@ import {
   referenciaPrestamo,
   type DatosComprobante,
 } from '@/lib/comprobante'
-import type { Movimiento, Prestamo } from '@/types/database.types'
+import type { Movimiento, Prestamo } from '@/types/db'
 
 const TIPO_LABEL: Record<string, string> = {
   desembolso: 'Desembolso',

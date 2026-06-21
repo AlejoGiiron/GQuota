@@ -3,7 +3,7 @@
 // delegan al motor (src/lib/motor-prestamos.ts); aquí no se reimplementan.
 
 import { interesDelPeriodo, type ModoInteres } from '@/lib/motor-prestamos'
-import type { CuotaDB, Movimiento, Prestamo } from '@/types/database.types'
+import type { CuotaDB, Movimiento, Prestamo } from '@/types/db'
 
 const ESTADO_ACTIVO = 'activo'
 const ESTADO_MORA = 'en_mora'

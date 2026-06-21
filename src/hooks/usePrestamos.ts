@@ -6,7 +6,7 @@ import {
   type ModoInteres,
   type ResultadoPago,
 } from '@/lib/motor-prestamos'
-import type { Prestamo } from '@/types/database.types'
+import type { Prestamo } from '@/types/db'
 
 /** Construye el préstamo del motor a partir de la fila de la BD. */
 export function prestamoDelMotor(p: Prestamo) {
@@ -108,9 +108,9 @@ export function usePrestamos(clienteId?: string) {
       p_tasa_mensual: input.tasa_mensual,
       p_modo_interes: input.modo_interes,
       p_fecha_desembolso: input.fecha_desembolso,
-      p_codeudor_nombre: input.codeudor_nombre ?? null,
-      p_codeudor_telefono: input.codeudor_telefono ?? null,
-      p_codeudor_documento: input.codeudor_documento ?? null,
+      p_codeudor_nombre: input.codeudor_nombre ?? undefined,
+      p_codeudor_telefono: input.codeudor_telefono ?? undefined,
+      p_codeudor_documento: input.codeudor_documento ?? undefined,
     })
     if (error || !data) {
       return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
@@ -132,9 +132,9 @@ export function usePrestamos(clienteId?: string) {
         p_frecuencia: input.frecuencia,
         p_n_cuotas: input.n_cuotas,
         p_fecha_desembolso: input.fecha_desembolso,
-        p_codeudor_nombre: input.codeudor_nombre ?? null,
-        p_codeudor_telefono: input.codeudor_telefono ?? null,
-        p_codeudor_documento: input.codeudor_documento ?? null,
+        p_codeudor_nombre: input.codeudor_nombre ?? undefined,
+        p_codeudor_telefono: input.codeudor_telefono ?? undefined,
+        p_codeudor_documento: input.codeudor_documento ?? undefined,
       })
       if (error || !data) {
         return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
@@ -159,9 +159,9 @@ export function usePrestamos(clienteId?: string) {
         p_n_cuotas: input.n_cuotas,
         p_valor_cuota: input.valor_cuota,
         p_fecha_desembolso: input.fecha_desembolso,
-        p_codeudor_nombre: input.codeudor_nombre ?? null,
-        p_codeudor_telefono: input.codeudor_telefono ?? null,
-        p_codeudor_documento: input.codeudor_documento ?? null,
+        p_codeudor_nombre: input.codeudor_nombre ?? undefined,
+        p_codeudor_telefono: input.codeudor_telefono ?? undefined,
+        p_codeudor_documento: input.codeudor_documento ?? undefined,
       })
       if (error || !data) {
         return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }

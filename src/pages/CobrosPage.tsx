@@ -12,7 +12,7 @@ import { useCuotasActivas } from '@/hooks/useCuotasActivas'
 import { calcularCobrosHoy, calcularVencidos } from '@/lib/cartera'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import { enlaceWhatsApp } from '@/lib/whatsapp'
-import type { Cliente, Prestamo } from '@/types/database.types'
+import type { Cliente, Prestamo } from '@/types/db'
 
 const IconWhatsApp = (
   <svg className="h-[17px] w-[17px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

@@ -13,7 +13,7 @@ import { useMovimientosDelMes } from '@/hooks/useMovimientosDelMes'
 import { useCuotasActivas } from '@/hooks/useCuotasActivas'
 import { calcularCobrosHoy, calcularMetricas, topDeudores } from '@/lib/cartera'
 import { fmtCOP } from '@/lib/formatters'
-import type { Cliente, Prestamo } from '@/types/database.types'
+import type { Cliente, Prestamo } from '@/types/db'
 
 const IconBillete = (
   <svg className="h-[19px] w-[19px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">

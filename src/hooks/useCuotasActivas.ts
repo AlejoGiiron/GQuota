@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { CuotaDB } from '@/types/database.types'
+import type { CuotaDB } from '@/types/db'
 
 /**
  * Todas las cuotas no pagadas del usuario (pendientes y vencidas), vía RLS.

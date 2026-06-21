@@ -10,7 +10,7 @@ import {
 import type { PrestamoCuotasInput, PrestamoCuotaFijaInput } from '@/hooks/usePrestamos'
 import type { PrestamoInput } from '@/hooks/usePrestamos'
 import type { ModoInteres } from '@/lib/motor-prestamos'
-import type { Cliente } from '@/types/database.types'
+import type { Cliente } from '@/types/db'
 
 const selectClass =
   'w-full h-[52px] rounded-xl border-[1.5px] border-line bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)]'
