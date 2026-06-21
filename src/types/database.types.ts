@@ -270,6 +270,7 @@ export interface Database {
           dia_cobro: number | null
           estado: string
           tipo: string
+          valor_cuota: number | null
           notas: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
@@ -303,6 +304,7 @@ export interface Database {
           dia_cobro: number | null
           estado: string
           tipo: string
+          valor_cuota: number | null
           notas: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
