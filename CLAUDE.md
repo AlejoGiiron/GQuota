@@ -91,6 +91,10 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 - tsc + npm test NO prueban las RPC/funciones SQL. Las 12 pruebas cubren el motor (TS). Toda la lógica que vive en SQL (RPC de pago, devengo, mora) solo se verifica con datos reales contra la BD. "Compila y pasa los tests" ≠ "el comportamiento es correcto".
 
+- EL CHEQUEO REAL ES `npm run build`, NO `tsc --noEmit`. `tsc --noEmit` usa caché incremental (.tsbuildinfo) y puede pasar mientras el build de producción (`tsc -b && vite build`, lo que corre Vercel) falla. Le pasó al release de cuota_fija: un bloque `Returns` de RPC en database.types.ts quedó sin `valor_cuota` y `tsc --noEmit` lo dejó pasar, pero `tsc -b` rompió el deploy. Antes de mergear a `main` / desplegar, correr `npm run build`.
+
+- AL AGREGAR UNA COLUMNA A UNA TABLA, ACTUALIZAR TODOS LOS `Returns` DE RPC QUE LA DEVUELVEN. En database.types.ts (escrito a mano) cada RPC que retorna `prestamos` DUPLICA el shape de la fila; agregar una columna al `Row` sin agregarla a esos `Returns` rompe el build donde se asigna ese `data` a un `Prestamo` (p. ej. setPrestamos). Hay que tocar el `Row`, el `Insert`, el `Update` y cada `Returns` que devuelva esa tabla.
+
 - VERIFICAR CADA CASO EN UN PRÉSTAMO LIMPIO. Encadenar muchas operaciones sobre el mismo préstamo mezcla efectos y hace imposible atribuir un número a una operación. Un préstamo por caso (abono de más / solo-interés / mora), cada cifra atribuible.
 
 - IDEMPOTENCIA SIEMPRE QUE HAYA UN JOB. Toda función de mantenimiento (devengo, moras) debe poder correrse dos veces sin duplicar/romper. Probarlo explícitamente: correr, mirar, correr otra vez, confirmar que no cambió.
