@@ -6,7 +6,7 @@ import ClienteFormModal from '@/components/ClienteFormModal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useClientes, type ClienteInput } from '@/hooks/useClientes'
 import type { ClientesOutletContext } from '@/components/ClienteFicha'
-import type { Cliente } from '@/types/database.types'
+import type { Cliente } from '@/types/db'
 
 const IconBuscar = (
   <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">

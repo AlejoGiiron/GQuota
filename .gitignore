@@ -7,3 +7,6 @@ dist
 .vite
 *.tsbuildinfo
 *.docx
+
+# Supabase CLI: archivos locales del link/proyecto (no van al repo)
+supabase/.temp/

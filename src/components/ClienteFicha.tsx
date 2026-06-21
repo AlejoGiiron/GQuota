@@ -3,7 +3,7 @@ import Avatar from '@/components/Avatar'
 import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { usePrestamos } from '@/hooks/usePrestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
-import type { Cliente } from '@/types/database.types'
+import type { Cliente } from '@/types/db'
 
 export interface ClientesOutletContext {
   clientes: Cliente[]

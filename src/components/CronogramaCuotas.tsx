@@ -11,7 +11,7 @@ import {
   type DatosComprobante,
   type FilaComprobante,
 } from '@/lib/comprobante'
-import type { CuotaDB, Movimiento, Prestamo } from '@/types/database.types'
+import type { CuotaDB, Movimiento, Prestamo } from '@/types/db'
 
 const ESTADO_CUOTA: Record<string, { label: string; cls: string }> = {
   pendiente: { label: 'Pendiente', cls: 'bg-bg text-text-2' },

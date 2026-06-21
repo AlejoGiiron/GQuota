@@ -12,7 +12,7 @@ import {
   referenciaPrestamo,
   type DatosComprobante,
 } from '@/lib/comprobante'
-import type { Prestamo } from '@/types/database.types'
+import type { Prestamo } from '@/types/db'
 
 function metodoLabel(valor: string): string {
   return METODOS_PAGO.find((m) => m.valor === valor)?.label ?? valor
