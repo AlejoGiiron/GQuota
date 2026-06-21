@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PagoModal from '@/components/PagoModal'
 import PagoCuotasModal from '@/components/PagoCuotasModal'
+import PagoCuotaFijaModal from '@/components/PagoCuotaFijaModal'
 import { EstadoBadge } from '@/components/PrestamoBadges'
 import { useAuth } from '@/contexts/AuthContext'
 import { useClientes } from '@/hooks/useClientes'
@@ -88,7 +89,7 @@ function MetricCard({
 
 export default function InicioPage() {
   const { user } = useAuth()
-  const { prestamos, registrarPago, registrarPagoCuotas } = usePrestamos()
+  const { prestamos, registrarPago, registrarPagoCuotas, registrarPagoCuotaFija } = usePrestamos()
   const { clientes } = useClientes()
   const { movimientos, recargar: recargarMovs } = useMovimientosDelMes()
   const { cuotas, recargar: recargarCuotas } = useCuotasActivas()
@@ -126,6 +127,19 @@ export default function InicioPage() {
   async function onRegistrarCuotas(abono: number, metodo: string, soloInteres: boolean) {
     if (!pagoPrestamo) return false
     const { error } = await registrarPagoCuotas(pagoPrestamo.id, abono, metodo, soloInteres)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Pago registrado.')
+    recargarMovs()
+    recargarCuotas()
+    return true
+  }
+
+  async function onRegistrarCuotaFija(monto: number, metodo: string) {
+    if (!pagoPrestamo) return false
+    const { error } = await registrarPagoCuotaFija(pagoPrestamo.id, monto, metodo)
     if (error) {
       toast.error(error)
       return false
@@ -278,7 +292,15 @@ export default function InicioPage() {
         </div>
       </div>
 
-      {pagoPrestamo && pagoPrestamo.tipo === 'cuotas' ? (
+      {pagoPrestamo && pagoPrestamo.tipo === 'cuota_fija' ? (
+        <PagoCuotaFijaModal
+          open
+          prestamo={pagoPrestamo}
+          clienteNombre={nombreDe(pagoPrestamo)}
+          onClose={() => setPagoPrestamo(null)}
+          onRegistrar={onRegistrarCuotaFija}
+        />
+      ) : pagoPrestamo && pagoPrestamo.tipo === 'cuotas' ? (
         <PagoCuotasModal
           open
           prestamo={pagoPrestamo}

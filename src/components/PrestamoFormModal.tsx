@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import Modal from '@/components/Modal'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
-import { generarCronograma, type FrecuenciaCuota } from '@/lib/motor-prestamos'
-import type { PrestamoCuotasInput } from '@/hooks/usePrestamos'
+import {
+  generarCronograma,
+  generarCronogramaFijo,
+  resumenCuotaFija,
+  type FrecuenciaCuota,
+} from '@/lib/motor-prestamos'
+import type { PrestamoCuotasInput, PrestamoCuotaFijaInput } from '@/hooks/usePrestamos'
 import type { PrestamoInput } from '@/hooks/usePrestamos'
 import type { ModoInteres } from '@/lib/motor-prestamos'
 import type { Cliente } from '@/types/database.types'
@@ -11,6 +16,7 @@ const selectClass =
   'w-full h-[52px] rounded-xl border-[1.5px] border-line bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)]'
 
 const FRECUENCIAS: ReadonlyArray<{ valor: FrecuenciaCuota; label: string }> = [
+  { valor: 'diaria', label: 'Diaria' },
   { valor: 'semanal', label: 'Semanal' },
   { valor: 'quincenal', label: 'Quincenal' },
   { valor: 'mensual', label: 'Mensual' },
@@ -40,7 +46,8 @@ function fechasCronograma(fechaISO: string, frecuencia: FrecuenciaCuota, nCuotas
   const fechas: string[] = []
   for (let i = 1; i <= nCuotas; i++) {
     let f: Date
-    if (frecuencia === 'semanal') f = new Date(y, m - 1, d + i * 7)
+    if (frecuencia === 'diaria') f = new Date(y, m - 1, d + i)
+    else if (frecuencia === 'semanal') f = new Date(y, m - 1, d + i * 7)
     else if (frecuencia === 'quincenal') f = new Date(y, m - 1, d + i * 15)
     else f = sumarMeses(base, i)
     fechas.push(isoLocal(f))
@@ -48,7 +55,7 @@ function fechasCronograma(fechaISO: string, frecuencia: FrecuenciaCuota, nCuotas
   return fechas
 }
 
-type TipoPrestamo = 'abierto' | 'cuotas'
+type TipoPrestamo = 'abierto' | 'cuotas' | 'cuota_fija'
 
 export default function PrestamoFormModal({
   open,
@@ -56,12 +63,14 @@ export default function PrestamoFormModal({
   onClose,
   onGuardar,
   onGuardarCuotas,
+  onGuardarCuotaFija,
 }: {
   open: boolean
   clientes: Cliente[]
   onClose: () => void
   onGuardar: (input: PrestamoInput) => Promise<boolean>
   onGuardarCuotas: (input: PrestamoCuotasInput) => Promise<boolean>
+  onGuardarCuotaFija: (input: PrestamoCuotaFijaInput) => Promise<boolean>
 }) {
   const [tipo, setTipo] = useState<TipoPrestamo>('abierto')
   const [clienteId, setClienteId] = useState('')
@@ -70,6 +79,7 @@ export default function PrestamoFormModal({
   const [modo, setModo] = useState<ModoInteres>('sobre_saldo')
   const [frecuencia, setFrecuencia] = useState<FrecuenciaCuota>('mensual')
   const [nCuotas, setNCuotas] = useState('')
+  const [valorCuota, setValorCuota] = useState('')
   const [fecha, setFecha] = useState(hoyLocal())
   const [codeudorNombre, setCodeudorNombre] = useState('')
   const [codeudorTelefono, setCodeudorTelefono] = useState('')
@@ -86,6 +96,7 @@ export default function PrestamoFormModal({
     setModo('sobre_saldo')
     setFrecuencia('mensual')
     setNCuotas('')
+    setValorCuota('')
     setFecha(hoyLocal())
     setCodeudorNombre('')
     setCodeudorTelefono('')
@@ -97,6 +108,7 @@ export default function PrestamoFormModal({
   const capitalNum = Number(capital)
   const tasaNum = Number(tasa)
   const nNum = Number(nCuotas)
+  const valorNum = Number(valorCuota)
 
   // Previsualización del cronograma (solo tipo cuotas, con datos válidos).
   const preview = useMemo(() => {
@@ -112,16 +124,40 @@ export default function PrestamoFormModal({
 
   const totalPreview = preview ? preview.reduce((s, c) => s + c.capital + c.interes, 0) : 0
 
+  // Resumen en vivo de cuota fija: total (nº × valor) y ganancia (total − capital).
+  const resumenFija = useMemo(() => {
+    if (tipo !== 'cuota_fija') return null
+    if (Number.isNaN(capitalNum) || capitalNum <= 0) return null
+    if (!Number.isInteger(nNum) || nNum < 1) return null
+    if (Number.isNaN(valorNum) || valorNum <= 0) return null
+    return resumenCuotaFija(capitalNum, nNum, valorNum)
+  }, [tipo, capitalNum, nNum, valorNum])
+
+  // Previsualización del cronograma de cuota fija (nº, fecha de vencimiento, valor).
+  const previewFija = useMemo(() => {
+    if (tipo !== 'cuota_fija') return null
+    if (!Number.isInteger(nNum) || nNum < 1) return null
+    if (Number.isNaN(valorNum) || valorNum <= 0) return null
+    if (!fecha) return null
+    const cuotas = generarCronogramaFijo(nNum, valorNum)
+    const fechas = fechasCronograma(fecha, frecuencia, nNum)
+    return cuotas.map((c, i) => ({ ...c, fecha: fechas[i] }))
+  }, [tipo, nNum, valorNum, frecuencia, fecha])
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const nuevos: Record<string, string> = {}
     if (!clienteId) nuevos.cliente = 'Selecciona un cliente.'
     if (!capital || Number.isNaN(capitalNum) || capitalNum <= 0)
       nuevos.capital = 'Ingresa un capital mayor a cero.'
-    if (tasa === '' || Number.isNaN(tasaNum) || tasaNum < 0) nuevos.tasa = 'Ingresa una tasa válida.'
+    // La tasa solo aplica a 'abierto' y 'cuotas'; 'cuota_fija' no tiene tasa.
+    if (tipo !== 'cuota_fija' && (tasa === '' || Number.isNaN(tasaNum) || tasaNum < 0))
+      nuevos.tasa = 'Ingresa una tasa válida.'
     if (!fecha) nuevos.fecha = 'Selecciona la fecha de desembolso.'
-    if (tipo === 'cuotas' && (!Number.isInteger(nNum) || nNum < 1))
+    if ((tipo === 'cuotas' || tipo === 'cuota_fija') && (!Number.isInteger(nNum) || nNum < 1))
       nuevos.nCuotas = 'Ingresa un número de cuotas válido.'
+    if (tipo === 'cuota_fija' && (!valorCuota || Number.isNaN(valorNum) || valorNum <= 0))
+      nuevos.valorCuota = 'Ingresa el valor de la cuota.'
 
     // Codeudor opcional: si llenaron algún dato, el nombre es obligatorio.
     const codNombre = codeudorNombre.trim()
@@ -151,6 +187,16 @@ export default function PrestamoFormModal({
         tasa_mensual: tasaNum / 100,
         frecuencia,
         n_cuotas: nNum,
+        fecha_desembolso: fecha,
+        ...codeudor,
+      })
+    } else if (tipo === 'cuota_fija') {
+      ok = await onGuardarCuotaFija({
+        cliente_id: clienteId,
+        capital_inicial: capitalNum,
+        frecuencia,
+        n_cuotas: nNum,
+        valor_cuota: valorNum,
         fecha_desembolso: fecha,
         ...codeudor,
       })
@@ -201,7 +247,7 @@ export default function PrestamoFormModal({
           <div className="flex flex-col gap-2">
             <span className="text-[13px] font-semibold text-text-2">Tipo de préstamo</span>
             <div className="flex gap-2">
-              {(['abierto', 'cuotas'] as const).map((t) => (
+              {(['abierto', 'cuotas', 'cuota_fija'] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -212,14 +258,16 @@ export default function PrestamoFormModal({
                       : 'border-line bg-card text-text-2 hover:bg-bg'
                   }`}
                 >
-                  {t === 'abierto' ? 'Abierto' : 'Cuotas'}
+                  {t === 'abierto' ? 'Abierto' : t === 'cuotas' ? 'Cuotas' : 'Cuota fija'}
                 </button>
               ))}
             </div>
             <p className="text-xs text-muted">
               {tipo === 'abierto'
                 ? 'Interés mensual sobre saldo, con pago flexible.'
-                : 'Cronograma fijo de cuotas con interés pactado.'}
+                : tipo === 'cuotas'
+                  ? 'Cronograma fijo de cuotas con interés pactado.'
+                  : 'Cuotas de monto fijo; sin tasa ni interés aparte.'}
             </p>
           </div>
 
@@ -263,26 +311,29 @@ export default function PrestamoFormModal({
             {errores.capital && <p className="text-xs font-semibold text-red">{errores.capital}</p>}
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label htmlFor="pr-tasa" className="text-[13px] font-semibold text-text-2">
-              Tasa mensual (%) <span className="text-red">*</span>
-            </label>
-            <input
-              id="pr-tasa"
-              className="input"
-              type="number"
-              min="0"
-              step="0.01"
-              inputMode="decimal"
-              placeholder="10"
-              value={tasa}
-              onChange={(e) => setTasa(e.target.value)}
-            />
-            {errores.tasa && <p className="text-xs font-semibold text-red">{errores.tasa}</p>}
-          </div>
+          {/* La tasa no aplica a 'cuota_fija' (no hay interés por tiempo). */}
+          {tipo !== 'cuota_fija' && (
+            <div className="flex flex-col gap-2">
+              <label htmlFor="pr-tasa" className="text-[13px] font-semibold text-text-2">
+                Tasa mensual (%) <span className="text-red">*</span>
+              </label>
+              <input
+                id="pr-tasa"
+                className="input"
+                type="number"
+                min="0"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="10"
+                value={tasa}
+                onChange={(e) => setTasa(e.target.value)}
+              />
+              {errores.tasa && <p className="text-xs font-semibold text-red">{errores.tasa}</p>}
+            </div>
+          )}
 
           {/* Campos exclusivos de cada tipo */}
-          {tipo === 'abierto' ? (
+          {tipo === 'abierto' && (
             <div className="flex flex-col gap-2">
               <span className="text-[13px] font-semibold text-text-2">Modo de interés</span>
               <label className="flex items-center gap-2.5 text-sm font-medium text-text">
@@ -306,45 +357,97 @@ export default function PrestamoFormModal({
                 Fijo sobre el monto prestado <span className="text-muted">— interés fijo</span>
               </label>
             </div>
-          ) : (
-            <div className="flex gap-3">
-              <div className="flex flex-1 flex-col gap-2">
-                <label htmlFor="pr-frec" className="text-[13px] font-semibold text-text-2">
-                  Frecuencia
-                </label>
-                <select
-                  id="pr-frec"
-                  className={selectClass}
-                  value={frecuencia}
-                  onChange={(e) => setFrecuencia(e.target.value as FrecuenciaCuota)}
-                >
-                  {FRECUENCIAS.map((f) => (
-                    <option key={f.valor} value={f.valor}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
+          )}
+
+          {(tipo === 'cuotas' || tipo === 'cuota_fija') && (
+            <>
+              <div className="flex gap-3">
+                <div className="flex flex-1 flex-col gap-2">
+                  <label htmlFor="pr-frec" className="text-[13px] font-semibold text-text-2">
+                    Frecuencia
+                  </label>
+                  <select
+                    id="pr-frec"
+                    className={selectClass}
+                    value={frecuencia}
+                    onChange={(e) => setFrecuencia(e.target.value as FrecuenciaCuota)}
+                  >
+                    {FRECUENCIAS.map((f) => (
+                      <option key={f.valor} value={f.valor}>
+                        {f.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex w-[120px] flex-col gap-2">
+                  <label htmlFor="pr-ncuotas" className="text-[13px] font-semibold text-text-2">
+                    N.º cuotas <span className="text-red">*</span>
+                  </label>
+                  <input
+                    id="pr-ncuotas"
+                    className="input"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputMode="numeric"
+                    placeholder="4"
+                    value={nCuotas}
+                    onChange={(e) => setNCuotas(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="flex w-[120px] flex-col gap-2">
-                <label htmlFor="pr-ncuotas" className="text-[13px] font-semibold text-text-2">
-                  N.º cuotas <span className="text-red">*</span>
-                </label>
-                <input
-                  id="pr-ncuotas"
-                  className="input"
-                  type="number"
-                  min="1"
-                  step="1"
-                  inputMode="numeric"
-                  placeholder="4"
-                  value={nCuotas}
-                  onChange={(e) => setNCuotas(e.target.value)}
-                />
-              </div>
+              {errores.nCuotas && (
+                <p className="text-xs font-semibold text-red">{errores.nCuotas}</p>
+              )}
+            </>
+          )}
+
+          {tipo === 'cuota_fija' && (
+            <div className="flex flex-col gap-2">
+              <label htmlFor="pr-valor" className="text-[13px] font-semibold text-text-2">
+                Valor de la cuota <span className="text-red">*</span>
+              </label>
+              <input
+                id="pr-valor"
+                className="input"
+                type="number"
+                min="1"
+                inputMode="numeric"
+                placeholder="10000"
+                value={valorCuota}
+                onChange={(e) => setValorCuota(e.target.value)}
+              />
+              {valorCuota !== '' && !Number.isNaN(valorNum) && valorNum > 0 && (
+                <p className="mono text-xs font-semibold text-text-2">{fmtCOP(valorNum)}</p>
+              )}
+              {errores.valorCuota && (
+                <p className="text-xs font-semibold text-red">{errores.valorCuota}</p>
+              )}
             </div>
           )}
-          {tipo === 'cuotas' && errores.nCuotas && (
-            <p className="text-xs font-semibold text-red">{errores.nCuotas}</p>
+
+          {/* Resumen en vivo de cuota fija: total y ganancia, con alerta si es negativa */}
+          {resumenFija && (
+            <div className="flex flex-col gap-2 rounded-xl border border-line bg-bg p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-text-2">Total a cobrar</span>
+                <span className="mono font-bold text-text">{fmtCOP(resumenFija.total)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-text-2">Ganancia</span>
+                <span
+                  className={`mono font-bold ${resumenFija.ganancia < 0 ? 'text-red' : 'text-green-700'}`}
+                >
+                  {fmtCOP(resumenFija.ganancia)}
+                </span>
+              </div>
+              {resumenFija.ganancia < 0 && (
+                <p className="rounded-lg bg-red-tint px-3 py-2 text-xs font-semibold text-red">
+                  El total a cobrar es menor que el capital prestado. Puedes continuar, pero revisa
+                  el valor de la cuota.
+                </p>
+              )}
+            </div>
           )}
 
           <div className="flex flex-col gap-2">
@@ -421,6 +524,36 @@ export default function PrestamoFormModal({
                         <td className="mono whitespace-nowrap px-2 py-1.5 text-right text-text">{fmtCOP(c.capital)}</td>
                         <td className="mono whitespace-nowrap px-2 py-1.5 text-right text-text">{fmtCOP(c.interes)}</td>
                         <td className="mono whitespace-nowrap px-2 py-1.5 text-right font-bold text-text">{fmtCOP(c.capital + c.interes)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Previsualización del cronograma (tipo cuota fija) */}
+          {previewFija && (
+            <div className="flex flex-col gap-2">
+              <span className="text-[13px] font-semibold text-text-2">
+                Cronograma ({previewFija.length} cuotas · total{' '}
+                {fmtCOP(previewFija.reduce((s, c) => s + c.valor, 0))})
+              </span>
+              <div className="max-h-56 overflow-auto rounded-xl border border-line">
+                <table className="w-full text-xs">
+                  <thead className="sticky top-0 bg-bg">
+                    <tr className="text-left text-muted">
+                      <th className="px-2 py-1.5 font-semibold">#</th>
+                      <th className="px-2 py-1.5 font-semibold">Vence</th>
+                      <th className="px-2 py-1.5 text-right font-semibold">Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {previewFija.map((c) => (
+                      <tr key={c.numero} className="border-t border-line-soft">
+                        <td className="px-2 py-1.5 text-text-2">{c.numero}</td>
+                        <td className="whitespace-nowrap px-2 py-1.5 text-text-2">{fmtFecha(c.fecha)}</td>
+                        <td className="mono whitespace-nowrap px-2 py-1.5 text-right font-bold text-text">{fmtCOP(c.valor)}</td>
                       </tr>
                     ))}
                   </tbody>

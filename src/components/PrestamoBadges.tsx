@@ -27,8 +27,10 @@ export function ModoBadge({ modo }: { modo: string }) {
   return <span className="badge bg-bg text-text-2">{label}</span>
 }
 
-/** Badge según el tipo de préstamo: "Cuotas" si es de cuotas, si no el modo de interés. */
+/** Badge según el tipo de préstamo: "Cuotas"/"Cuota fija" si aplica, si no el modo de interés. */
 export function TipoOModoBadge({ tipo, modo }: { tipo: string; modo: string }) {
   if (tipo === 'cuotas') return <span className="badge bg-green-tint text-green-700">Cuotas</span>
+  if (tipo === 'cuota_fija')
+    return <span className="badge bg-green-tint text-green-700">Cuota fija</span>
   return <ModoBadge modo={modo} />
 }
