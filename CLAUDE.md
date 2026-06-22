@@ -51,7 +51,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
   - **Opción de fondo (estructurada):** columna `numero`/`cuota_id` en `movimientos` (o no vaciar la cuota). Es lo correcto a largo plazo.
   - **Opción intermedia (barata, trazabilidad legible):** que `registrar_pago_cuotas` escriba en `movimientos.nota` el/los número(s) de cuota afectados — da trazabilidad por cuota tocando solo la RPC, sin migración de esquema. Advertencia honesta: `nota` es texto libre, así que es trazabilidad para LEER, no para consultar/calcular de forma estructurada (si mañana hay que calcular algo por cuota, un texto no sirve como un `cuota_id` real). Buen puente barato; NO reemplaza la opción de fondo.
 - [ ] El préstamo de cuotas no guarda `frecuencia` ni el `nCuotas` original, así que el cronograma no es reconstruible vía generarCronograma una vez hay pagos (sobre todo con solo-interés, que agrega cuotas). Considerar persistir frecuencia/nCuotas.
-- [ ] Conectar el CLI de Supabase: link + migration repair (las migraciones están aplicadas a mano, el historial del CLI está vacío) + regenerar database.types.ts real. Hoy los tipos están escritos a mano (riesgo de desincronización con la BD).
+- [x] HECHO (2026-06-21): CLI de Supabase conectado. El proyecto está vinculado (link), se corrió el migration repair (las 21 migraciones figuran como aplicadas en el remoto del CLI) y los tipos se regeneran desde el esquema real con `gen types`. Los alias (Cliente, Prestamo, Movimiento, CuotaDB, Configuracion) se DERIVAN de `Database` en src/types/db.ts, no se escriben a mano. Flujo en "Aprendizajes".
 - [ ] Doble fuente de fórmulas (deuda estructural conocida): la lógica de cálculo vive en motor-prestamos.ts (TS) y replicada en SQL en varias RPC/funciones (devengar_intereses, marcar_mora, crear_prestamo_cuotas, registrar_pago_cuotas, marcar_cuotas_vencidas). Cada una lleva comentario apuntando al motor como referencia. Si una fórmula cambia, hay que tocar ambos lados. No hay test que detecte la desincronización; vive en la disciplina.
 - [ ] (prioridad media-alta) Test de integración de las RPC/funciones SQL contra una BD de prueba, comparando su resultado con el motor (motor-prestamos.ts). Es lo único que cazaría la desincronización de la doble fuente de fórmulas; hoy "vive en la disciplina" (= nadie la vigila). Es trabajo real (montar BD de prueba, sembrar datos, correr las RPC, comparar con el motor). Prioridad media-alta porque cada RPC nueva que se replica del motor aumenta la superficie donde algo puede divergir sin que nadie note, hasta que un cliente reclama.
 
@@ -83,13 +83,20 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 - NO ASUMIR, CONFIRMAR CONTRA LA BD. Varias veces un "esto debería dar X" no coincidió con lo que la base tenía: el préstamo en modo fijo que daba un "tercio" (era capital_inicial 300k, no un bug), el devengo, el interés del primer periodo. La regla: ante un número raro, mirar el dato real (information_schema, pg_proc, select directo), no teorizar. El bug casi nunca está donde la primera hipótesis dice.
 
-- LAS MIGRACIONES SE APLICAN A MANO Y EL CÓDIGO LAS ASUME. Antes de probar una fase, confirmar qué migraciones están realmente aplicadas (la consulta de diagnóstico con information_schema/pg_proc). Aplicar en ORDEN estricto; cada una asume la anterior.
+- FLUJO DE MIGRACIONES Y TIPOS (CLI conectado). El CLI de Supabase está vinculado al proyecto.
+  - Migraciones nuevas: aplicar con `npx supabase db push` (ya NO copiar-pegar en el SQL Editor a mano). En ORDEN; cada una asume la anterior.
+  - Tras un cambio de esquema, regenerar tipos: `npx supabase gen types typescript --linked > src/types/database.types.ts`. Los alias de src/types/db.ts se actualizan solos (derivan de `Database`); no editar a mano database.types.ts ni los alias.
+  - Verificar con `npm run build` (NO `tsc --noEmit`: su caché incremental puede dejar pasar errores que el build limpio sí atrapa — lección del deploy; ver abajo).
 
 - MIGRACIONES NUEVAS, NO EDITAR LAS APLICADAS. Una migración ya aplicada no se reescribe; los cambios van en una nueva con create or replace. Mantiene la cadena íntegra.
 
 - FUNCIONES SECURITY DEFINER → REVOKE EXECUTE. Postgres concede EXECUTE a PUBLIC por defecto, así que toda función de mantenimiento (devengo, moras) quedaría invocable por cualquier usuario vía PostgREST si no se hace `revoke execute ... from public, anon, authenticated`. Hacerlo en la misma migración que crea la función.
 
 - tsc + npm test NO prueban las RPC/funciones SQL. Las 12 pruebas cubren el motor (TS). Toda la lógica que vive en SQL (RPC de pago, devengo, mora) solo se verifica con datos reales contra la BD. "Compila y pasa los tests" ≠ "el comportamiento es correcto".
+
+- EL CHEQUEO REAL ES `npm run build`, NO `tsc --noEmit`. `tsc --noEmit` usa caché incremental (.tsbuildinfo) y puede pasar mientras el build de producción (`tsc -b && vite build`, lo que corre Vercel) falla. Le pasó al release de cuota_fija: un bloque `Returns` de RPC en database.types.ts quedó sin `valor_cuota` y `tsc --noEmit` lo dejó pasar, pero `tsc -b` rompió el deploy. Antes de mergear a `main` / desplegar, correr `npm run build`.
+
+- AL CAMBIAR EL ESQUEMA, REGENERAR LOS TIPOS (no editar database.types.ts a mano). Cuando los tipos eran a mano, cada RPC que retorna `prestamos` duplicaba el shape de la fila; agregar una columna al `Row` sin tocar esos `Returns` rompía el build donde se asigna ese `data` a un `Prestamo` (le pasó a `valor_cuota` en el deploy). Ahora `gen types` produce los `Returns` correctos solos: tras un cambio de esquema, regenerar (ver el flujo arriba) en vez de tocar el archivo o los alias derivados.
 
 - VERIFICAR CADA CASO EN UN PRÉSTAMO LIMPIO. Encadenar muchas operaciones sobre el mismo préstamo mezcla efectos y hace imposible atribuir un número a una operación. Un préstamo por caso (abono de más / solo-interés / mora), cada cifra atribuible.
 

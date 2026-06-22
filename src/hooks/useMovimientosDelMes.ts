@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { primerDiaDelMes } from '@/lib/cartera'
-import type { Movimiento } from '@/types/database.types'
+import type { Movimiento } from '@/types/db'
 
 /**
  * Movimientos del mes en curso (todos los del usuario, vía RLS). Sirve para

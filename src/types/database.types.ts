@@ -1,450 +1,596 @@
-// TODO(fase-05): regenerar con el CLI de Supabase (supabase gen types) en vez de
-// mantenerlo a mano; si una migración cambia el esquema y no se actualiza aquí,
-// el tipo y la base se desincronizan en silencio.
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
-// Tipos de la base de datos de G-Quota.
-// Escritos a mano según supabase/migrations/001_schema_inicial.sql con la misma
-// forma que genera `supabase gen types typescript`. Cuando haya acceso al CLI,
-// regenerar este archivo para mantenerlo 100% fiel al esquema.
-
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
-
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
-      configuracion: {
-        Row: {
-          id: string
-          user_id: string
-          nombre_negocio: string | null
-          metodos_pago: string[]
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          nombre_negocio?: string | null
-          metodos_pago?: string[]
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          nombre_negocio?: string | null
-          metodos_pago?: string[]
-          created_at?: string
-        }
-        Relationships: []
-      }
       clientes: {
         Row: {
-          id: string
-          user_id: string
-          nombre: string
-          documento: string | null
-          telefono: string | null
-          direccion: string | null
-          notas: string | null
           created_at: string
+          direccion: string | null
+          documento: string | null
+          id: string
+          nombre: string
+          notas: string | null
+          telefono: string | null
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          nombre: string
-          documento?: string | null
-          telefono?: string | null
-          direccion?: string | null
-          notas?: string | null
           created_at?: string
+          direccion?: string | null
+          documento?: string | null
+          id?: string
+          nombre: string
+          notas?: string | null
+          telefono?: string | null
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          nombre?: string
-          documento?: string | null
-          telefono?: string | null
-          direccion?: string | null
-          notas?: string | null
           created_at?: string
+          direccion?: string | null
+          documento?: string | null
+          id?: string
+          nombre?: string
+          notas?: string | null
+          telefono?: string | null
+          user_id?: string
         }
         Relationships: []
       }
-      prestamos: {
+      configuracion: {
         Row: {
-          id: string
-          user_id: string
-          cliente_id: string
-          capital_inicial: number
-          saldo_capital: number
-          interes_pendiente: number
-          tasa_mensual: number
-          modo_interes: string
-          fecha_desembolso: string
-          dia_cobro: number | null
-          estado: string
-          tipo: string
-          valor_cuota: number | null
-          notas: string | null
-          codeudor_nombre: string | null
-          codeudor_telefono: string | null
-          codeudor_documento: string | null
-          ultimo_devengo: string | null
           created_at: string
+          id: string
+          metodos_pago: string[]
+          nombre_negocio: string | null
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          cliente_id: string
-          capital_inicial: number
-          saldo_capital: number
-          interes_pendiente?: number
-          tasa_mensual: number
-          modo_interes?: string
-          fecha_desembolso: string
-          dia_cobro?: number | null
-          estado?: string
-          tipo?: string
-          valor_cuota?: number | null
-          notas?: string | null
-          codeudor_nombre?: string | null
-          codeudor_telefono?: string | null
-          codeudor_documento?: string | null
-          ultimo_devengo?: string | null
           created_at?: string
+          id?: string
+          metodos_pago?: string[]
+          nombre_negocio?: string | null
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          cliente_id?: string
-          capital_inicial?: number
-          saldo_capital?: number
-          interes_pendiente?: number
-          tasa_mensual?: number
-          modo_interes?: string
-          fecha_desembolso?: string
-          dia_cobro?: number | null
-          estado?: string
-          tipo?: string
-          valor_cuota?: number | null
-          notas?: string | null
-          codeudor_nombre?: string | null
-          codeudor_telefono?: string | null
-          codeudor_documento?: string | null
-          ultimo_devengo?: string | null
           created_at?: string
+          id?: string
+          metodos_pago?: string[]
+          nombre_negocio?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cuotas: {
+        Row: {
+          abonado: number
+          capital: number
+          created_at: string
+          estado: string
+          fecha_vence: string
+          id: string
+          interes: number
+          numero: number
+          prestamo_id: string
+          user_id: string
+        }
+        Insert: {
+          abonado?: number
+          capital: number
+          created_at?: string
+          estado?: string
+          fecha_vence: string
+          id?: string
+          interes: number
+          numero: number
+          prestamo_id: string
+          user_id: string
+        }
+        Update: {
+          abonado?: number
+          capital?: number
+          created_at?: string
+          estado?: string
+          fecha_vence?: string
+          id?: string
+          interes?: number
+          numero?: number
+          prestamo_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'prestamos_cliente_id_fkey'
-            columns: ['cliente_id']
-            referencedRelation: 'clientes'
-            referencedColumns: ['id']
+            foreignKeyName: "cuotas_prestamo_id_fkey"
+            columns: ["prestamo_id"]
+            isOneToOne: false
+            referencedRelation: "prestamos"
+            referencedColumns: ["id"]
           },
         ]
       }
       movimientos: {
         Row: {
-          id: string
-          user_id: string
-          prestamo_id: string
+          created_at: string
           fecha: string
-          tipo: string
-          monto_total: number
-          monto_interes: number
+          id: string
+          metodo_pago: string | null
           monto_capital: number
+          monto_interes: number
+          monto_total: number
+          nota: string | null
+          prestamo_id: string
           saldo_anterior: number
           saldo_posterior: number
-          metodo_pago: string | null
-          nota: string | null
-          created_at: string
+          tipo: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          prestamo_id: string
+          created_at?: string
           fecha?: string
-          tipo: string
-          monto_total: number
-          monto_interes?: number
+          id?: string
+          metodo_pago?: string | null
           monto_capital?: number
+          monto_interes?: number
+          monto_total: number
+          nota?: string | null
+          prestamo_id: string
           saldo_anterior: number
           saldo_posterior: number
-          metodo_pago?: string | null
-          nota?: string | null
-          created_at?: string
+          tipo: string
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          prestamo_id?: string
+          created_at?: string
           fecha?: string
-          tipo?: string
-          monto_total?: number
-          monto_interes?: number
+          id?: string
+          metodo_pago?: string | null
           monto_capital?: number
+          monto_interes?: number
+          monto_total?: number
+          nota?: string | null
+          prestamo_id?: string
           saldo_anterior?: number
           saldo_posterior?: number
-          metodo_pago?: string | null
-          nota?: string | null
-          created_at?: string
+          tipo?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'movimientos_prestamo_id_fkey'
-            columns: ['prestamo_id']
-            referencedRelation: 'prestamos'
-            referencedColumns: ['id']
+            foreignKeyName: "movimientos_prestamo_id_fkey"
+            columns: ["prestamo_id"]
+            isOneToOne: false
+            referencedRelation: "prestamos"
+            referencedColumns: ["id"]
           },
         ]
       }
-      cuotas: {
+      prestamos: {
         Row: {
-          id: string
-          user_id: string
-          prestamo_id: string
-          numero: number
-          fecha_vence: string
-          capital: number
-          interes: number
-          abonado: number
-          estado: string
+          capital_inicial: number
+          cliente_id: string
+          codeudor_documento: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
           created_at: string
+          dia_cobro: number | null
+          estado: string
+          fecha_desembolso: string
+          id: string
+          interes_pendiente: number
+          modo_interes: string
+          notas: string | null
+          saldo_capital: number
+          tasa_mensual: number
+          tipo: string
+          ultimo_devengo: string | null
+          user_id: string
+          valor_cuota: number | null
         }
         Insert: {
-          id?: string
-          user_id: string
-          prestamo_id: string
-          numero: number
-          fecha_vence: string
-          capital: number
-          interes: number
-          abonado?: number
-          estado?: string
+          capital_inicial: number
+          cliente_id: string
+          codeudor_documento?: string | null
+          codeudor_nombre?: string | null
+          codeudor_telefono?: string | null
           created_at?: string
+          dia_cobro?: number | null
+          estado?: string
+          fecha_desembolso: string
+          id?: string
+          interes_pendiente?: number
+          modo_interes?: string
+          notas?: string | null
+          saldo_capital: number
+          tasa_mensual: number
+          tipo?: string
+          ultimo_devengo?: string | null
+          user_id: string
+          valor_cuota?: number | null
         }
         Update: {
-          id?: string
-          user_id?: string
-          prestamo_id?: string
-          numero?: number
-          fecha_vence?: string
-          capital?: number
-          interes?: number
-          abonado?: number
-          estado?: string
+          capital_inicial?: number
+          cliente_id?: string
+          codeudor_documento?: string | null
+          codeudor_nombre?: string | null
+          codeudor_telefono?: string | null
           created_at?: string
+          dia_cobro?: number | null
+          estado?: string
+          fecha_desembolso?: string
+          id?: string
+          interes_pendiente?: number
+          modo_interes?: string
+          notas?: string | null
+          saldo_capital?: number
+          tasa_mensual?: number
+          tipo?: string
+          ultimo_devengo?: string | null
+          user_id?: string
+          valor_cuota?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: 'cuotas_prestamo_id_fkey'
-            columns: ['prestamo_id']
-            referencedRelation: 'prestamos'
-            referencedColumns: ['id']
+            foreignKeyName: "prestamos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
           },
         ]
       }
     }
-    Views: Record<string, never>
+    Views: {
+      [_ in never]: never
+    }
     Functions: {
       crear_prestamo: {
         Args: {
-          p_cliente_id: string
           p_capital: number
-          p_tasa_mensual: number
+          p_cliente_id: string
+          p_codeudor_documento?: string
+          p_codeudor_nombre?: string
+          p_codeudor_telefono?: string
+          p_fecha_desembolso: string
           p_modo_interes: string
-          p_fecha_desembolso: string
-          p_codeudor_nombre?: string | null
-          p_codeudor_telefono?: string | null
-          p_codeudor_documento?: string | null
-        }
-        Returns: {
-          id: string
-          user_id: string
-          cliente_id: string
-          capital_inicial: number
-          saldo_capital: number
-          interes_pendiente: number
-          tasa_mensual: number
-          modo_interes: string
-          fecha_desembolso: string
-          dia_cobro: number | null
-          estado: string
-          tipo: string
-          valor_cuota: number | null
-          notas: string | null
-          codeudor_nombre: string | null
-          codeudor_telefono: string | null
-          codeudor_documento: string | null
-          ultimo_devengo: string | null
-          created_at: string
-        }
-      }
-      crear_prestamo_cuotas: {
-        Args: {
-          p_cliente_id: string
-          p_capital: number
           p_tasa_mensual: number
-          p_frecuencia: string
-          p_n_cuotas: number
-          p_fecha_desembolso: string
-          p_codeudor_nombre?: string | null
-          p_codeudor_telefono?: string | null
-          p_codeudor_documento?: string | null
         }
         Returns: {
-          id: string
-          user_id: string
-          cliente_id: string
           capital_inicial: number
-          saldo_capital: number
-          interes_pendiente: number
-          tasa_mensual: number
-          modo_interes: string
-          fecha_desembolso: string
-          dia_cobro: number | null
-          estado: string
-          tipo: string
-          valor_cuota: number | null
-          notas: string | null
+          cliente_id: string
+          codeudor_documento: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
-          codeudor_documento: string | null
+          created_at: string
+          dia_cobro: number | null
+          estado: string
+          fecha_desembolso: string
+          id: string
+          interes_pendiente: number
+          modo_interes: string
+          notas: string | null
+          saldo_capital: number
+          tasa_mensual: number
+          tipo: string
           ultimo_devengo: string | null
-          created_at: string
-        }
-      }
-      registrar_pago: {
-        Args: {
-          p_prestamo_id: string
-          p_monto: number
-          p_metodo_pago: string
-          p_tipo: string
-          p_monto_interes: number
-          p_monto_capital: number
-          p_saldo_anterior: number
-          p_saldo_posterior: number
-          p_interes_pendiente_restante: number
-        }
-        Returns: {
-          id: string
           user_id: string
-          prestamo_id: string
-          fecha: string
-          tipo: string
-          monto_total: number
-          monto_interes: number
-          monto_capital: number
-          saldo_anterior: number
-          saldo_posterior: number
-          metodo_pago: string | null
-          nota: string | null
-          created_at: string
+          valor_cuota: number | null
         }
-      }
-      registrar_pago_cuotas: {
-        Args: {
-          p_prestamo_id: string
-          p_abono: number
-          p_metodo_pago: string
-          p_solo_interes: boolean
-        }
-        Returns: {
-          id: string
-          user_id: string
-          prestamo_id: string
-          fecha: string
-          tipo: string
-          monto_total: number
-          monto_interes: number
-          monto_capital: number
-          saldo_anterior: number
-          saldo_posterior: number
-          metodo_pago: string | null
-          nota: string | null
-          created_at: string
+        SetofOptions: {
+          from: "*"
+          to: "prestamos"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
       crear_prestamo_cuota_fija: {
         Args: {
-          p_cliente_id: string
           p_capital: number
+          p_cliente_id: string
+          p_codeudor_documento?: string
+          p_codeudor_nombre?: string
+          p_codeudor_telefono?: string
+          p_fecha_desembolso: string
           p_frecuencia: string
           p_n_cuotas: number
           p_valor_cuota: number
-          p_fecha_desembolso: string
-          p_codeudor_nombre?: string | null
-          p_codeudor_telefono?: string | null
-          p_codeudor_documento?: string | null
         }
         Returns: {
-          id: string
-          user_id: string
-          cliente_id: string
           capital_inicial: number
-          saldo_capital: number
-          interes_pendiente: number
-          tasa_mensual: number
-          modo_interes: string
-          fecha_desembolso: string
-          dia_cobro: number | null
-          estado: string
-          tipo: string
-          valor_cuota: number | null
-          notas: string | null
+          cliente_id: string
+          codeudor_documento: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
-          codeudor_documento: string | null
-          ultimo_devengo: string | null
           created_at: string
+          dia_cobro: number | null
+          estado: string
+          fecha_desembolso: string
+          id: string
+          interes_pendiente: number
+          modo_interes: string
+          notas: string | null
+          saldo_capital: number
+          tasa_mensual: number
+          tipo: string
+          ultimo_devengo: string | null
+          user_id: string
+          valor_cuota: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "prestamos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      crear_prestamo_cuotas: {
+        Args: {
+          p_capital: number
+          p_cliente_id: string
+          p_codeudor_documento?: string
+          p_codeudor_nombre?: string
+          p_codeudor_telefono?: string
+          p_fecha_desembolso: string
+          p_frecuencia: string
+          p_n_cuotas: number
+          p_tasa_mensual: number
+        }
+        Returns: {
+          capital_inicial: number
+          cliente_id: string
+          codeudor_documento: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          created_at: string
+          dia_cobro: number | null
+          estado: string
+          fecha_desembolso: string
+          id: string
+          interes_pendiente: number
+          modo_interes: string
+          notas: string | null
+          saldo_capital: number
+          tasa_mensual: number
+          tipo: string
+          ultimo_devengo: string | null
+          user_id: string
+          valor_cuota: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "prestamos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      devengar_intereses: { Args: never; Returns: number }
+      marcar_cuotas_vencidas: { Args: never; Returns: number }
+      marcar_mora: { Args: never; Returns: number }
+      registrar_pago: {
+        Args: {
+          p_interes_pendiente_restante: number
+          p_metodo_pago: string
+          p_monto: number
+          p_monto_capital: number
+          p_monto_interes: number
+          p_prestamo_id: string
+          p_saldo_anterior: number
+          p_saldo_posterior: number
+          p_tipo: string
+        }
+        Returns: {
+          created_at: string
+          fecha: string
+          id: string
+          metodo_pago: string | null
+          monto_capital: number
+          monto_interes: number
+          monto_total: number
+          nota: string | null
+          prestamo_id: string
+          saldo_anterior: number
+          saldo_posterior: number
+          tipo: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "movimientos"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
       registrar_pago_cuota_fija: {
-        Args: {
-          p_prestamo_id: string
-          p_monto: number
-          p_metodo_pago: string
-        }
+        Args: { p_metodo_pago: string; p_monto: number; p_prestamo_id: string }
         Returns: {
-          id: string
-          user_id: string
-          prestamo_id: string
+          created_at: string
           fecha: string
-          tipo: string
-          monto_total: number
-          monto_interes: number
+          id: string
+          metodo_pago: string | null
           monto_capital: number
+          monto_interes: number
+          monto_total: number
+          nota: string | null
+          prestamo_id: string
           saldo_anterior: number
           saldo_posterior: number
-          metodo_pago: string | null
-          nota: string | null
-          created_at: string
+          tipo: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "movimientos"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
-      devengar_intereses: {
-        Args: Record<string, never>
-        Returns: number
-      }
-      marcar_mora: {
-        Args: Record<string, never>
-        Returns: number
-      }
-      marcar_cuotas_vencidas: {
-        Args: Record<string, never>
-        Returns: number
+      registrar_pago_cuotas: {
+        Args: {
+          p_abono: number
+          p_metodo_pago: string
+          p_prestamo_id: string
+          p_solo_interes: boolean
+        }
+        Returns: {
+          created_at: string
+          fecha: string
+          id: string
+          metodo_pago: string | null
+          monto_capital: number
+          monto_interes: number
+          monto_total: number
+          nota: string | null
+          prestamo_id: string
+          saldo_anterior: number
+          saldo_posterior: number
+          tipo: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "movimientos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
-    Enums: Record<string, never>
-    CompositeTypes: Record<string, never>
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
 }
 
-// ── Alias de conveniencia ──
-export type Cliente = Database['public']['Tables']['clientes']['Row']
-export type ClienteInsert = Database['public']['Tables']['clientes']['Insert']
-export type ClienteUpdate = Database['public']['Tables']['clientes']['Update']
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-export type Prestamo = Database['public']['Tables']['prestamos']['Row']
-export type Movimiento = Database['public']['Tables']['movimientos']['Row']
-export type Configuracion = Database['public']['Tables']['configuracion']['Row']
-// Fila de la tabla cuotas (distinta del tipo Cuota del motor, que es lógica pura).
-export type CuotaDB = Database['public']['Tables']['cuotas']['Row']
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const

@@ -11,7 +11,7 @@ import PagoCuotaFijaModal from '@/components/PagoCuotaFijaModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { ResultadoPago } from '@/lib/motor-prestamos'
-import type { Cliente, Prestamo } from '@/types/database.types'
+import type { Cliente, Prestamo } from '@/types/db'
 
 export interface PrestamosOutletContext {
   prestamos: Prestamo[]

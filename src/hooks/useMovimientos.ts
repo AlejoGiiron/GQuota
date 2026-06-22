@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { Movimiento } from '@/types/database.types'
+import type { Movimiento } from '@/types/db'
 
 /**
  * Movimientos (ledger) de un préstamo, más reciente primero.

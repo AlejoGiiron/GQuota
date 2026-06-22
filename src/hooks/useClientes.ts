@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Cliente } from '@/types/database.types'
+import type { Cliente } from '@/types/db'
 
 /** Campos editables de un cliente (lo que captura el formulario). */
 export interface ClienteInput {
