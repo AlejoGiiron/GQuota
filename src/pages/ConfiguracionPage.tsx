@@ -5,21 +5,21 @@ import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 
 export default function ConfiguracionPage() {
   const { user, signOut } = useAuth()
-  const { configuracion, loading, guardar } = useConfiguracion()
+  const { negocio, loading, guardar } = useConfiguracion()
 
   const [nombre, setNombre] = useState('')
   const [metodos, setMetodos] = useState<string[]>([])
   const [guardando, setGuardando] = useState(false)
 
-  // Sincroniza el formulario cuando llega/ cambia la config.
+  // Sincroniza el formulario cuando llega/ cambia el negocio.
   useEffect(() => {
-    setNombre(configuracion?.nombre_negocio ?? '')
+    setNombre(negocio?.nombre ?? '')
     setMetodos(
-      configuracion?.metodos_pago && configuracion.metodos_pago.length > 0
-        ? configuracion.metodos_pago
+      negocio?.metodos_pago && negocio.metodos_pago.length > 0
+        ? negocio.metodos_pago
         : METODOS_PAGO.map((m) => m.valor),
     )
-  }, [configuracion])
+  }, [negocio])
 
   function toggleMetodo(valor: string) {
     setMetodos((prev) =>
