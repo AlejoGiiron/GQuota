@@ -5,6 +5,7 @@ import Avatar from '@/components/Avatar'
 import ClienteFormModal from '@/components/ClienteFormModal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import { useClientes, type ClienteInput } from '@/hooks/useClientes'
+import { useConfiguracion } from '@/contexts/ConfiguracionContext'
 import type { ClientesOutletContext } from '@/components/ClienteFicha'
 import type { Cliente } from '@/types/db'
 
@@ -41,6 +42,7 @@ function FilaSkeleton() {
 
 export default function ClientesPage() {
   const { clientes, loading, error, crear, actualizar, eliminar } = useClientes()
+  const { esDueno } = useConfiguracion()
   const navigate = useNavigate()
   const detalle = useMatch('/clientes/:clienteId')
 
@@ -120,10 +122,12 @@ export default function ClientesPage() {
               <span className="text-base font-bold text-muted">({clientes.length})</span>
             )}
           </h1>
-          <button type="button" className="btn-primary" onClick={abrirNuevo}>
-            {IconMas}
-            <span>Nuevo cliente</span>
-          </button>
+          {esDueno && (
+            <button type="button" className="btn-primary" onClick={abrirNuevo}>
+              {IconMas}
+              <span>Nuevo cliente</span>
+            </button>
+          )}
         </div>
 
         <div className="relative">
@@ -155,13 +159,19 @@ export default function ClientesPage() {
               {IconUsuarios}
             </span>
             <div>
-              <p className="text-sm font-bold text-text">Aún no tienes clientes</p>
-              <p className="mt-1 text-sm text-text-2">Crea el primero para empezar a llevar el control.</p>
+              <p className="text-sm font-bold text-text">Aún no hay clientes</p>
+              <p className="mt-1 text-sm text-text-2">
+                {esDueno
+                  ? 'Crea el primero para empezar a llevar el control.'
+                  : 'El dueño aún no ha registrado clientes.'}
+              </p>
             </div>
-            <button type="button" className="btn-primary" onClick={abrirNuevo}>
-              {IconMas}
-              <span>Nuevo cliente</span>
-            </button>
+            {esDueno && (
+              <button type="button" className="btn-primary" onClick={abrirNuevo}>
+                {IconMas}
+                <span>Nuevo cliente</span>
+              </button>
+            )}
           </div>
         ) : filtrados.length === 0 ? (
           <div className="card flex flex-col items-center gap-2 px-6 py-12 text-center">

@@ -473,6 +473,7 @@ export type Database = {
       marcar_cuotas_vencidas: { Args: never; Returns: number }
       marcar_mora: { Args: never; Returns: number }
       mi_negocio: { Args: never; Returns: string }
+      mi_rol: { Args: never; Returns: string }
       registrar_pago: {
         Args: {
           p_interes_pendiente_restante: number

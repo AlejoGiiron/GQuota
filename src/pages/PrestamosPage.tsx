@@ -6,6 +6,7 @@ import PrestamoFormModal from '@/components/PrestamoFormModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import type { PrestamosOutletContext } from '@/components/PrestamoFicha'
 import { useClientes } from '@/hooks/useClientes'
+import { useConfiguracion } from '@/contexts/ConfiguracionContext'
 import {
   usePrestamos,
   type PrestamoCuotasInput,
@@ -51,6 +52,7 @@ export default function PrestamosPage() {
     registrarPagoCuotaFija,
   } = usePrestamos()
   const { clientes } = useClientes()
+  const { esDueno } = useConfiguracion()
   const detalle = useMatch('/prestamos/:prestamoId')
 
   const [modalAbierto, setModalAbierto] = useState(false)
@@ -110,10 +112,12 @@ export default function PrestamosPage() {
               <span className="text-base font-bold text-muted">({prestamos.length})</span>
             )}
           </h1>
-          <button type="button" className="btn-primary" onClick={() => setModalAbierto(true)}>
-            {IconMas}
-            <span>Nuevo préstamo</span>
-          </button>
+          {esDueno && (
+            <button type="button" className="btn-primary" onClick={() => setModalAbierto(true)}>
+              {IconMas}
+              <span>Nuevo préstamo</span>
+            </button>
+          )}
         </div>
 
         {loading ? (
@@ -132,13 +136,19 @@ export default function PrestamosPage() {
               {IconPrestamos}
             </span>
             <div>
-              <p className="text-sm font-bold text-text">Aún no tienes préstamos</p>
-              <p className="mt-1 text-sm text-text-2">Crea el primero para empezar a llevar el control.</p>
+              <p className="text-sm font-bold text-text">Aún no hay préstamos</p>
+              <p className="mt-1 text-sm text-text-2">
+                {esDueno
+                  ? 'Crea el primero para empezar a llevar el control.'
+                  : 'El dueño aún no ha registrado préstamos.'}
+              </p>
             </div>
-            <button type="button" className="btn-primary" onClick={() => setModalAbierto(true)}>
-              {IconMas}
-              <span>Nuevo préstamo</span>
-            </button>
+            {esDueno && (
+              <button type="button" className="btn-primary" onClick={() => setModalAbierto(true)}>
+                {IconMas}
+                <span>Nuevo préstamo</span>
+              </button>
+            )}
           </div>
         ) : (
           <div className="card overflow-hidden">

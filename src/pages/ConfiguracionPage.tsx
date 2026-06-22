@@ -1,11 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 
 export default function ConfiguracionPage() {
   const { user, signOut } = useAuth()
-  const { negocio, loading, guardar } = useConfiguracion()
+  const { negocio, loading, guardar, esDueno } = useConfiguracion()
 
   const [nombre, setNombre] = useState('')
   const [metodos, setMetodos] = useState<string[]>([])
@@ -50,6 +51,11 @@ export default function ConfiguracionPage() {
   async function handleSignOut() {
     await signOut()
     toast.success('Sesión cerrada.')
+  }
+
+  // Configuración del negocio es solo del dueño; el cobrador no administra el negocio.
+  if (!loading && !esDueno) {
+    return <Navigate to="/cobros" replace />
   }
 
   return (
