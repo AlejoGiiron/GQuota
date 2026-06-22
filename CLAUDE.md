@@ -90,6 +90,8 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 - MIGRACIONES NUEVAS, NO EDITAR LAS APLICADAS. Una migración ya aplicada no se reescribe; los cambios van en una nueva con create or replace. Mantiene la cadena íntegra.
 
+- ⚠️ crear_prestamo DEBE inicializar interes_pendiente del primer periodo (regla de la 015): interes_pendiente = round(capital_inicial * tasa_mensual) y ultimo_devengo = fecha_desembolso, en AMBOS modos. Ya se perdió una vez en la 017 al recrear la función copiando una versión vieja (regresión arreglada en la 026). Cualquier recreación futura de crear_prestamo debe conservarlo.
+
 - FUNCIONES SECURITY DEFINER → REVOKE EXECUTE. Postgres concede EXECUTE a PUBLIC por defecto, así que toda función de mantenimiento (devengo, moras) quedaría invocable por cualquier usuario vía PostgREST si no se hace `revoke execute ... from public, anon, authenticated`. Hacerlo en la misma migración que crea la función.
 
 - tsc + npm test NO prueban las RPC/funciones SQL. Las 12 pruebas cubren el motor (TS). Toda la lógica que vive en SQL (RPC de pago, devengo, mora) solo se verifica con datos reales contra la BD. "Compila y pasa los tests" ≠ "el comportamiento es correcto".
