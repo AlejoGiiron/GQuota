@@ -20,6 +20,7 @@ export type Database = {
           direccion: string | null
           documento: string | null
           id: string
+          negocio_id: string
           nombre: string
           notas: string | null
           telefono: string | null
@@ -30,6 +31,7 @@ export type Database = {
           direccion?: string | null
           documento?: string | null
           id?: string
+          negocio_id?: string
           nombre: string
           notas?: string | null
           telefono?: string | null
@@ -40,12 +42,21 @@ export type Database = {
           direccion?: string | null
           documento?: string | null
           id?: string
+          negocio_id?: string
           nombre?: string
           notas?: string | null
           telefono?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "clientes_negocio_id_fkey"
+            columns: ["negocio_id"]
+            isOneToOne: false
+            referencedRelation: "negocios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       configuracion: {
         Row: {
@@ -80,6 +91,7 @@ export type Database = {
           fecha_vence: string
           id: string
           interes: number
+          negocio_id: string
           numero: number
           prestamo_id: string
           user_id: string
@@ -92,6 +104,7 @@ export type Database = {
           fecha_vence: string
           id?: string
           interes: number
+          negocio_id?: string
           numero: number
           prestamo_id: string
           user_id: string
@@ -104,16 +117,56 @@ export type Database = {
           fecha_vence?: string
           id?: string
           interes?: number
+          negocio_id?: string
           numero?: number
           prestamo_id?: string
           user_id?: string
         }
         Relationships: [
           {
+            foreignKeyName: "cuotas_negocio_id_fkey"
+            columns: ["negocio_id"]
+            isOneToOne: false
+            referencedRelation: "negocios"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "cuotas_prestamo_id_fkey"
             columns: ["prestamo_id"]
             isOneToOne: false
             referencedRelation: "prestamos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      miembros: {
+        Row: {
+          created_at: string
+          id: string
+          negocio_id: string
+          rol: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          negocio_id: string
+          rol?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          negocio_id?: string
+          rol?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "miembros_negocio_id_fkey"
+            columns: ["negocio_id"]
+            isOneToOne: false
+            referencedRelation: "negocios"
             referencedColumns: ["id"]
           },
         ]
@@ -127,6 +180,7 @@ export type Database = {
           monto_capital: number
           monto_interes: number
           monto_total: number
+          negocio_id: string
           nota: string | null
           prestamo_id: string
           saldo_anterior: number
@@ -142,6 +196,7 @@ export type Database = {
           monto_capital?: number
           monto_interes?: number
           monto_total: number
+          negocio_id?: string
           nota?: string | null
           prestamo_id: string
           saldo_anterior: number
@@ -157,6 +212,7 @@ export type Database = {
           monto_capital?: number
           monto_interes?: number
           monto_total?: number
+          negocio_id?: string
           nota?: string | null
           prestamo_id?: string
           saldo_anterior?: number
@@ -166,6 +222,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "movimientos_negocio_id_fkey"
+            columns: ["negocio_id"]
+            isOneToOne: false
+            referencedRelation: "negocios"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "movimientos_prestamo_id_fkey"
             columns: ["prestamo_id"]
             isOneToOne: false
@@ -173,6 +236,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      negocios: {
+        Row: {
+          created_at: string
+          id: string
+          metodos_pago: string[]
+          nombre: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metodos_pago?: string[]
+          nombre: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metodos_pago?: string[]
+          nombre?: string
+        }
+        Relationships: []
       }
       prestamos: {
         Row: {
@@ -188,6 +272,7 @@ export type Database = {
           id: string
           interes_pendiente: number
           modo_interes: string
+          negocio_id: string
           notas: string | null
           saldo_capital: number
           tasa_mensual: number
@@ -209,6 +294,7 @@ export type Database = {
           id?: string
           interes_pendiente?: number
           modo_interes?: string
+          negocio_id?: string
           notas?: string | null
           saldo_capital: number
           tasa_mensual: number
@@ -230,6 +316,7 @@ export type Database = {
           id?: string
           interes_pendiente?: number
           modo_interes?: string
+          negocio_id?: string
           notas?: string | null
           saldo_capital?: number
           tasa_mensual?: number
@@ -244,6 +331,13 @@ export type Database = {
             columns: ["cliente_id"]
             isOneToOne: false
             referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prestamos_negocio_id_fkey"
+            columns: ["negocio_id"]
+            isOneToOne: false
+            referencedRelation: "negocios"
             referencedColumns: ["id"]
           },
         ]
@@ -277,6 +371,7 @@ export type Database = {
           id: string
           interes_pendiente: number
           modo_interes: string
+          negocio_id: string
           notas: string | null
           saldo_capital: number
           tasa_mensual: number
@@ -317,6 +412,7 @@ export type Database = {
           id: string
           interes_pendiente: number
           modo_interes: string
+          negocio_id: string
           notas: string | null
           saldo_capital: number
           tasa_mensual: number
@@ -357,6 +453,7 @@ export type Database = {
           id: string
           interes_pendiente: number
           modo_interes: string
+          negocio_id: string
           notas: string | null
           saldo_capital: number
           tasa_mensual: number
@@ -375,6 +472,7 @@ export type Database = {
       devengar_intereses: { Args: never; Returns: number }
       marcar_cuotas_vencidas: { Args: never; Returns: number }
       marcar_mora: { Args: never; Returns: number }
+      mi_negocio: { Args: never; Returns: string }
       registrar_pago: {
         Args: {
           p_interes_pendiente_restante: number
@@ -395,6 +493,7 @@ export type Database = {
           monto_capital: number
           monto_interes: number
           monto_total: number
+          negocio_id: string
           nota: string | null
           prestamo_id: string
           saldo_anterior: number
@@ -419,6 +518,7 @@ export type Database = {
           monto_capital: number
           monto_interes: number
           monto_total: number
+          negocio_id: string
           nota: string | null
           prestamo_id: string
           saldo_anterior: number
@@ -448,6 +548,7 @@ export type Database = {
           monto_capital: number
           monto_interes: number
           monto_total: number
+          negocio_id: string
           nota: string | null
           prestamo_id: string
           saldo_anterior: number

@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Configuracion } from '@/types/db'
+import type { Negocio } from '@/types/db'
 
 /** Métodos de pago soportados por la app (catálogo maestro). */
 export const METODOS_PAGO: ReadonlyArray<{ valor: string; label: string }> = [
@@ -25,11 +25,14 @@ export interface ConfiguracionInput {
 }
 
 interface ConfiguracionContextValue {
-  configuracion: Configuracion | null
+  /** El negocio del usuario actual (SaaS multi-negocio), o null si no es miembro. */
+  negocio: Negocio | null
+  /** id del negocio actual, o null si el usuario no pertenece a ninguno. */
+  negocioId: string | null
   loading: boolean
   /** Nombre del negocio o 'G-Quota' si no se ha configurado. */
   nombreNegocio: string
-  /** Métodos de pago activos; si no hay config, el catálogo completo. */
+  /** Métodos de pago activos; si no hay negocio, el catálogo completo. */
   metodosActivos: string[]
   guardar: (input: ConfiguracionInput) => Promise<{ error: string | null }>
   refrescar: () => Promise<void>
@@ -39,20 +42,24 @@ const ConfiguracionContext = createContext<ConfiguracionContextValue | undefined
 
 const NOMBRE_POR_DEFECTO = 'G-Quota'
 
+// El nombre/métodos del negocio viven ahora en la tabla `negocios` (modelo
+// SaaS multi-negocio). La RLS de `negocios` solo expone el negocio del
+// usuario actual (id = mi_negocio()), así que un select sin filtro devuelve
+// exactamente su fila. La antigua tabla `configuracion` queda deprecada.
 export function ConfiguracionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
-  const [configuracion, setConfiguracion] = useState<Configuracion | null>(null)
+  const [negocio, setNegocio] = useState<Negocio | null>(null)
   const [loading, setLoading] = useState(true)
 
   const cargar = useCallback(async () => {
     if (!user) {
-      setConfiguracion(null)
+      setNegocio(null)
       setLoading(false)
       return
     }
     setLoading(true)
-    const { data } = await supabase.from('configuracion').select('*').maybeSingle()
-    setConfiguracion(data ?? null)
+    const { data } = await supabase.from('negocios').select('*').maybeSingle()
+    setNegocio(data ?? null)
     setLoading(false)
   }, [user])
 
@@ -63,34 +70,39 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
   const guardar = useCallback(
     async (input: ConfiguracionInput): Promise<{ error: string | null }> => {
       if (!user) return { error: 'No hay una sesión activa.' }
+      if (!negocio) return { error: 'No tienes un negocio asignado.' }
       const { data, error } = await supabase
-        .from('configuracion')
-        .upsert({ user_id: user.id, ...input }, { onConflict: 'user_id' })
+        .from('negocios')
+        // `nombre` es NOT NULL: el nombre vacío se guarda como '' (no null),
+        // que el getter nombreNegocio muestra como 'G-Quota'.
+        .update({ nombre: input.nombre_negocio?.trim() ?? '', metodos_pago: input.metodos_pago })
+        .eq('id', negocio.id)
         .select()
         .single()
       if (error || !data) {
         return { error: 'No pudimos guardar la configuración. Intenta de nuevo.' }
       }
-      setConfiguracion(data)
+      setNegocio(data)
       return { error: null }
     },
-    [user],
+    [user, negocio],
   )
 
   const value = useMemo<ConfiguracionContextValue>(() => {
     const metodos =
-      configuracion?.metodos_pago && configuracion.metodos_pago.length > 0
-        ? configuracion.metodos_pago
+      negocio?.metodos_pago && negocio.metodos_pago.length > 0
+        ? negocio.metodos_pago
         : METODOS_PAGO.map((m) => m.valor)
     return {
-      configuracion,
+      negocio,
+      negocioId: negocio?.id ?? null,
       loading,
-      nombreNegocio: configuracion?.nombre_negocio?.trim() || NOMBRE_POR_DEFECTO,
+      nombreNegocio: negocio?.nombre?.trim() || NOMBRE_POR_DEFECTO,
       metodosActivos: metodos,
       guardar,
       refrescar: cargar,
     }
-  }, [configuracion, loading, guardar, cargar])
+  }, [negocio, loading, guardar, cargar])
 
   return <ConfiguracionContext.Provider value={value}>{children}</ConfiguracionContext.Provider>
 }
