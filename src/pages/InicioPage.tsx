@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PagoModal from '@/components/PagoModal'
@@ -7,6 +7,7 @@ import PagoCuotasModal from '@/components/PagoCuotasModal'
 import PagoCuotaFijaModal from '@/components/PagoCuotaFijaModal'
 import { EstadoBadge } from '@/components/PrestamoBadges'
 import { useAuth } from '@/contexts/AuthContext'
+import { useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { useClientes } from '@/hooks/useClientes'
 import { usePrestamos } from '@/hooks/usePrestamos'
 import { useMovimientosDelMes } from '@/hooks/useMovimientosDelMes'
@@ -89,6 +90,7 @@ function MetricCard({
 
 export default function InicioPage() {
   const { user } = useAuth()
+  const { esDueno, loading: cargandoRol } = useConfiguracion()
   const { prestamos, registrarPago, registrarPagoCuotas, registrarPagoCuotaFija } = usePrestamos()
   const { clientes } = useClientes()
   const { movimientos, recargar: recargarMovs } = useMovimientosDelMes()
@@ -148,6 +150,12 @@ export default function InicioPage() {
     recargarMovs()
     recargarCuotas()
     return true
+  }
+
+  // El cobrador no ve el dashboard de ganancias: su inicio es Cobros (lo operativo).
+  // La seguridad real está en la base; esto es la cara visible del permiso.
+  if (!cargandoRol && !esDueno) {
+    return <Navigate to="/cobros" replace />
   }
 
   return (

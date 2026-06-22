@@ -24,11 +24,18 @@ export interface ConfiguracionInput {
   metodos_pago: string[]
 }
 
+/** Rol del miembro dentro del negocio (Fase de roles). */
+export type Rol = 'dueno' | 'cobrador'
+
 interface ConfiguracionContextValue {
   /** El negocio del usuario actual (SaaS multi-negocio), o null si no es miembro. */
   negocio: Negocio | null
   /** id del negocio actual, o null si el usuario no pertenece a ninguno. */
   negocioId: string | null
+  /** Rol del usuario en su negocio, o null si no es miembro de ninguno. */
+  rol: Rol | null
+  /** true si el usuario es dueño (puede crear préstamos, gestionar clientes, etc.). */
+  esDueno: boolean
   loading: boolean
   /** Nombre del negocio o 'G-Quota' si no se ha configurado. */
   nombreNegocio: string
@@ -49,17 +56,25 @@ const NOMBRE_POR_DEFECTO = 'G-Quota'
 export function ConfiguracionProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const [negocio, setNegocio] = useState<Negocio | null>(null)
+  const [rol, setRol] = useState<Rol | null>(null)
   const [loading, setLoading] = useState(true)
 
   const cargar = useCallback(async () => {
     if (!user) {
       setNegocio(null)
+      setRol(null)
       setLoading(false)
       return
     }
     setLoading(true)
-    const { data } = await supabase.from('negocios').select('*').maybeSingle()
-    setNegocio(data ?? null)
+    // El negocio y el rol salen de tablas distintas (negocios / miembros), ambas
+    // acotadas por RLS a lo del usuario; se leen en paralelo.
+    const [{ data: neg }, { data: miembro }] = await Promise.all([
+      supabase.from('negocios').select('*').maybeSingle(),
+      supabase.from('miembros').select('rol').maybeSingle(),
+    ])
+    setNegocio(neg ?? null)
+    setRol((miembro?.rol as Rol | undefined) ?? null)
     setLoading(false)
   }, [user])
 
@@ -96,13 +111,15 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
     return {
       negocio,
       negocioId: negocio?.id ?? null,
+      rol,
+      esDueno: rol === 'dueno',
       loading,
       nombreNegocio: negocio?.nombre?.trim() || NOMBRE_POR_DEFECTO,
       metodosActivos: metodos,
       guardar,
       refrescar: cargar,
     }
-  }, [negocio, loading, guardar, cargar])
+  }, [negocio, rol, loading, guardar, cargar])
 
   return <ConfiguracionContext.Provider value={value}>{children}</ConfiguracionContext.Provider>
 }
