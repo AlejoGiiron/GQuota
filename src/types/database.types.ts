@@ -268,6 +268,7 @@ export type Database = {
         Row: {
           capital_inicial: number
           cliente_id: string
+          cobrador_id: string | null
           codeudor_documento: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
@@ -290,6 +291,7 @@ export type Database = {
         Insert: {
           capital_inicial: number
           cliente_id: string
+          cobrador_id?: string | null
           codeudor_documento?: string | null
           codeudor_nombre?: string | null
           codeudor_telefono?: string | null
@@ -312,6 +314,7 @@ export type Database = {
         Update: {
           capital_inicial?: number
           cliente_id?: string
+          cobrador_id?: string | null
           codeudor_documento?: string | null
           codeudor_nombre?: string | null
           codeudor_telefono?: string | null
@@ -340,6 +343,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "prestamos_cobrador_id_fkey"
+            columns: ["cobrador_id"]
+            isOneToOne: false
+            referencedRelation: "miembros"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "prestamos_negocio_id_fkey"
             columns: ["negocio_id"]
             isOneToOne: false
@@ -353,10 +363,47 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      asignar_cobrador: {
+        Args: { p_cobrador_id?: string; p_prestamo_id: string }
+        Returns: {
+          capital_inicial: number
+          cliente_id: string
+          cobrador_id: string | null
+          codeudor_documento: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          created_at: string
+          dia_cobro: number | null
+          estado: string
+          fecha_desembolso: string
+          id: string
+          interes_pendiente: number
+          modo_interes: string
+          negocio_id: string
+          notas: string | null
+          saldo_capital: number
+          tasa_mensual: number
+          tipo: string
+          ultimo_devengo: string | null
+          user_id: string
+          valor_cuota: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "prestamos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      cliente_visible_para_cobrador: {
+        Args: { p_cliente_id: string }
+        Returns: boolean
+      }
       crear_prestamo: {
         Args: {
           p_capital: number
           p_cliente_id: string
+          p_cobrador_id?: string
           p_codeudor_documento?: string
           p_codeudor_nombre?: string
           p_codeudor_telefono?: string
@@ -367,6 +414,7 @@ export type Database = {
         Returns: {
           capital_inicial: number
           cliente_id: string
+          cobrador_id: string | null
           codeudor_documento: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
@@ -397,6 +445,7 @@ export type Database = {
         Args: {
           p_capital: number
           p_cliente_id: string
+          p_cobrador_id?: string
           p_codeudor_documento?: string
           p_codeudor_nombre?: string
           p_codeudor_telefono?: string
@@ -408,6 +457,7 @@ export type Database = {
         Returns: {
           capital_inicial: number
           cliente_id: string
+          cobrador_id: string | null
           codeudor_documento: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
@@ -438,6 +488,7 @@ export type Database = {
         Args: {
           p_capital: number
           p_cliente_id: string
+          p_cobrador_id?: string
           p_codeudor_documento?: string
           p_codeudor_nombre?: string
           p_codeudor_telefono?: string
@@ -449,6 +500,7 @@ export type Database = {
         Returns: {
           capital_inicial: number
           cliente_id: string
+          cobrador_id: string | null
           codeudor_documento: string | null
           codeudor_nombre: string | null
           codeudor_telefono: string | null
@@ -476,10 +528,16 @@ export type Database = {
         }
       }
       devengar_intereses: { Args: never; Returns: number }
+      es_miembro_activo_del_negocio: {
+        Args: { p_miembro_id: string; p_negocio: string }
+        Returns: boolean
+      }
       marcar_cuotas_vencidas: { Args: never; Returns: number }
       marcar_mora: { Args: never; Returns: number }
+      mi_miembro_id: { Args: never; Returns: string }
       mi_negocio: { Args: never; Returns: string }
       mi_rol: { Args: never; Returns: string }
+      puedo_ver_prestamo: { Args: { p_prestamo_id: string }; Returns: boolean }
       registrar_pago: {
         Args: {
           p_interes_pendiente_restante: number

@@ -60,6 +60,7 @@ type TipoPrestamo = 'abierto' | 'cuotas' | 'cuota_fija'
 export default function PrestamoFormModal({
   open,
   clientes,
+  cobradores,
   onClose,
   onGuardar,
   onGuardarCuotas,
@@ -67,6 +68,8 @@ export default function PrestamoFormModal({
 }: {
   open: boolean
   clientes: Cliente[]
+  /** Cobradores activos del negocio para asignar (solo dueño). */
+  cobradores: ReadonlyArray<{ id: string; nombre: string | null }>
   onClose: () => void
   onGuardar: (input: PrestamoInput) => Promise<boolean>
   onGuardarCuotas: (input: PrestamoCuotasInput) => Promise<boolean>
@@ -74,6 +77,7 @@ export default function PrestamoFormModal({
 }) {
   const [tipo, setTipo] = useState<TipoPrestamo>('abierto')
   const [clienteId, setClienteId] = useState('')
+  const [cobradorId, setCobradorId] = useState('') // '' = sin asignar
   const [capital, setCapital] = useState('')
   const [tasa, setTasa] = useState('')
   const [modo, setModo] = useState<ModoInteres>('sobre_saldo')
@@ -91,6 +95,7 @@ export default function PrestamoFormModal({
     if (!open) return
     setTipo('abierto')
     setClienteId('')
+    setCobradorId('')
     setCapital('')
     setTasa('')
     setModo('sobre_saldo')
@@ -178,6 +183,8 @@ export default function PrestamoFormModal({
         }
       : { codeudor_nombre: null, codeudor_telefono: null, codeudor_documento: null }
 
+    const cobrador_id = cobradorId || null
+
     setGuardando(true)
     let ok: boolean
     if (tipo === 'cuotas') {
@@ -188,6 +195,7 @@ export default function PrestamoFormModal({
         frecuencia,
         n_cuotas: nNum,
         fecha_desembolso: fecha,
+        cobrador_id,
         ...codeudor,
       })
     } else if (tipo === 'cuota_fija') {
@@ -198,6 +206,7 @@ export default function PrestamoFormModal({
         n_cuotas: nNum,
         valor_cuota: valorNum,
         fecha_desembolso: fecha,
+        cobrador_id,
         ...codeudor,
       })
     } else {
@@ -207,6 +216,7 @@ export default function PrestamoFormModal({
         tasa_mensual: tasaNum / 100,
         modo_interes: modo,
         fecha_desembolso: fecha,
+        cobrador_id,
         ...codeudor,
       })
     }
@@ -289,6 +299,30 @@ export default function PrestamoFormModal({
               ))}
             </select>
             {errores.cliente && <p className="text-xs font-semibold text-red">{errores.cliente}</p>}
+          </div>
+
+          {/* Cobrador asignado (opcional). El cronograma/cálculo no depende de esto;
+              solo decide quién verá y cobrará el préstamo (RLS por asignación). */}
+          <div className="flex flex-col gap-2">
+            <label htmlFor="pr-cobrador" className="text-[13px] font-semibold text-text-2">
+              Cobrador asignado
+            </label>
+            <select
+              id="pr-cobrador"
+              className={selectClass}
+              value={cobradorId}
+              onChange={(e) => setCobradorId(e.target.value)}
+            >
+              <option value="">Sin asignar</option>
+              {cobradores.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre ?? 'Cobrador'}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-muted">
+              Si lo asignas, solo ese cobrador (y tú) verá y cobrará este préstamo.
+            </p>
           </div>
 
           <div className="flex flex-col gap-2">
