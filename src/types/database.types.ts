@@ -144,6 +144,7 @@ export type Database = {
           created_at: string
           id: string
           negocio_id: string
+          nombre: string | null
           rol: string
           user_id: string
         }
@@ -151,6 +152,7 @@ export type Database = {
           created_at?: string
           id?: string
           negocio_id: string
+          nombre?: string | null
           rol?: string
           user_id: string
         }
@@ -158,6 +160,7 @@ export type Database = {
           created_at?: string
           id?: string
           negocio_id?: string
+          nombre?: string | null
           rol?: string
           user_id?: string
         }

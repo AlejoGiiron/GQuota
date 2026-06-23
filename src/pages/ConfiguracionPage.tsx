@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
+import { supabase } from '@/lib/supabase'
 
 export default function ConfiguracionPage() {
   const { user, signOut } = useAuth()
@@ -11,6 +12,14 @@ export default function ConfiguracionPage() {
   const [nombre, setNombre] = useState('')
   const [metodos, setMetodos] = useState<string[]>([])
   const [guardando, setGuardando] = useState(false)
+
+  // Alta de cobradores (Fase 4A): el dueño crea la cuenta del cobrador con una
+  // contraseña inicial. El usuario en Auth lo crea la Edge Function crear-cobrador
+  // (necesita la service_role, que no puede vivir en el frontend).
+  const [cobNombre, setCobNombre] = useState('')
+  const [cobEmail, setCobEmail] = useState('')
+  const [cobPassword, setCobPassword] = useState('')
+  const [creandoCobrador, setCreandoCobrador] = useState(false)
 
   // Sincroniza el formulario cuando llega/ cambia el negocio.
   useEffect(() => {
@@ -46,6 +55,55 @@ export default function ConfiguracionPage() {
       return
     }
     toast.success('Configuración guardada.')
+  }
+
+  async function handleCrearCobrador(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const nombreCob = cobNombre.trim()
+    const emailCob = cobEmail.trim()
+    if (!nombreCob) {
+      toast.error('Escribe el nombre del cobrador.')
+      return
+    }
+    if (!emailCob.includes('@')) {
+      toast.error('Escribe un correo válido.')
+      return
+    }
+    if (cobPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres.')
+      return
+    }
+    setCreandoCobrador(true)
+    const { data, error } = await supabase.functions.invoke<{ ok?: boolean; error?: string }>(
+      'crear-cobrador',
+      { body: { nombre: nombreCob, email: emailCob, password: cobPassword } },
+    )
+    setCreandoCobrador(false)
+    // La Edge Function devuelve { error } con un mensaje ya seguro (genérico para
+    // email duplicado, sin filtrar datos de otros negocios). Para respuestas no-2xx,
+    // supabase-js entrega un FunctionsHttpError; el cuerpo está en error.context.
+    if (error) {
+      let mensaje = 'No pudimos crear el cobrador. Intenta de nuevo.'
+      const contexto = (error as { context?: Response }).context
+      if (contexto && typeof contexto.json === 'function') {
+        try {
+          const cuerpo = (await contexto.json()) as { error?: string }
+          if (cuerpo?.error) mensaje = cuerpo.error
+        } catch {
+          // Sin cuerpo JSON: queda el mensaje genérico.
+        }
+      }
+      toast.error(mensaje)
+      return
+    }
+    if (data?.error) {
+      toast.error(data.error)
+      return
+    }
+    toast.success('Cobrador agregado.')
+    setCobNombre('')
+    setCobEmail('')
+    setCobPassword('')
   }
 
   async function handleSignOut() {
@@ -116,6 +174,65 @@ export default function ConfiguracionPage() {
         <div className="flex justify-end">
           <button type="submit" className="btn-primary" disabled={guardando || loading}>
             {guardando ? 'Guardando…' : 'Guardar cambios'}
+          </button>
+        </div>
+      </form>
+
+      {/* Agregar cobrador (Fase 4A) — solo visible para el dueño (toda la página lo es). */}
+      <form onSubmit={handleCrearCobrador} className="card flex flex-col gap-4 p-5">
+        <div>
+          <h2 className="text-sm font-bold text-text">Agregar cobrador</h2>
+          <p className="mt-1 text-xs text-text-2">
+            Creas la cuenta del cobrador con una contraseña inicial. Podrá iniciar sesión con ese
+            correo y esa contraseña, y ver solo los cobros de tu negocio.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="cob-nombre" className="text-[13px] font-semibold text-text-2">
+            Nombre
+          </label>
+          <input
+            id="cob-nombre"
+            className="input"
+            placeholder="Ej. Luis Pérez"
+            value={cobNombre}
+            onChange={(e) => setCobNombre(e.target.value)}
+            disabled={creandoCobrador}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="cob-email" className="text-[13px] font-semibold text-text-2">
+            Correo
+          </label>
+          <input
+            id="cob-email"
+            type="email"
+            autoComplete="off"
+            className="input"
+            placeholder="cobrador@ejemplo.com"
+            value={cobEmail}
+            onChange={(e) => setCobEmail(e.target.value)}
+            disabled={creandoCobrador}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="cob-password" className="text-[13px] font-semibold text-text-2">
+            Contraseña inicial
+          </label>
+          <input
+            id="cob-password"
+            type="text"
+            autoComplete="new-password"
+            className="input"
+            placeholder="Mínimo 6 caracteres"
+            value={cobPassword}
+            onChange={(e) => setCobPassword(e.target.value)}
+            disabled={creandoCobrador}
+          />
+        </div>
+        <div className="flex justify-end">
+          <button type="submit" className="btn-primary" disabled={creandoCobrador}>
+            {creandoCobrador ? 'Creando…' : 'Agregar cobrador'}
           </button>
         </div>
       </form>
