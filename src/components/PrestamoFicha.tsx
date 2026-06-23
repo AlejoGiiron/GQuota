@@ -12,6 +12,7 @@ import PagoCuotaFijaModal from '@/components/PagoCuotaFijaModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { ResultadoPago } from '@/lib/motor-prestamos'
+import type { MiembroEquipo } from '@/hooks/useEquipo'
 import type { Cliente, Prestamo } from '@/types/db'
 
 export interface PrestamosOutletContext {
@@ -34,6 +35,13 @@ export interface PrestamosOutletContext {
     monto: number,
     metodo: string,
   ) => Promise<{ error: string | null }>
+  /** Solo el dueño asigna cobradores; el cobrador no ve este control. */
+  esDueno: boolean
+  /** Cobradores activos del negocio (para el selector de asignación). */
+  cobradores: ReadonlyArray<MiembroEquipo>
+  /** Mapa id→miembro (incluye inactivos) para resolver el nombre asignado. */
+  miembroPorId: Map<string, MiembroEquipo>
+  asignarCobrador: (prestamoId: string, cobradorId: string | null) => Promise<{ error: string | null }>
 }
 
 const IconAtras = (
@@ -61,10 +69,15 @@ export default function PrestamoFicha() {
     registrarPago,
     registrarPagoCuotas,
     registrarPagoCuotaFija,
+    esDueno,
+    cobradores,
+    miembroPorId,
+    asignarCobrador,
   } = useOutletContext<PrestamosOutletContext>()
   const [pagoAbierto, setPagoAbierto] = useState(false)
   const [pagoCuotasAbierto, setPagoCuotasAbierto] = useState(false)
   const [pagoCuotaFijaAbierto, setPagoCuotaFijaAbierto] = useState(false)
+  const [asignando, setAsignando] = useState(false)
   const [version, setVersion] = useState(0)
   const prestamo = prestamos.find((p) => p.id === prestamoId)
 
@@ -135,6 +148,17 @@ export default function PrestamoFicha() {
     return true
   }
 
+  async function handleAsignar(valor: string) {
+    setAsignando(true)
+    const { error } = await asignarCobrador(idPrestamo, valor || null)
+    setAsignando(false)
+    if (error) {
+      toast.error(error)
+      return
+    }
+    toast.success(valor ? 'Cobrador asignado.' : 'Préstamo desasignado.')
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <button
@@ -189,6 +213,37 @@ export default function PrestamoFicha() {
           <BotonCompartirCronograma prestamo={prestamo} clienteNombre={nombre} />
         </div>
       </div>
+
+      {/* Asignación de cobrador: solo el dueño. El cobrador no ve este control
+          (y la RLS lo respalda: no puede reasignar). */}
+      {esDueno && (
+        <div className="card flex flex-col gap-2 p-5">
+          <h3 className="text-sm font-bold text-text">Cobrador asignado</h3>
+          <select
+            className="h-[52px] w-full rounded-xl border-[1.5px] border-line bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)] disabled:opacity-60"
+            value={prestamo.cobrador_id ?? ''}
+            onChange={(e) => void handleAsignar(e.target.value)}
+            disabled={asignando}
+          >
+            <option value="">Sin asignar</option>
+            {/* Si el asignado actual quedó inactivo, lo mostramos igual para no perderlo de vista. */}
+            {prestamo.cobrador_id &&
+              !cobradores.some((c) => c.id === prestamo.cobrador_id) && (
+                <option value={prestamo.cobrador_id}>
+                  {(miembroPorId.get(prestamo.cobrador_id)?.nombre ?? 'Cobrador') + ' (inactivo)'}
+                </option>
+              )}
+            {cobradores.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nombre ?? 'Cobrador'}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-muted">
+            Solo el cobrador asignado (y tú) verá y cobrará este préstamo. «Sin asignar» = solo tú.
+          </p>
+        </div>
+      )}
 
       {/* Codeudor (opcional): solo si el préstamo lo tiene. */}
       {prestamo.codeudor_nombre && (

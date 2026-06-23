@@ -7,6 +7,7 @@ import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/Pres
 import type { PrestamosOutletContext } from '@/components/PrestamoFicha'
 import { useClientes } from '@/hooks/useClientes'
 import { useConfiguracion } from '@/contexts/ConfiguracionContext'
+import { useEquipo } from '@/hooks/useEquipo'
 import {
   usePrestamos,
   type PrestamoCuotasInput,
@@ -50,9 +51,12 @@ export default function PrestamosPage() {
     registrarPago,
     registrarPagoCuotas,
     registrarPagoCuotaFija,
+    asignarCobrador,
   } = usePrestamos()
   const { clientes } = useClientes()
   const { esDueno } = useConfiguracion()
+  // El equipo (cobradores) es solo-dueño: el cobrador no asigna ni ve esta lista.
+  const { cobradoresActivos, miembroPorId } = useEquipo(esDueno)
   const detalle = useMatch('/prestamos/:prestamoId')
 
   const [modalAbierto, setModalAbierto] = useState(false)
@@ -99,6 +103,10 @@ export default function PrestamosPage() {
     registrarPago,
     registrarPagoCuotas,
     registrarPagoCuotaFija,
+    esDueno,
+    cobradores: cobradoresActivos,
+    miembroPorId,
+    asignarCobrador,
   }
 
   return (
@@ -140,7 +148,7 @@ export default function PrestamosPage() {
               <p className="mt-1 text-sm text-text-2">
                 {esDueno
                   ? 'Crea el primero para empezar a llevar el control.'
-                  : 'El dueño aún no ha registrado préstamos.'}
+                  : 'Aún no tienes préstamos asignados. El dueño te asignará los que debes cobrar.'}
               </p>
             </div>
             {esDueno && (
@@ -177,6 +185,16 @@ export default function PrestamosPage() {
                       <TipoOModoBadge tipo={p.tipo} modo={p.modo_interes} />
                       <EstadoBadge estado={p.estado} />
                     </div>
+                    {/* Cobrador asignado: solo el dueño lo ve (el cobrador ve solo lo suyo). */}
+                    {esDueno && (
+                      <div className="mt-1 truncate text-[11.5px] font-semibold text-muted">
+                        {p.cobrador_id
+                          ? `Cobrador: ${miembroPorId.get(p.cobrador_id)?.nombre ?? 'Cobrador'}${
+                              miembroPorId.get(p.cobrador_id)?.activo === false ? ' (inactivo)' : ''
+                            }`
+                          : 'Sin asignar'}
+                      </div>
+                    )}
                   </div>
                   <div className="shrink-0 text-right leading-tight">
                     <div className="mono text-[15.5px] font-bold text-text">{fmtCOP(p.saldo_capital)}</div>
@@ -206,6 +224,7 @@ export default function PrestamosPage() {
       <PrestamoFormModal
         open={modalAbierto}
         clientes={clientes}
+        cobradores={cobradoresActivos}
         onClose={() => setModalAbierto(false)}
         onGuardar={handleGuardar}
         onGuardarCuotas={handleGuardarCuotas}

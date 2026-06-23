@@ -31,8 +31,13 @@ export interface CodeudorInput {
   codeudor_documento?: string | null
 }
 
+/** Cobrador opcional asignado al crear el préstamo (id de `miembros`, o null). */
+export interface AsignacionInput {
+  cobrador_id?: string | null
+}
+
 /** Datos que captura el formulario de "Nuevo préstamo". */
-export interface PrestamoInput extends CodeudorInput {
+export interface PrestamoInput extends CodeudorInput, AsignacionInput {
   cliente_id: string
   capital_inicial: number
   /** Tasa mensual en decimal: 0.10 = 10%. */
@@ -43,7 +48,7 @@ export interface PrestamoInput extends CodeudorInput {
 }
 
 /** Datos del formulario de "Nuevo préstamo" tipo cuotas. */
-export interface PrestamoCuotasInput extends CodeudorInput {
+export interface PrestamoCuotasInput extends CodeudorInput, AsignacionInput {
   cliente_id: string
   capital_inicial: number
   /** Tasa mensual en decimal: 0.10 = 10%. */
@@ -54,7 +59,7 @@ export interface PrestamoCuotasInput extends CodeudorInput {
 }
 
 /** Datos del formulario de "Nuevo préstamo" tipo cuota fija (sin tasa). */
-export interface PrestamoCuotaFijaInput extends CodeudorInput {
+export interface PrestamoCuotaFijaInput extends CodeudorInput, AsignacionInput {
   cliente_id: string
   capital_inicial: number
   frecuencia: FrecuenciaCuota
@@ -111,6 +116,7 @@ export function usePrestamos(clienteId?: string) {
       p_codeudor_nombre: input.codeudor_nombre ?? undefined,
       p_codeudor_telefono: input.codeudor_telefono ?? undefined,
       p_codeudor_documento: input.codeudor_documento ?? undefined,
+      p_cobrador_id: input.cobrador_id ?? undefined,
     })
     if (error || !data) {
       return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
@@ -135,6 +141,7 @@ export function usePrestamos(clienteId?: string) {
         p_codeudor_nombre: input.codeudor_nombre ?? undefined,
         p_codeudor_telefono: input.codeudor_telefono ?? undefined,
         p_codeudor_documento: input.codeudor_documento ?? undefined,
+        p_cobrador_id: input.cobrador_id ?? undefined,
       })
       if (error || !data) {
         return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
@@ -162,6 +169,7 @@ export function usePrestamos(clienteId?: string) {
         p_codeudor_nombre: input.codeudor_nombre ?? undefined,
         p_codeudor_telefono: input.codeudor_telefono ?? undefined,
         p_codeudor_documento: input.codeudor_documento ?? undefined,
+        p_cobrador_id: input.cobrador_id ?? undefined,
       })
       if (error || !data) {
         return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
@@ -267,6 +275,28 @@ export function usePrestamos(clienteId?: string) {
     [cargar],
   )
 
+  /**
+   * Asigna / reasigna / desasigna (cobradorId = null) el cobrador de un préstamo.
+   * Solo el dueño (la RPC asignar_cobrador valida rol y que el cobrador sea un
+   * miembro activo del mismo negocio). Refresca el préstamo en la lista.
+   */
+  const asignarCobrador = useCallback(
+    async (prestamoId: string, cobradorId: string | null): Promise<{ error: string | null }> => {
+      const { data, error } = await supabase.rpc('asignar_cobrador', {
+        p_prestamo_id: prestamoId,
+        // Desasignar = omitir el parámetro: la RPC usa su default null y pone
+        // cobrador_id = null. (El tipo generado no acepta null explícito.)
+        p_cobrador_id: cobradorId ?? undefined,
+      })
+      if (error || !data) {
+        return { error: 'No pudimos asignar el cobrador. Intenta de nuevo.' }
+      }
+      setPrestamos((prev) => prev.map((x) => (x.id === prestamoId ? data : x)))
+      return { error: null }
+    },
+    [],
+  )
+
   return {
     prestamos,
     loading,
@@ -277,6 +307,7 @@ export function usePrestamos(clienteId?: string) {
     registrarPago,
     registrarPagoCuotas,
     registrarPagoCuotaFija,
+    asignarCobrador,
     recargar: cargar,
   }
 }
