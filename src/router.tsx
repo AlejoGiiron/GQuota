@@ -10,6 +10,7 @@ import PrestamosPage from '@/pages/PrestamosPage'
 import PrestamoFicha from '@/components/PrestamoFicha'
 import CobrosPage from '@/pages/CobrosPage'
 import ConfiguracionPage from '@/pages/ConfiguracionPage'
+import EquipoPage from '@/pages/EquipoPage'
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
             children: [{ path: ':prestamoId', element: <PrestamoFicha /> }],
           },
           { path: 'cobros', element: <CobrosPage /> },
+          { path: 'equipo', element: <EquipoPage /> },
           { path: 'configuracion', element: <ConfiguracionPage /> },
         ],
       },
