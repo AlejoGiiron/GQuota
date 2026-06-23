@@ -33,6 +33,14 @@ const IconCash = ({ className }: IconProps) => (
     <path d="M6 9.5v0M18 14.5v0" />
   </svg>
 )
+const IconTeam = ({ className }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="8" r="3" />
+    <path d="M2.5 19c.5-2.8 2.7-4.3 5.5-4.3S13 16.2 13.5 19" />
+    <circle cx="17" cy="9" r="2.5" />
+    <path d="M15.5 14.8c2 .3 3.4 1.6 3.9 4.2" />
+  </svg>
+)
 const IconGear = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="3" />
@@ -63,11 +71,12 @@ const NAV: NavItem[] = [
   { to: '/clientes', label: 'Clientes', Icon: IconUsers },
   { to: '/prestamos', label: 'Préstamos', Icon: IconLoan },
   { to: '/cobros', label: 'Cobros', Icon: IconCash },
+  { to: '/equipo', label: 'Equipo', Icon: IconTeam },
   { to: '/configuracion', label: 'Configuración', Icon: IconGear },
 ]
-// El cobrador no ve Inicio (dashboard de ganancias) ni Configuración (admin del
-// negocio): su navegación es lo operativo (clientes, préstamos, cobros).
-const SOLO_DUENO = new Set(['/', '/configuracion'])
+// El cobrador no ve Inicio (dashboard de ganancias), Equipo ni Configuración
+// (admin del negocio): su navegación es lo operativo (clientes, préstamos, cobros).
+const SOLO_DUENO = new Set(['/', '/equipo', '/configuracion'])
 
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -89,7 +98,9 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const nav = esDueno ? NAV : NAV.filter((n) => !SOLO_DUENO.has(n.to))
-  const navBottom = nav.filter((n) => n.to !== '/configuracion')
+  // En móvil, Equipo y Configuración (admin) van en el menú de perfil, no en la
+  // barra inferior: ahí solo lo operativo del día a día.
+  const navBottom = nav.filter((n) => n.to !== '/configuracion' && n.to !== '/equipo')
 
   const inicialaes = (user?.email?.split('@')[0]?.slice(0, 2) || 'U').toUpperCase()
 
@@ -192,15 +203,26 @@ export default function Layout() {
                     </p>
                   </div>
                   {esDueno && (
-                    <NavLink
-                      to="/configuracion"
-                      role="menuitem"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
-                    >
-                      <IconGear className="h-[18px] w-[18px] text-muted" />
-                      Configuración
-                    </NavLink>
+                    <>
+                      <NavLink
+                        to="/equipo"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
+                      >
+                        <IconTeam className="h-[18px] w-[18px] text-muted" />
+                        Equipo
+                      </NavLink>
+                      <NavLink
+                        to="/configuracion"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
+                      >
+                        <IconGear className="h-[18px] w-[18px] text-muted" />
+                        Configuración
+                      </NavLink>
+                    </>
                   )}
                   <button
                     type="button"
