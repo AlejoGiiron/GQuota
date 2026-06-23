@@ -7,19 +7,22 @@
 //  opera SOLO dentro de su negocio; la service_role vive solo aquí (env).
 //
 //  Acciones (body.accion):
-//    - 'listar'         -> [{ id, user_id, nombre, rol, email, es_yo }]
+//    - 'listar'         -> [{ id, user_id, nombre, rol, email, es_yo, activo }]
 //    - 'reset_password' -> { miembro_id, password }   nueva clave del cobrador
-//    - 'quitar'         -> { miembro_id }              desvincula + banea
+//    - 'quitar'         -> { miembro_id }              inactiva + banea
+//    - 'reactivar'      -> { miembro_id }              re-activa + des-banea
 //    - 'cambiar_rol'    -> { miembro_id, nuevo_rol }
 //
-//  INVARIANTE: un negocio SIEMPRE tiene al menos un dueño. No se puede quitar
-//  ni degradar al último dueño, ni quitarse uno mismo.
+//  INVARIANTE: un negocio SIEMPRE tiene al menos un dueño ACTIVO. No se puede
+//  quitar ni degradar al último dueño activo, ni quitarse uno mismo.
 //
-//  ⚠️ "quitar" NO borra el usuario de Auth: clientes/prestamos/movimientos/cuotas
-//  tienen user_id ... references auth.users on delete CASCADE, así que borrar al
-//  cobrador destruiría los pagos que registró. En su lugar se borra su fila en
-//  `miembros` (lo desvincula del negocio) y se BANEA su cuenta (no puede entrar),
-//  conservando intacto su historial financiero.
+//  ⚠️ "quitar" NO borra el usuario de Auth ni su fila en `miembros`:
+//  clientes/prestamos/movimientos/cuotas tienen user_id ... references auth.users
+//  on delete CASCADE, así que borrar al cobrador destruiría los pagos que
+//  registró. En su lugar se marca su membresía inactiva (miembros.activo=false,
+//  que mi_negocio()/mi_rol() ya excluyen -> deja de ver/poder todo) y se BANEA su
+//  cuenta (no puede entrar). Reactivar revierte ambos: vuelve a ser cobrador con
+//  su historial intacto, sin crear cuenta nueva.
 // ============================================================
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -46,6 +49,7 @@ interface Miembro {
   nombre: string | null
   rol: string
   negocio_id: string
+  activo: boolean
 }
 
 Deno.serve(async (req) => {
@@ -84,6 +88,7 @@ Deno.serve(async (req) => {
     .from('miembros')
     .select('negocio_id, rol')
     .eq('user_id', invocador.id)
+    .eq('activo', true)
     .maybeSingle()
   if (errorYo) return json({ error: 'No se pudo verificar tu cuenta.' }, 500)
   if (!yo || yo.rol !== 'dueno') {
@@ -107,7 +112,7 @@ Deno.serve(async (req) => {
     if (!miembroId) return json({ error: 'Falta el miembro objetivo.' }, 400)
     const { data, error } = await admin
       .from('miembros')
-      .select('id, user_id, nombre, rol, negocio_id')
+      .select('id, user_id, nombre, rol, negocio_id, activo')
       .eq('id', miembroId)
       .maybeSingle()
     // Error genérico tanto si no existe como si es de otro negocio: no se
@@ -118,24 +123,28 @@ Deno.serve(async (req) => {
     return data as Miembro
   }
 
-  // Cuántos dueños quedan en el negocio (para proteger el invariante).
-  async function contarDuenos(): Promise<number> {
+  // Cuántos dueños ACTIVOS quedan en el negocio (para proteger el invariante).
+  // Un dueño inactivo no cuenta: el negocio no puede quedar solo con dueños
+  // baneados/desvinculados.
+  async function contarDuenosActivos(): Promise<number> {
     const { count } = await admin
       .from('miembros')
       .select('id', { count: 'exact', head: true })
       .eq('negocio_id', negocioId)
       .eq('rol', 'dueno')
+      .eq('activo', true)
     return count ?? 0
   }
 
   // ── 4. Acciones ───────────────────────────────────────────────────────────
   switch (accion) {
     case 'listar': {
+      // Incluye activos e inactivos (los inactivos conservan su fila y su
+      // negocio_id); el frontend separa la sección de reactivables por `activo`.
       const { data: miembros, error } = await admin
         .from('miembros')
-        .select('id, user_id, nombre, rol')
+        .select('id, user_id, nombre, rol, activo')
         .eq('negocio_id', negocioId)
-        .order('rol', { ascending: true }) // 'cobrador' < 'dueno' alfabético; se ordena en el front igual
       if (error) return json({ error: 'No se pudo cargar el equipo.' }, 500)
 
       // El email vive en auth.users (no en miembros): solo accesible con la
@@ -148,6 +157,7 @@ Deno.serve(async (req) => {
             user_id: m.user_id,
             nombre: m.nombre,
             rol: m.rol,
+            activo: m.activo,
             email: u?.user?.email ?? null,
             es_yo: m.user_id === invocador.id,
           }
@@ -174,24 +184,51 @@ Deno.serve(async (req) => {
       if (objetivo.user_id === invocador.id) {
         return json({ error: 'No puedes quitarte a ti mismo.' }, 409)
       }
-      if (objetivo.rol === 'dueno' && (await contarDuenos()) <= 1) {
+      if (!objetivo.activo) {
+        return json({ error: 'Ese miembro ya está inactivo.' }, 409)
+      }
+      if (objetivo.rol === 'dueno' && (await contarDuenosActivos()) <= 1) {
         return json({ error: 'No puedes quitar al último dueño del negocio.' }, 409)
       }
-      // Desvincular: borra la fila de miembros (NO el usuario de Auth, ver cabecera).
-      const { error: errDel } = await admin
+      // Inactivar: conserva la fila (NO la borra) para poder reactivar luego.
+      // mi_negocio()/mi_rol() excluyen activo=false, así que deja de ver/poder todo.
+      const { error: errUpd } = await admin
         .from('miembros')
-        .delete()
+        .update({ activo: false })
         .eq('id', objetivo.id)
         .eq('negocio_id', negocioId)
-      if (errDel) return json({ error: 'No se pudo quitar al miembro.' }, 500)
+      if (errUpd) return json({ error: 'No se pudo quitar al miembro.' }, 500)
       // Banear la cuenta para que ya no pueda entrar (sin borrar su historial).
       const { error: errBan } = await admin.auth.admin.updateUserById(objetivo.user_id, {
         ban_duration: BAN_PERMANENTE,
       })
       if (errBan) {
-        // La desvinculación ya surtió efecto (no ve nada del negocio); el baneo
+        // La inactivación ya surtió efecto (no ve nada del negocio); el baneo
         // es defensa adicional. Se reporta para no callar el fallo.
         return json({ error: 'Se quitó del negocio, pero no se pudo bloquear el acceso.' }, 500)
+      }
+      return json({ ok: true }, 200)
+    }
+
+    case 'reactivar': {
+      const objetivo = await cargarObjetivo()
+      if (objetivo instanceof Response) return objetivo
+      if (objetivo.activo) {
+        return json({ error: 'Ese miembro ya está activo.' }, 409)
+      }
+      // Reactivar = revertir el quitar: vuelve la membresía activa y se des-banea
+      // la cuenta. Entra con su clave anterior (el dueño puede resetearla aparte).
+      const { error: errUpd } = await admin
+        .from('miembros')
+        .update({ activo: true })
+        .eq('id', objetivo.id)
+        .eq('negocio_id', negocioId)
+      if (errUpd) return json({ error: 'No se pudo reactivar al miembro.' }, 500)
+      const { error: errUnban } = await admin.auth.admin.updateUserById(objetivo.user_id, {
+        ban_duration: 'none',
+      })
+      if (errUnban) {
+        return json({ error: 'Se reactivó, pero no se pudo restaurar el acceso.' }, 500)
       }
       return json({ ok: true }, 200)
     }
@@ -207,7 +244,7 @@ Deno.serve(async (req) => {
         return json({ error: 'El miembro ya tiene ese rol.' }, 409)
       }
       // Degradar un dueño a cobrador no puede dejar el negocio sin dueño.
-      if (objetivo.rol === 'dueno' && nuevoRol === 'cobrador' && (await contarDuenos()) <= 1) {
+      if (objetivo.rol === 'dueno' && nuevoRol === 'cobrador' && (await contarDuenosActivos()) <= 1) {
         return json({ error: 'No puedes dejar el negocio sin ningún dueño.' }, 409)
       }
       const { error } = await admin

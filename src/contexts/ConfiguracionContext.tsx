@@ -69,9 +69,12 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     // El negocio y el rol salen de tablas distintas (negocios / miembros), ambas
     // acotadas por RLS a lo del usuario; se leen en paralelo.
+    // Solo la membresía ACTIVA cuenta: un miembro inactivo (quitado) no pertenece
+    // a ningún negocio activo, igual que mi_negocio()/mi_rol() en la base. El
+    // negocio ya viene null por RLS (id = mi_negocio()); el rol se filtra aquí.
     const [{ data: neg }, { data: miembro }] = await Promise.all([
       supabase.from('negocios').select('*').maybeSingle(),
-      supabase.from('miembros').select('rol').maybeSingle(),
+      supabase.from('miembros').select('rol').eq('activo', true).maybeSingle(),
     ])
     setNegocio(neg ?? null)
     setRol((miembro?.rol as Rol | undefined) ?? null)

@@ -141,6 +141,7 @@ export type Database = {
       }
       miembros: {
         Row: {
+          activo: boolean
           created_at: string
           id: string
           negocio_id: string
@@ -149,6 +150,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          activo?: boolean
           created_at?: string
           id?: string
           negocio_id: string
@@ -157,6 +159,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          activo?: boolean
           created_at?: string
           id?: string
           negocio_id?: string

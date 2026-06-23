@@ -13,6 +13,7 @@ interface MiembroEquipo {
   rol: Rol
   email: string | null
   es_yo: boolean
+  activo: boolean
 }
 
 export default function EquipoPage() {
@@ -125,6 +126,19 @@ export default function EquipoPage() {
     void cargarEquipo()
   }
 
+  async function handleReactivar(m: MiembroEquipo) {
+    const { error } = await invocarEdge('gestionar-equipo', {
+      accion: 'reactivar',
+      miembro_id: m.id,
+    })
+    if (error) return toast.error(error)
+    toast.success(`${m.nombre ?? 'El miembro'} fue reactivado. Entra con su clave anterior.`)
+    void cargarEquipo()
+  }
+
+  const activos = equipo?.filter((m) => m.activo) ?? []
+  const inactivos = equipo?.filter((m) => !m.activo) ?? []
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-5">
       <h1 className="text-2xl font-extrabold tracking-tight text-text">Equipo</h1>
@@ -147,7 +161,7 @@ export default function EquipoPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {equipo?.map((m) => (
+            {activos.map((m) => (
               <li
                 key={m.id}
                 className="flex flex-col gap-3 rounded-xl border border-line bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
@@ -201,6 +215,41 @@ export default function EquipoPage() {
           </ul>
         )}
       </section>
+
+      {/* Inactivos (quitados): se pueden reactivar sin crear cuenta nueva. */}
+      {!cargando && !errorCarga && inactivos.length > 0 && (
+        <section className="card flex flex-col gap-3 p-5">
+          <div>
+            <h2 className="text-sm font-bold text-text">Inactivos</h2>
+            <p className="mt-1 text-xs text-text-2">
+              Cobradores que quitaste. No tienen acceso. Puedes reactivarlos: entran con su clave
+              anterior y conservan su historial.
+            </p>
+          </div>
+          <ul className="flex flex-col gap-2">
+            {inactivos.map((m) => (
+              <li
+                key={m.id}
+                className="flex flex-col gap-3 rounded-xl border border-line bg-bg p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <span className="truncate text-sm font-bold text-text-2">
+                    {m.nombre ?? 'Sin nombre'}
+                  </span>
+                  <p className="mt-0.5 truncate text-xs text-muted">{m.email ?? '—'}</p>
+                </div>
+                <button
+                  type="button"
+                  className="btn-secondary shrink-0"
+                  onClick={() => void handleReactivar(m)}
+                >
+                  Reactivar
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Agregar cobrador */}
       <form onSubmit={handleCrear} className="card flex flex-col gap-4 p-5">
