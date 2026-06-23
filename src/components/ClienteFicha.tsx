@@ -1,6 +1,7 @@
 import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import Avatar from '@/components/Avatar'
 import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
+import { useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { usePrestamos } from '@/hooks/usePrestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { Cliente } from '@/types/db'
@@ -30,6 +31,7 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string | null }) {
 export default function ClienteFicha() {
   const { clienteId } = useParams()
   const navigate = useNavigate()
+  const { esDueno } = useConfiguracion()
   const { clientes, loading, onEditar, onEliminar } = useOutletContext<ClientesOutletContext>()
   const cliente = clientes.find((c) => c.id === clienteId)
 
@@ -75,14 +77,16 @@ export default function ClienteFicha() {
             <p className="mt-1 text-xs text-muted">Cliente desde {fmtFecha(cliente.created_at)}</p>
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" className="btn-secondary" onClick={() => onEditar(cliente)}>
-            Editar
-          </button>
-          <button type="button" className="btn-destructive" onClick={() => onEliminar(cliente)}>
-            Eliminar
-          </button>
-        </div>
+        {esDueno && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button type="button" className="btn-secondary" onClick={() => onEditar(cliente)}>
+              Editar
+            </button>
+            <button type="button" className="btn-destructive" onClick={() => onEliminar(cliente)}>
+              Eliminar
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Datos */}

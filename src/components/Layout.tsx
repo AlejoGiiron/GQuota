@@ -65,8 +65,9 @@ const NAV: NavItem[] = [
   { to: '/cobros', label: 'Cobros', Icon: IconCash },
   { to: '/configuracion', label: 'Configuración', Icon: IconGear },
 ]
-// Bottom nav: solo los 4 principales (Configuración vive en el perfil del header).
-const NAV_BOTTOM = NAV.filter((n) => n.to !== '/configuracion')
+// El cobrador no ve Inicio (dashboard de ganancias) ni Configuración (admin del
+// negocio): su navegación es lo operativo (clientes, préstamos, cobros).
+const SOLO_DUENO = new Set(['/', '/configuracion'])
 
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -84,8 +85,11 @@ const bottomItemClass = ({ isActive }: { isActive: boolean }) =>
 
 export default function Layout() {
   const { user, signOut } = useAuth()
-  const { nombreNegocio } = useConfiguracion()
+  const { nombreNegocio, esDueno } = useConfiguracion()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const nav = esDueno ? NAV : NAV.filter((n) => !SOLO_DUENO.has(n.to))
+  const navBottom = nav.filter((n) => n.to !== '/configuracion')
 
   const inicialaes = (user?.email?.split('@')[0]?.slice(0, 2) || 'U').toUpperCase()
 
@@ -117,7 +121,7 @@ export default function Layout() {
           <div className="px-3 pb-2 pt-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5e7d72]">
             Menú
           </div>
-          {NAV.map(({ to, label, Icon, end }) => (
+          {nav.map(({ to, label, Icon, end }) => (
             <NavLink key={to} to={to} end={end} className={navItemClass}>
               <Icon className="h-[19px] w-[19px] shrink-0" />
               <span>{label}</span>
@@ -134,7 +138,7 @@ export default function Layout() {
               <div className="truncate text-[13.5px] font-bold text-white">
                 {user?.email ?? 'Mi cuenta'}
               </div>
-              <div className="text-xs text-[#6f9085]">Prestamista</div>
+              <div className="text-xs text-[#6f9085]">{esDueno ? 'Dueño' : 'Cobrador'}</div>
             </div>
           </div>
         </div>
@@ -187,15 +191,17 @@ export default function Layout() {
                       {user?.email ?? 'Mi cuenta'}
                     </p>
                   </div>
-                  <NavLink
-                    to="/configuracion"
-                    role="menuitem"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
-                  >
-                    <IconGear className="h-[18px] w-[18px] text-muted" />
-                    Configuración
-                  </NavLink>
+                  {esDueno && (
+                    <NavLink
+                      to="/configuracion"
+                      role="menuitem"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
+                    >
+                      <IconGear className="h-[18px] w-[18px] text-muted" />
+                      Configuración
+                    </NavLink>
+                  )}
                   <button
                     type="button"
                     role="menuitem"
@@ -218,7 +224,7 @@ export default function Layout() {
 
         {/* Bottom nav (móvil) */}
         <nav className="flex shrink-0 border-t border-line bg-card px-2 pb-[22px] pt-2 md:hidden">
-          {NAV_BOTTOM.map(({ to, label, Icon, end }) => (
+          {navBottom.map(({ to, label, Icon, end }) => (
             <NavLink key={to} to={to} end={end} className={bottomItemClass}>
               <Icon className="h-[23px] w-[23px]" />
               <span>{label}</span>

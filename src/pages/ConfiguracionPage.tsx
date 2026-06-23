@@ -1,25 +1,26 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Navigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { METODOS_PAGO, useConfiguracion } from '@/contexts/ConfiguracionContext'
 
 export default function ConfiguracionPage() {
   const { user, signOut } = useAuth()
-  const { configuracion, loading, guardar } = useConfiguracion()
+  const { negocio, loading, guardar, esDueno } = useConfiguracion()
 
   const [nombre, setNombre] = useState('')
   const [metodos, setMetodos] = useState<string[]>([])
   const [guardando, setGuardando] = useState(false)
 
-  // Sincroniza el formulario cuando llega/ cambia la config.
+  // Sincroniza el formulario cuando llega/ cambia el negocio.
   useEffect(() => {
-    setNombre(configuracion?.nombre_negocio ?? '')
+    setNombre(negocio?.nombre ?? '')
     setMetodos(
-      configuracion?.metodos_pago && configuracion.metodos_pago.length > 0
-        ? configuracion.metodos_pago
+      negocio?.metodos_pago && negocio.metodos_pago.length > 0
+        ? negocio.metodos_pago
         : METODOS_PAGO.map((m) => m.valor),
     )
-  }, [configuracion])
+  }, [negocio])
 
   function toggleMetodo(valor: string) {
     setMetodos((prev) =>
@@ -50,6 +51,11 @@ export default function ConfiguracionPage() {
   async function handleSignOut() {
     await signOut()
     toast.success('Sesión cerrada.')
+  }
+
+  // Configuración del negocio es solo del dueño; el cobrador no administra el negocio.
+  if (!loading && !esDueno) {
+    return <Navigate to="/cobros" replace />
   }
 
   return (
