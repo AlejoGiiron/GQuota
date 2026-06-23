@@ -308,9 +308,26 @@ export async function generarPNGComprobante(datos: DatosComprobante): Promise<Bl
   return blob
 }
 
-/** ¿El navegador puede COMPARTIR archivos (Web Share con files)? Si no, se descarga. */
+/**
+ * ¿El dispositivo es probablemente móvil/táctil? En escritorio (Chrome/Edge en
+ * Windows) `navigator.canShare({files})` también da true, pero compartir abre una
+ * hoja de compartir que bloquea la promesa (el botón se queda "Generando…") en vez
+ * de descargar. Queremos: en móvil compartir (→ WhatsApp), en escritorio descargar.
+ */
+function esProbablementeMovil(): boolean {
+  if (typeof navigator === 'undefined') return false
+  const uaData = (navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData
+  if (uaData && typeof uaData.mobile === 'boolean') return uaData.mobile
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    return window.matchMedia('(pointer: coarse)').matches
+  }
+  return false
+}
+
+/** ¿Conviene COMPARTIR (móvil con Web Share + files)? Si no, se descarga. */
 export function puedeCompartirImagen(): boolean {
   if (typeof navigator === 'undefined' || typeof navigator.canShare !== 'function') return false
+  if (!esProbablementeMovil()) return false // escritorio → descargar, no abrir la hoja de compartir
   try {
     const prueba = new File([new Uint8Array()], 'x.png', { type: 'image/png' })
     return navigator.canShare({ files: [prueba] })
