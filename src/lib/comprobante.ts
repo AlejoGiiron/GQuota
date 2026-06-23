@@ -39,7 +39,9 @@ export interface DatosComprobante {
 }
 
 // ── Colores del design-system (src/index.css :root). No inventar. ──
-const COLOR = {
+// Se exportan para que otras imágenes generadas en canvas (p. ej. la tarjeta de
+// cronograma) compartan la misma paleta sin volver a declararla.
+export const COLOR = {
   card: '#ffffff',
   green: '#047857',
   green700: '#036249',
@@ -49,10 +51,13 @@ const COLOR = {
   muted: '#8b9a93',
   line: '#ece8e1',
   blanco: '#ffffff',
+  amber: '#b45309', // texto ámbar para estados "parcial" (igual que la UI)
+  amberTint: '#fef3e2',
+  red: '#dc2626',
 } as const
 
-const FUENTE_UI = "'Plus Jakarta Sans', system-ui, sans-serif"
-const FUENTE_MONO = "'JetBrains Mono', ui-monospace, monospace"
+export const FUENTE_UI = "'Plus Jakarta Sans', system-ui, sans-serif"
+export const FUENTE_MONO = "'JetBrains Mono', ui-monospace, monospace"
 
 const W = 720 // ancho lógico del ticket (vertical, se ve bien en un chat)
 const PAD = 56
@@ -63,7 +68,7 @@ const CONTENT_W = W - PAD * 2
  * Sin esto, el primer comprobante puede salir con la fuente por defecto (las web
  * fonts cargan async): es el equivalente en canvas a la "primera captura en blanco".
  */
-async function asegurarFuentes(): Promise<void> {
+export async function asegurarFuentes(): Promise<void> {
   if (typeof document === 'undefined' || !document.fonts) return
   try {
     await Promise.all([
@@ -80,7 +85,7 @@ async function asegurarFuentes(): Promise<void> {
 }
 
 /** Parte un texto en líneas que caben en maxWidth, según la fuente activa del ctx. */
-function envolverTexto(ctx: CanvasRenderingContext2D, texto: string, maxWidth: number): string[] {
+export function envolverTexto(ctx: CanvasRenderingContext2D, texto: string, maxWidth: number): string[] {
   const palabras = texto.split(' ')
   const lineas: string[] = []
   let actual = ''
@@ -97,7 +102,7 @@ function envolverTexto(ctx: CanvasRenderingContext2D, texto: string, maxWidth: n
   return lineas
 }
 
-function rectRedondeado(
+export function rectRedondeado(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -326,24 +331,19 @@ function descargar(blob: Blob, nombreArchivo: string): void {
 }
 
 /**
- * Genera el comprobante y lo comparte (Web Share, móvil → WhatsApp) o, si el
- * navegador no soporta compartir archivos (escritorio), lo descarga como PNG.
- * Lanza si la generación falla; el llamador muestra el toast de error.
+ * Comparte un PNG ya generado (Web Share, móvil → WhatsApp) o, si el navegador
+ * no soporta compartir archivos (escritorio), lo descarga. Genérico: lo reutiliza
+ * tanto el comprobante de pago como la tarjeta de cronograma.
  */
-export async function compartirODescargarComprobante(
-  datos: DatosComprobante,
+export async function compartirODescargarPNG(
+  blob: Blob,
   nombreArchivo: string,
+  compartir: { title: string; text: string },
 ): Promise<void> {
-  const blob = await generarPNGComprobante(datos)
   const file = new File([blob], nombreArchivo, { type: 'image/png' })
-
   if (puedeCompartirImagen()) {
     try {
-      await navigator.share({
-        files: [file],
-        title: 'Comprobante de pago',
-        text: `Comprobante de pago — ${datos.negocio}`,
-      })
+      await navigator.share({ files: [file], title: compartir.title, text: compartir.text })
       return
     } catch (e) {
       // El usuario canceló el menú de compartir: no descargamos por encima.
@@ -354,18 +354,40 @@ export async function compartirODescargarComprobante(
   descargar(blob, nombreArchivo)
 }
 
+/**
+ * Genera el comprobante y lo comparte (Web Share, móvil → WhatsApp) o, si el
+ * navegador no soporta compartir archivos (escritorio), lo descarga como PNG.
+ * Lanza si la generación falla; el llamador muestra el toast de error.
+ */
+export async function compartirODescargarComprobante(
+  datos: DatosComprobante,
+  nombreArchivo: string,
+): Promise<void> {
+  const blob = await generarPNGComprobante(datos)
+  await compartirODescargarPNG(blob, nombreArchivo, {
+    title: 'Comprobante de pago',
+    text: `Comprobante de pago — ${datos.negocio}`,
+  })
+}
+
 /** Referencia corta y estable del préstamo a partir de su id (uuid). */
 export function referenciaPrestamo(id: string): string {
   return `#${id.replace(/-/g, '').slice(0, 6).toUpperCase()}`
 }
 
+/** Slug seguro a partir del nombre del cliente (para nombres de archivo). */
+export function slugCliente(cliente: string): string {
+  return (
+    cliente
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-zA-Z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase() || 'cliente'
+  )
+}
+
 /** Nombre de archivo del PNG, derivado del nombre del cliente. */
 export function nombreArchivoComprobante(cliente: string): string {
-  const slug = cliente
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-zA-Z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .toLowerCase()
-  return `comprobante-${slug || 'cliente'}.png`
+  return `comprobante-${slugCliente(cliente)}.png`
 }

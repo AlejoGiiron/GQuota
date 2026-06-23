@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
+import BotonCompartirCronograma from '@/components/BotonCompartirCronograma'
 import CronogramaCuotas from '@/components/CronogramaCuotas'
 import CronogramaCuotaFija from '@/components/CronogramaCuotaFija'
 import EstadoDeCuenta from '@/components/EstadoDeCuenta'
@@ -157,33 +158,36 @@ export default function PrestamoFicha() {
             </div>
           </div>
         </div>
-        {pagable && (
-          <button
-            type="button"
-            className="btn-primary mt-4 w-full sm:w-auto"
-            onClick={() => setPagoAbierto(true)}
-          >
-            Registrar pago
-          </button>
-        )}
-        {pagableCuotas && (
-          <button
-            type="button"
-            className="btn-primary mt-4 w-full sm:w-auto"
-            onClick={() => setPagoCuotasAbierto(true)}
-          >
-            Registrar pago
-          </button>
-        )}
-        {pagableCuotaFija && (
-          <button
-            type="button"
-            className="btn-primary mt-4 w-full sm:w-auto"
-            onClick={() => setPagoCuotaFijaAbierto(true)}
-          >
-            Registrar pago
-          </button>
-        )}
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+          {pagable && (
+            <button
+              type="button"
+              className="btn-primary w-full sm:w-auto"
+              onClick={() => setPagoAbierto(true)}
+            >
+              Registrar pago
+            </button>
+          )}
+          {pagableCuotas && (
+            <button
+              type="button"
+              className="btn-primary w-full sm:w-auto"
+              onClick={() => setPagoCuotasAbierto(true)}
+            >
+              Registrar pago
+            </button>
+          )}
+          {pagableCuotaFija && (
+            <button
+              type="button"
+              className="btn-primary w-full sm:w-auto"
+              onClick={() => setPagoCuotaFijaAbierto(true)}
+            >
+              Registrar pago
+            </button>
+          )}
+          <BotonCompartirCronograma prestamo={prestamo} clienteNombre={nombre} />
+        </div>
       </div>
 
       {/* Codeudor (opcional): solo si el préstamo lo tiene. */}
