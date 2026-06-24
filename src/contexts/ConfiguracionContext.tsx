@@ -42,6 +42,12 @@ interface ConfiguracionContextValue {
   /** Métodos de pago activos; si no hay negocio, el catálogo completo. */
   metodosActivos: string[]
   guardar: (input: ConfiguracionInput) => Promise<{ error: string | null }>
+  /**
+   * Registro self-service: el usuario autenticado crea su negocio y queda como
+   * dueño (RPC crear_mi_negocio). Refresca el contexto al terminar, así la app
+   * pasa del estado "sin negocio" a su negocio vacío sin recargar.
+   */
+  crearNegocio: (nombre: string) => Promise<{ error: string | null }>
   refrescar: () => Promise<void>
 }
 
@@ -106,6 +112,24 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
     [user, negocio],
   )
 
+  const crearNegocio = useCallback(
+    async (nombre: string): Promise<{ error: string | null }> => {
+      if (!user) return { error: 'No hay una sesión activa.' }
+      const limpio = nombre.trim()
+      if (!limpio) return { error: 'Escribe el nombre de tu negocio.' }
+      // La RPC valida "un usuario, un negocio" y lanza mensajes en español ya
+      // listos para mostrar (ej. 'Ya perteneces a un negocio.'); se pasan tal cual.
+      const { error } = await supabase.rpc('crear_mi_negocio', { p_nombre: limpio })
+      if (error) {
+        return { error: error.message || 'No pudimos crear tu negocio. Intenta de nuevo.' }
+      }
+      // Recarga negocio + rol: la app sale del estado "sin negocio".
+      await cargar()
+      return { error: null }
+    },
+    [user, cargar],
+  )
+
   const value = useMemo<ConfiguracionContextValue>(() => {
     const metodos =
       negocio?.metodos_pago && negocio.metodos_pago.length > 0
@@ -120,9 +144,10 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
       nombreNegocio: negocio?.nombre?.trim() || NOMBRE_POR_DEFECTO,
       metodosActivos: metodos,
       guardar,
+      crearNegocio,
       refrescar: cargar,
     }
-  }, [negocio, rol, loading, guardar, cargar])
+  }, [negocio, rol, loading, guardar, crearNegocio, cargar])
 
   return <ConfiguracionContext.Provider value={value}>{children}</ConfiguracionContext.Provider>
 }

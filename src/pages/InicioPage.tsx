@@ -91,8 +91,14 @@ function MetricCard({
 export default function InicioPage() {
   const { user } = useAuth()
   const { esDueno, loading: cargandoRol } = useConfiguracion()
-  const { prestamos, registrarPago, registrarPagoCuotas, registrarPagoCuotaFija } = usePrestamos()
-  const { clientes } = useClientes()
+  const {
+    prestamos,
+    loading: cargandoPrestamos,
+    registrarPago,
+    registrarPagoCuotas,
+    registrarPagoCuotaFija,
+  } = usePrestamos()
+  const { clientes, loading: cargandoClientes } = useClientes()
   const { movimientos, recargar: recargarMovs } = useMovimientosDelMes()
   const { cuotas, recargar: recargarCuotas } = useCuotasActivas()
 
@@ -113,6 +119,11 @@ export default function InicioPage() {
   const nombre = user?.email?.split('@')[0] ?? ''
   const nombreDe = (p: Prestamo) => clientePorId.get(p.cliente_id)?.nombre ?? 'Cliente'
   const pct = cobros.programados > 0 ? Math.round((cobros.cobrados / cobros.programados) * 100) : 0
+
+  // Negocio recién creado: sin clientes ni préstamos. En vez del dashboard en
+  // ceros, se muestra un onboarding que invita a dar el primer paso.
+  const negocioVacio =
+    !cargandoPrestamos && !cargandoClientes && prestamos.length === 0 && clientes.length === 0
 
   async function onRegistrar(monto: number, metodo: string) {
     if (!pagoPrestamo) return null
@@ -168,6 +179,31 @@ export default function InicioPage() {
         <p className="mt-0.5 text-sm text-text-2">{fechaLarga(hoy)}</p>
       </div>
 
+      {negocioVacio ? (
+        <div className="card flex flex-col items-center gap-4 px-6 py-12 text-center">
+          <span className="grid h-16 w-16 place-items-center rounded-full bg-green-tint text-3xl">
+            👋
+          </span>
+          <div className="max-w-md">
+            <h2 className="text-lg font-extrabold tracking-tight text-text">
+              ¡Bienvenido a tu negocio!
+            </h2>
+            <p className="mt-1.5 text-sm text-text-2">
+              Aún no tienes nada registrado. Empieza creando tu primer cliente y luego dale un
+              préstamo. Aquí verás tus cobros del día, tu ganancia del mes y la mora de un vistazo.
+            </p>
+          </div>
+          <div className="flex flex-col gap-2.5 sm:flex-row">
+            <Link to="/clientes" className="btn-primary">
+              Crear mi primer cliente
+            </Link>
+            <Link to="/prestamos" className="btn-secondary">
+              Ir a préstamos
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <>
       {/* Métricas: franja deslizable en móvil, grid de 4 en desktop */}
       <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1 md:mx-0 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:px-0">
         <MetricCard
@@ -299,6 +335,8 @@ export default function InicioPage() {
           )}
         </div>
       </div>
+        </>
+      )}
 
       {pagoPrestamo && pagoPrestamo.tipo === 'cuota_fija' ? (
         <PagoCuotaFijaModal

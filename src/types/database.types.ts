@@ -399,6 +399,21 @@ export type Database = {
         Args: { p_cliente_id: string }
         Returns: boolean
       }
+      crear_mi_negocio: {
+        Args: { p_nombre: string }
+        Returns: {
+          created_at: string
+          id: string
+          metodos_pago: string[]
+          nombre: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "negocios"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       crear_prestamo: {
         Args: {
           p_capital: number
