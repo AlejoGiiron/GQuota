@@ -26,7 +26,8 @@ Fuentes: Plus Jakarta Sans (UI) + JetBrains Mono. Logo naranja "G·Quota".
 
 ## 2. Estado actual: SaaS completo en producción
 
-**Fases 1 a 5 del SaaS: COMPLETAS y desplegadas en producción.** El registro público está abierto.
+**Fases 1 a 5 del SaaS: COMPLETAS y desplegadas en producción.** El registro está CERRADO en la
+práctica por decisión (2026-09-23): por ahora solo usa la app el cliente actual (ver Confirm email).
 
 El producto hoy hace:
 - **Tres tipos de préstamo** conviviendo: `abierto` (interés sobre saldo o sobre capital inicial,
@@ -114,9 +115,10 @@ de borde verificados con números. Las RPC SQL NO están cubiertas por tests (ve
 registrado llama para crear su negocio + membresía dueño (atómica, guard "un usuario un negocio").
 Pantallas: `RegistroPage`, `SinNegocioPage` (recuperación si la creación falla a mitad), onboarding
 en `InicioPage` (estado vacío que invita a crear el primer cliente/préstamo).
-**Confirm email está ON** (visto en el panel el 2026-09-23). El signup no entrega sesión hasta confirmar:
-`RegistroPage` muestra "revisa tu correo" y `SinNegocioPage` termina de crear el negocio al entrar.
-Por eso el registro público depende de que el correo de confirmación llegue (ver Resend, abajo).
+**Confirm email ON.** Con el SMTP por defecto de Supabase (solo entrega al equipo, 2/hora) el registro
+queda cerrado en la práctica, que es lo que queremos por ahora. Abrir al público requiere configurar
+Resend/SMTP y decidir si se mantiene la confirmación. Los cobradores creados por el dueño no se ven
+afectados.
 
 ---
 
@@ -191,7 +193,8 @@ para todos los negocios en una pasada. NO usan mi_negocio() (bajo cron correría
   contenido: `main` solo suma los merges `--no-ff` de cada release (verificado el 2026-09-23 con
   `git diff origin/develop origin/main` vacío). En el remoto solo existen `main` y `develop`.
 - Migraciones 001–034 aplicadas en producción.
-- El registro público está ABIERTO (cualquiera puede crear cuenta; sin tope ni cobro todavía).
+- El registro está CERRADO en la práctica (Confirm email ON + SMTP por defecto). Solo usa la app el
+  cliente actual.
 - Hay **datos de prueba mezclados en producción**: el negocio "LAB - Negocio Prueba", cobradores de
   prueba, y registros creados al probar. La RLS los aísla (Luis no los ve), pero hay que limpiarlos.
 - Cuentas de prueba (negocio LAB): dueno.lab@prueba.com / cobrador.lab@prueba.com. La clave NO va en
@@ -218,11 +221,10 @@ Es lo siguiente a hacer. Tres piezas, EN ESTE ORDEN:
 3. **Docker + Supabase local** (`supabase start`): base de pruebas con esquema aislado, para probar
    migraciones localmente antes de `db push` a producción. Documentar el flujo local → push.
 
-### PRIORIDAD ALTA (en paralelo, no depende del servidor)
-- **"Olvidé contraseña"**: hoy muestra "disponible pronto" (`LoginPage`). Con el registro público
-  abierto, quien olvida la clave queda fuera. Requiere configurar **Resend (o SMTP)** en Supabase Auth.
-- **Probar un registro real con un correo externo**: con Confirm email ON, si el correo de confirmación
-  no llega, nadie nuevo puede entrar.
+### ANTES DE ABRIR EL REGISTRO AL PÚBLICO (hoy cerrado a propósito)
+- **Configurar Resend (o SMTP)** en Supabase Auth y decidir si se mantiene la confirmación de email.
+- **"Olvidé contraseña"** (prioridad alta al abrir): hoy muestra "disponible pronto" (`LoginPage`);
+  quien olvida la clave queda fuera. Requiere Resend/SMTP.
 - **Revisar que la URL de Vercel esté en Supabase Auth → URL Configuration** (los enlaces de correo,
   el de confirmación y el de recuperación, redirigen ahí).
 
@@ -237,10 +239,6 @@ limpia. Es la fase que más red de seguridad requiere.
 ### Deuda técnica de fondo (anotada, para cuando toque)
 - **Test de integración de las RPC contra la BD:** lo único que cazaría la desincronización motor TS ↔
   SQL (la "doble fuente"). La regresión del interés (017) es la prueba viviente de por qué importa.
-- **Configurar Resend (o SMTP)**: lo pide "Olvidé contraseña" (prioridad alta, arriba) y también el
-  registro, porque con Confirm email ON cada cuenta nueva necesita recibir su correo de confirmación.
-  Hasta entonces, verificar que el correo por defecto de Supabase entregue a direcciones externas
-  (tiene límites de envío bajos).
 - **`on delete cascade` por `user_id`** en clientes/prestamos/movimientos/cuotas: frágil en el modelo
   multi-negocio (por eso "quitar" cobrador inactiva+banea, no borra). Los datos financieros deberían
   depender del negocio, no del usuario que los creó. Revisar algún día.
