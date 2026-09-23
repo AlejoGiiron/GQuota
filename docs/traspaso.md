@@ -124,8 +124,8 @@ afectados.
 
 ## 5. Migraciones (todas aplicadas en producción)
 
-Numeradas **001–034**, todas en la base de la nube (según el cierre de la Fase 5; falta
-reconfirmarlo con `supabase migration list` desde el equipo nuevo). Hitos:
+Numeradas **001–034**, todas en la base de la nube (confirmado el 2026-09-23 con
+`supabase migration list` desde el equipo nuevo: Local = Remote en 001–034, sin huecos). Hitos:
 - 001–010: esquema base, préstamo abierto, pagos, mora, configuración.
 - 011–014: modelo de cuotas pactadas.
 - 015: interés del primer periodo (abierto).
