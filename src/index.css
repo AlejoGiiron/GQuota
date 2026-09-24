@@ -3,44 +3,90 @@
 @tailwind utilities;
 
 /* ───────────────────────────────────────────────────────────
-   G-Quota — tokens del sistema visual (de gquota.css del handoff).
-   Fuente de verdad: src/design-system.md. No inventar tokens nuevos.
+   G-Quota — tokens del sistema de diseño 2a Contable (marca blanca).
+   Fuente de verdad: src/design-system.md y design/paquete-2a/ (Sistema).
+   Tailwind apunta a estas variables (tailwind.config.js): no duplicar valores.
    ─────────────────────────────────────────────────────────── */
+
+/* Sistema: fijos para todos los negocios. */
 :root {
-  /* Paleta */
-  --green: #047857;
-  --green-700: #036249;
-  --green-600: #047857;
-  --green-tint: #ecfdf5;
-  --green-tint-2: #d1fae5;
-  --ink: #0c1f1a;
-  --ink-2: #112a23;
-  --ink-soft: #1b3a31;
+  --fondo: #F5F6F8;
+  --superficie: #FFFFFF;
+  --superficie-2: #F8F9FA;
+  --borde: #E2E5EA;
+  --borde-fila: #EDEFF2;
+  --borde-control: #CDD2D9;
+  --tinta: #14181F;
+  --tinta-2: #3B4452;
+  --tinta-3: #5B6472;
+  --tinta-sobre-marca: #17150F;
 
-  --bg: #faf9f7;
-  --card: #ffffff;
-  --line: #ece8e1;
-  --line-soft: #f3f0ea;
+  /* Estados: mismo color, ícono y palabra en todos los negocios. */
+  --estado-pagado: #1A7431;
+  --estado-pagado-fondo: #E7F3EA;
+  --estado-al-dia: #1A7431;
+  --estado-al-dia-fondo: #E7F3EA;
+  --estado-por-vencer: #8A5300;
+  --estado-por-vencer-fondo: #FCF1D9;
+  --estado-mora: #B3261E;
+  --estado-mora-fondo: #FBE8E6;
+  --estado-parcial: #2446B8;
+  --estado-parcial-fondo: #E8EDFB;
+  --estado-pendiente: #5B6472;
+  --estado-pendiente-fondo: #EEF0F3;
 
-  --amber: #d97706;
-  --amber-tint: #fef3e2;
-  --red: #dc2626;
-  --red-tint: #fef2f2;
-  --red-tint-2: #fee2e2;
+  /* Forma */
+  --radio-control: 6px;
+  --radio-tarjeta: 8px;
+  --radio-estado: 12px;
+  --sombra-flotante: 0 24px 48px -20px rgba(20, 24, 31, 0.4);
+  --velo: rgba(20, 24, 31, 0.42);
 
-  --text: #16241f;
-  --text-2: #475a53;
-  --muted: #8b9a93;
+  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
 
-  --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+/* Marca: por ahora FIJA (verde y ámbar de G-Quota). Valores calculados con
+   tokensDeMarca('#047857', '#D97706') de src/lib/marca.ts; una prueba verifica
+   que coincidan. Con "Mi marca" la app los reemplazará por los de cada negocio. */
+:root {
+  --marca: #047857;
+  --marca-sobre: #FFFFFF;
+  --marca-texto: #047857;
+  --marca-suave: #E1EFEB;
+  --acento: #D97706;
+  --acento-sobre: #17150F;
+  --acento-texto: #A95F08;
+}
 
-  --r-sm: 9px;
-  --r: 14px;
-  --r-lg: 18px;
-
-  --shadow-card: 0 1px 2px rgba(12, 31, 26, 0.04), 0 4px 14px rgba(12, 31, 26, 0.05);
-  --shadow-pop: 0 12px 36px rgba(12, 31, 26, 0.12);
+/* Tokens VIEJOS (sistema anterior) mapeados a los nuevos, para que las pantallas
+   que aún no se rediseñan sigan funcionando. No usarlos en código nuevo. */
+:root {
+  --green: var(--marca);
+  --green-700: var(--marca-texto);
+  --green-600: var(--marca);
+  --green-tint: var(--marca-suave);
+  --green-tint-2: color-mix(in srgb, var(--marca) 22%, #FFFFFF);
+  --ink: var(--tinta);
+  --ink-2: var(--tinta-2);
+  --ink-soft: var(--tinta-2);
+  --bg: var(--fondo);
+  --card: var(--superficie);
+  --line: var(--borde);
+  --line-soft: var(--borde-fila);
+  --amber: var(--acento);
+  --amber-tint: var(--estado-por-vencer-fondo);
+  --red: var(--estado-mora);
+  --red-tint: var(--estado-mora-fondo);
+  --red-tint-2: color-mix(in srgb, var(--estado-mora) 16%, #FFFFFF);
+  --text: var(--tinta);
+  --text-2: var(--tinta-2);
+  --muted: var(--tinta-3);
+  --font-mono: var(--font-ui); /* las cifras ya no van en monoespaciada: Plex Sans tabular */
+  --r-sm: var(--radio-control);
+  --r: var(--radio-tarjeta);
+  --r-lg: var(--radio-tarjeta);
+  --shadow-card: none; /* 2a es plano: tarjetas con borde, sin sombra */
+  --shadow-pop: var(--sombra-flotante);
 }
 
 html,
@@ -51,112 +97,343 @@ body,
 
 body {
   font-family: var(--font-ui);
-  color: var(--text);
-  background: var(--bg);
+  font-size: 14.5px;
+  color: var(--tinta);
+  background: var(--fondo);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-.mono {
-  font-family: var(--font-mono);
-  font-feature-settings: 'tnum' 1;
-  letter-spacing: -0.02em;
+/* Cifras: números tabulares para que las columnas de dinero alineen.
+   (Nombre heredado: ya no cambia la fuente, solo los números.) */
+.mono,
+.cifra {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ───────────────────────────────────────────────────────────
-   Primitivos del design system (src/design-system.md).
-   Una sola definición por primitivo, conectada a los tokens.
-   El CSS plano queda solo para lo bespoke de una pantalla.
+   Componentes base (src/design-system.md). Una sola definición por
+   componente, conectada a los tokens. Los componentes React de
+   src/components/ui/ usan estas mismas clases.
    ─────────────────────────────────────────────────────────── */
 @layer components {
-  /* Botón primario — verde esmeralda */
-  .btn-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-green font-bold text-white;
-    height: 46px;
-    padding: 0 20px;
-    gap: 9px;
-    font-size: 14.5px;
-    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.28);
-    transition: transform 0.12s, box-shadow 0.15s;
-  }
-  .btn-primary:hover {
-    box-shadow: 0 8px 22px rgba(4, 120, 87, 0.36);
-    transform: translateY(-1px);
-  }
-
-  /* Botón secundario — borde gris, fondo blanco */
-  .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-xl bg-card font-bold text-text;
-    height: 46px;
-    padding: 0 20px;
-    gap: 9px;
-    font-size: 14.5px;
-    border: 1px solid var(--line);
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .btn-secondary:hover {
-    border-color: #d8d2c8;
-  }
-
-  /* Botón destructivo — rojo */
+  /* ── Botones: 44 px en el celular, 40 px en escritorio ── */
+  .btn-primary,
+  .btn-secondary,
   .btn-destructive {
-    @apply inline-flex items-center justify-center rounded-xl bg-red font-bold text-white;
-    height: 46px;
-    padding: 0 20px;
-    gap: 9px;
-    font-size: 14.5px;
-    transition: opacity 0.15s;
+    @apply inline-flex items-center justify-center whitespace-nowrap font-semibold;
+    height: 44px;
+    padding: 0 16px;
+    gap: 8px;
+    font-size: 15px;
+    border-radius: var(--radio-control);
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s, filter 0.15s;
   }
-  .btn-destructive:hover {
-    opacity: 0.92;
+  @media (min-width: 768px) {
+    .btn-primary,
+    .btn-secondary,
+    .btn-destructive {
+      height: 40px;
+      font-size: 14px;
+    }
+  }
+  .btn-primary {
+    background: var(--marca);
+    color: var(--marca-sobre);
+  }
+  .btn-primary:hover:not(:disabled) {
+    filter: brightness(0.92);
+  }
+  .btn-secondary {
+    background: var(--superficie);
+    color: var(--tinta);
+    border: 1px solid var(--borde-control);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    border-color: var(--tinta-3);
+  }
+  /* Destructivo: contorno rojo (p. ej. "Deshacer pago"). */
+  .btn-destructive {
+    background: var(--superficie);
+    color: var(--estado-mora);
+    border: 1px solid var(--estado-mora);
+  }
+  .btn-destructive:hover:not(:disabled) {
+    background: var(--estado-mora-fondo);
+  }
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-destructive:disabled {
+    background: var(--estado-pendiente-fondo);
+    color: var(--tinta-3);
+    border-color: transparent;
+    cursor: not-allowed;
+    filter: none;
+  }
+  /* Acción principal en el celular: 54 px. */
+  .btn-grande {
+    height: 54px;
+    padding: 0 22px;
+    font-size: 17px;
+    border-radius: var(--radio-tarjeta);
+  }
+  /* Enlace: la marca como texto (≥ 4,5:1). */
+  .btn-enlace {
+    @apply inline-flex items-center font-semibold;
+    gap: 6px;
+    color: var(--marca-texto);
+    font-size: 14px;
+  }
+  .btn-enlace:hover {
+    text-decoration: underline;
+  }
+  .btn-primary:focus-visible,
+  .btn-secondary:focus-visible,
+  .btn-destructive:focus-visible,
+  .btn-enlace:focus-visible,
+  .segmentado__opcion:focus-visible {
+    outline: 2px solid var(--marca-texto);
+    outline-offset: 2px;
   }
 
-  /* Input de texto */
-  .input {
-    @apply w-full rounded-xl bg-card text-text;
-    height: 52px;
-    padding: 0 16px;
-    font-size: 15px;
-    font-weight: 500;
-    border: 1.5px solid var(--line);
+  /* ── Campo de texto y selector ── */
+  .input,
+  .select {
+    @apply w-full;
+    height: 44px;
+    padding: 0 12px;
+    font-size: 16px; /* 16 px en el celular: iOS no hace zoom al enfocar */
+    color: var(--tinta);
+    background: var(--superficie);
+    border: 1px solid var(--borde-control);
+    border-radius: var(--radio-control);
     transition: border-color 0.15s, box-shadow 0.15s;
   }
+  textarea.input {
+    height: auto;
+    padding: 10px 12px;
+  }
+  @media (min-width: 768px) {
+    .input,
+    .select {
+      height: 40px;
+      font-size: 14.5px;
+    }
+    textarea.input {
+      height: auto;
+    }
+  }
   .input::placeholder {
-    @apply text-muted;
+    color: var(--tinta-3);
+  }
+  /* Foco: borde de 2 px con la marca como texto (sin mover el contenido). */
+  .input:focus,
+  .select:focus {
+    outline: none;
+    border-color: var(--marca-texto);
+    box-shadow: inset 0 0 0 1px var(--marca-texto);
+  }
+  .input[aria-invalid='true'],
+  .select[aria-invalid='true'] {
+    border-color: var(--estado-mora);
+    box-shadow: inset 0 0 0 0.5px var(--estado-mora);
+  }
+  .input:disabled,
+  .select:disabled {
+    background: var(--superficie-2);
+    color: var(--tinta-3);
+  }
+  .select {
+    appearance: none;
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6472' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px;
+  }
+  /* Monto grande: 52 px, cifra de 24 px (va después de .input: gana también en escritorio). */
+  .input-monto {
+    height: 52px;
+    font-size: 24px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Campo = etiqueta + control + ayuda/error */
+  .campo {
+    @apply flex flex-col;
+    gap: 6px;
+  }
+  .campo__etiqueta {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tinta);
+  }
+  .campo__ayuda {
+    font-size: 12.5px;
+    color: var(--tinta-3);
+  }
+  .campo__error {
+    @apply flex items-center;
+    gap: 5px;
+    font-size: 12.5px;
+    color: var(--estado-mora);
+  }
+
+  /* ── Control segmentado ── */
+  .segmentado {
+    @apply inline-flex w-fit max-w-full self-start overflow-x-auto;
+    border: 1px solid var(--borde-control);
+    border-radius: var(--radio-control);
+    font-size: 13.5px;
     font-weight: 500;
   }
-  .input:focus {
-    outline: none;
-    border-color: var(--green);
-    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.12);
+  .segmentado__opcion {
+    @apply flex shrink-0 items-center whitespace-nowrap;
+    height: 44px;
+    padding: 0 12px;
+    gap: 6px;
+    color: var(--tinta);
+    background: var(--superficie);
+  }
+  .segmentado__opcion + .segmentado__opcion {
+    border-left: 1px solid var(--borde-control);
+  }
+  @media (min-width: 768px) {
+    .segmentado__opcion {
+      height: 36px;
+    }
+  }
+  .segmentado__opcion[aria-pressed='true'] {
+    background: var(--tinta);
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+  .segmentado__cantidad {
+    font-variant-numeric: tabular-nums;
   }
 
-  /* Tarjeta */
-  .card {
-    @apply rounded bg-card shadow-card;
-    border: 1px solid var(--line);
+  /* ── Tarjeta ── */
+  .card,
+  .tarjeta {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-tarjeta);
+  }
+  .tarjeta__encabezado {
+    @apply flex items-center justify-between;
+    gap: 12px;
+    min-height: 52px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--borde);
+  }
+  .tarjeta__titulo {
+    font-size: 16px;
+    font-weight: 600;
   }
 
-  /* Badge de estado — al día / por vencer / vencido / pagado */
-  .badge {
-    @apply inline-flex items-center gap-1.5 font-bold;
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 20px;
+  /* ── Tabla: cifras tabulares a la derecha ── */
+  .tabla-contenedor {
+    @apply overflow-x-auto;
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-tarjeta);
+  }
+  .tabla {
+    @apply w-full;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tabla th {
+    height: 40px;
+    padding: 0 16px;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--tinta-3);
+    background: var(--superficie-2);
+    border-bottom: 1px solid var(--borde);
+  }
+  .tabla td {
+    height: 48px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--borde-fila);
+  }
+  .tabla tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .tabla .num {
+    text-align: right;
     white-space: nowrap;
   }
+  .tabla tfoot td {
+    height: 48px;
+    font-weight: 600;
+    background: var(--superficie-2);
+    border-top: 1px solid var(--borde);
+    border-bottom: 0;
+  }
+
+  /* ── Etiqueta de estado: SIEMPRE ícono + palabra (EtiquetaEstado.tsx) ── */
+  .estado {
+    @apply inline-flex items-center whitespace-nowrap font-semibold;
+    height: 24px;
+    padding: 0 9px 0 7px;
+    gap: 5px;
+    font-size: 12.5px;
+    border-radius: var(--radio-estado);
+  }
+  .estado--pagado {
+    color: var(--estado-pagado);
+    background: var(--estado-pagado-fondo);
+  }
+  .estado--al-dia {
+    color: var(--estado-al-dia);
+    background: var(--estado-al-dia-fondo);
+  }
+  .estado--por-vencer {
+    color: var(--estado-por-vencer);
+    background: var(--estado-por-vencer-fondo);
+  }
+  .estado--mora {
+    color: var(--estado-mora);
+    background: var(--estado-mora-fondo);
+  }
+  .estado--parcial {
+    color: var(--estado-parcial);
+    background: var(--estado-parcial-fondo);
+  }
+  .estado--pendiente,
+  .estado--inactivo {
+    color: var(--estado-pendiente);
+    background: var(--estado-pendiente-fondo);
+  }
+
+  /* Insignia VIEJA (sin ícono): solo para etiquetas que no son estados (modo,
+     tipo, rol). Para estados usar EtiquetaEstado. */
+  .badge {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap font-semibold;
+    height: 24px;
+    padding: 0 9px;
+    font-size: 12.5px;
+    border-radius: var(--radio-estado);
+  }
   .badge--aldia {
-    @apply bg-green-tint text-green-700;
+    color: var(--estado-al-dia);
+    background: var(--estado-al-dia-fondo);
   }
   .badge--porvenc {
-    @apply bg-amber-tint;
-    color: #b45309;
+    color: var(--estado-por-vencer);
+    background: var(--estado-por-vencer-fondo);
   }
   .badge--vencido {
-    @apply bg-red-tint text-red;
+    color: var(--estado-mora);
+    background: var(--estado-mora-fondo);
   }
   .badge--pagado {
-    background: #eef2f0;
-    color: #3f5b50;
+    color: var(--estado-pendiente);
+    background: var(--estado-pendiente-fondo);
   }
 }

@@ -162,7 +162,7 @@
 .lg-brand-foot {
   position: relative;
   font-size: 12.5px;
-  color: #5e7d72;
+  color: #7f9a90; /* 5,9:1 sobre la tinta (antes 3,9:1) */
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -278,9 +278,9 @@
 }
 .lg-eye {
   position: absolute;
-  right: 7px;
-  width: 40px;
-  height: 40px;
+  right: 4px;
+  width: 44px; /* área de toque mínima en el celular */
+  height: 44px;
   border-radius: 9px;
   display: grid;
   place-items: center;
@@ -300,6 +300,11 @@
   font-weight: 700;
   color: var(--green-700);
   background: none;
+  /* Área de toque de 44 px; el margen negativo conserva el alto de la fila. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: -12.5px 0;
 }
 .lg-forgot:hover {
   text-decoration: underline;

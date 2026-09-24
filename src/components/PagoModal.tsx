@@ -236,7 +236,7 @@ export default function PagoModal({
                 key={m.valor}
                 type="button"
                 onClick={() => setMetodo(m.valor)}
-                className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${
+                className={`min-h-11 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors md:min-h-10 ${
                   metodo === m.valor
                     ? 'border-green bg-green-tint text-green-700'
                     : 'border-line bg-card text-text-2 hover:bg-bg'
@@ -266,7 +266,7 @@ export default function PagoModal({
               {previo.excedente > 0 && (
                 <li className="flex justify-between">
                   <span className="text-text-2">Sobrante (saldo a favor)</span>
-                  <span className="mono font-semibold text-amber">{fmtCOP(previo.excedente)}</span>
+                  <span className="mono font-semibold text-estado-por-vencer">{fmtCOP(previo.excedente)}</span>
                 </li>
               )}
               <li className="flex justify-between border-t border-line pt-1.5">

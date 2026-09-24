@@ -164,7 +164,7 @@ export default function PrestamoFicha() {
       <button
         type="button"
         onClick={() => navigate('/prestamos')}
-        className="flex items-center gap-1 self-start text-sm font-semibold text-green-700 md:hidden"
+        className="flex min-h-11 -my-3 items-center gap-1 self-start text-sm font-semibold text-green-700 md:hidden"
       >
         {IconAtras} Volver
       </button>
@@ -220,7 +220,7 @@ export default function PrestamoFicha() {
         <div className="card flex flex-col gap-2 p-5">
           <h3 className="text-sm font-bold text-text">Cobrador asignado</h3>
           <select
-            className="h-[52px] w-full rounded-xl border-[1.5px] border-line bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)] disabled:opacity-60"
+            className="h-[52px] w-full rounded-control border border-borde-control bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-marca-texto focus:shadow-[inset_0_0_0_1px_var(--marca-texto)] disabled:opacity-60"
             value={prestamo.cobrador_id ?? ''}
             onChange={(e) => void handleAsignar(e.target.value)}
             disabled={asignando}

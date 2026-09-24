@@ -244,7 +244,7 @@ export default function PagoCuotasModal({
             <span className="mono font-semibold text-text">{fmtCOP(comprobante.capital)}</span>
           </div>
           {comprobante.soloInteres && (
-            <p className="rounded-xl bg-amber-tint px-4 py-2 text-center text-sm font-semibold text-[#b45309]">
+            <p className="rounded-xl bg-estado-por-vencer-fondo px-4 py-2 text-center text-sm font-semibold text-estado-por-vencer">
               Pago de solo interés: se agregó una cuota al final con el mismo interés.
             </p>
           )}
@@ -350,7 +350,7 @@ export default function PagoCuotasModal({
                   key={m.valor}
                   type="button"
                   onClick={() => setMetodo(m.valor)}
-                  className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${
+                  className={`min-h-11 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors md:min-h-10 ${
                     metodo === m.valor
                       ? 'border-green bg-green-tint text-green-700'
                       : 'border-line bg-card text-text-2 hover:bg-bg'

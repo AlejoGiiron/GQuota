@@ -19,8 +19,9 @@ React Router + vitest + sonner. Desplegado en **Vercel** (rama `main` = producci
 
 **Repo:** `gquota`. **Base Supabase (única, ref):** `khxmhavnoydgzhclzwjg`.
 
-**Tokens visuales:** verde `#047857`, crema `#faf9f7`, tinta `#0c1f1a`, ámbar `#d97706`.
-Fuentes: Plus Jakarta Sans (UI) + JetBrains Mono. Logo naranja "G·Quota".
+**Sistema visual:** dirección 2a Contable, marca blanca (ver `src/design-system.md` y `design/paquete-2a/`).
+Tokens de marca por negocio (por ahora fijos: verde `#047857` + ámbar `#D97706`) y tokens de sistema
+fijos (estados con ícono + palabra). Fuente IBM Plex Sans servida desde el proyecto.
 
 ---
 
