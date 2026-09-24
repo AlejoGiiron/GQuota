@@ -10,8 +10,8 @@
 /** Versión vigente de la guía (la del sistema de diseño 2a). */
 export const VERSION_NOVEDADES = 'diseno-2a'
 
-// PENDIENTE antes del release: el contacto real de soporte (ver CLAUDE.md, Operación).
-export const CONTACTO_SOPORTE = '[TU CONTACTO]'
+/** Soporte de G-Quota: aparece en el último paso de la guía. */
+export const CONTACTO_SOPORTE = 'WhatsApp 316 151 3882'
 
 export type RolGuia = 'dueno' | 'cobrador'
 export type PantallaGuia = 'celular' | 'computador'

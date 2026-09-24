@@ -58,6 +58,8 @@ Prueba técnica (sin tocar la base ni producción) para leer la cédula colombia
 
 **Evidencia (limitada):** 1 cédula amarilla, 2 fotos reenviadas por WhatsApp (1600 px, comprimidas). El método A decodificó el respaldo al primer intento (sin preprocesado, ~0,25 s, sin red) y leyó **6/6 campos correctos** contra la verdad: número, apellidos, nombres, sexo, fecha de nacimiento, RH. Autoprueba con códigos sintéticos: 12/12 byte a byte, pero el PDF417 NO se lee con ~8° de inclinación sin enderezar (se resolvió probando giros de ±3° a ±20°; el QR aguanta 20° solo).
 
+**Después, en la vista previa de la 1B (2026-09-24):** una segunda cédula amarilla, la del dueño del proyecto, se leyó bien desde su celular.
+
 **NO probado (riesgos abiertos):** fotos originales de cámara, fotos inclinadas con perspectiva, poca luz/reflejos, la **cédula digital** (se desconoce qué código trae y si sus datos vienen legibles o firmados/cifrados), y más de una cédula amarilla (las posiciones de los campos salen de UNA sola; confirmar con un solo apellido y nombres largos). **No bloquean la construcción:** si la lectura falla, entra la captura a mano marcada "sin verificar". Probar cuando haya una cédula digital disponible (con `herramientas/prueba-cedula/`).
 
 **Reglas para producción (obligatorias):**
@@ -91,6 +93,7 @@ El dueño escribe el celular de un prospecto; la app genera un enlace de 24 hora
 - **Envío:** `enviar` revalida el token, valida contra ficha_config con `validarEnvio` y guarda todo en UN `UPDATE` condicionado a `estado = 'enviada'` y sin vencer (el segundo envío no encuentra fila). No se crearon funciones SQL.
 - **Reglas compartidas:** `supabase/functions/_shared/ficha.ts` (TypeScript puro, imports con `.ts`) lo usan la Edge Function y el frontend (`src/lib/ficha.ts` lo reexporta). El deploy lo empaqueta solo.
 - **Borrar fotos:** por SQL está bloqueado (`storage.protect_delete`). Usar el CLI: `npx supabase storage rm -r ss:///solicitudes/<negocio_id> --experimental --linked --yes` (SIN barra final).
+- **Prueba en un celular real (2026-09-24, dueño del proyecto):** su cédula amarilla se leyó bien en el formulario de la vista previa. La relectura del dueño en la 1C trabaja sobre la foto guardada (1600 px, JPEG): se mide igual, con cédulas reales fuera del repo y del chat.
 - Verificado (2026-09-24) contra la base real con cuentas LAB y una cédula SINTÉTICA (PDF417 con datos inventados, girado 5°): lectura, edición → manual, 3 fotos, envío, doble envío rechazado, respaldo sin autorización borrado, red del prospecto solo hacia ficha-publica y URLs firmadas. Datos de prueba borrados.
 
 ### 2026-09-24 — Luis recibe el diseño 2a como todos (guía de novedades, migración 038)
@@ -150,7 +153,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] Confirmar que la URL de Vercel está en Supabase Auth > URL Configuration.
 - [ ] Próximo release de `develop` a `main` (diseño 2a y solicitudes), antes del merge:
   - [ ] Guía de novedades lista y probada.
-  - [ ] Poner el contacto real de soporte en `CONTACTO_SOPORTE` (`src/lib/novedades.ts`; hoy dice `[TU CONTACTO]`).
+  - [x] Contacto de soporte en `CONTACTO_SOPORTE` (`src/lib/novedades.ts`): WhatsApp 316 151 3882.
   - [ ] Usuarios creados después de la 038 no tienen la guía. Si deben verla (usaron el diseño anterior), insertarles la fila: `insert into novedades_usuario (user_id, version) select id, 'diseno-2a' from auth.users on conflict do nothing`.
 - [ ] Borrar los préstamos de prueba (quedaron en estados artificiales de tanto UPDATE manual). Crear datos limpios.
 - [ ] (fase de limpieza) Borrar la tabla `configuracion`, reemplazada por `negocios` desde la 022, con una migración nueva (`drop table`), regenerar tipos y quitar el alias `Configuracion` de src/types/db.ts (hoy no lo usa nadie). Solo después del backup.
