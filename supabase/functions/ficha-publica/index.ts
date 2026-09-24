@@ -1,31 +1,31 @@
 // ============================================================
-//  Edge Function: ficha-publica  (Fase 1A · ficha de cliente por enlace)
+//  Edge Function: ficha-publica  (ficha de cliente por enlace, fases 1A–1B)
 //
-//  El PROSPECTO abre el enlace /s/<token> sin cuenta. Esta función valida el
-//  token y dice en qué estado está el enlace. Es pública: NO verifica JWT (el
-//  prospecto no tiene sesión). Eso lo fija supabase/config.toml
-//  ([functions.ficha-publica] verify_jwt = false), así que basta con:
+//  Única puerta del prospecto (sin cuenta) al backend: la página /s/<token>
+//  NUNCA toca tablas ni storage con la anon key (regla en CLAUDE.md). Es pública:
+//  no verifica JWT (supabase/config.toml: [functions.ficha-publica] verify_jwt = false).
 //
-//    npx supabase functions deploy ficha-publica --use-api
+//  Acciones (POST { accion, token, ... }):
+//    abrir   → marca del negocio (nombre, contacto para datos personales),
+//              ficha_config y expira_en.
+//    subir   → URLs firmadas de subida (con reemplazo) para las fotos permitidas:
+//              frente siempre; respaldo solo si autorizó; fachada si la ficha la pide.
+//    enviar  → valida contra ficha_config, comprueba las fotos en storage y guarda
+//              todo en UN solo UPDATE condicionado a estado = 'enviada' y sin
+//              vencer: un segundo envío no encuentra fila y se rechaza.
 //
 //  SEGURIDAD
-//    - En la base solo existe el HASH del token (sha256). Aquí se calcula el hash
-//      del token recibido y se busca con la service_role (solicitudes no tiene
-//      ninguna política para anon).
-//    - Respuestas: activa · vencida · usada · no_disponible. Token inexistente,
-//      mal formado o anulado → "no_disponible", el MISMO mensaje: no se distingue
-//      si alguna vez existió.
-//    - Solo devuelve lo que la pantalla necesita: nombre del negocio, la
-//      ficha_config, el nombre de referencia y la hora de vencimiento (activa);
-//      el nombre del negocio (vencida) y la fecha de envío (usada). Nada más del
-//      negocio ni de otras solicitudes.
-//    - NUNCA registra el token ni su hash en logs.
-//
-//  Variables de entorno (inyectadas por Supabase Edge): SUPABASE_URL,
-//  SUPABASE_SERVICE_ROLE_KEY. La service_role solo vive aquí.
+//    - El token solo existe en el navegador del prospecto; aquí se calcula su
+//      sha256 y se busca con service_role.
+//    - Cualquier token que no sirva (inexistente, mal formado, anulado, vencido,
+//      usado) recibe la MISMA respuesta: { estado: 'no_disponible' }.
+//    - No devuelve el celular ni el nombre de referencia. No registra tokens.
+//    - La foto del respaldo (con la huella) solo se acepta si se autorizó; si no,
+//      se borra antes de guardar.
 // ============================================================
 
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+import { createClient, type SupabaseClient } from 'jsr:@supabase/supabase-js@2'
+import { VERSIONES_AUTORIZACION, leerFicha, validarEnvio, type FichaConfig } from '../_shared/ficha.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -40,13 +40,59 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
-// Token de crear_solicitud: 32 bytes en base64url sin relleno = 43 caracteres.
 const FORMATO_TOKEN = /^[A-Za-z0-9_-]{43}$/
 const NO_DISPONIBLE = { estado: 'no_disponible' } as const
+const BUCKET = 'solicitudes'
+type Foto = 'frente' | 'respaldo' | 'fachada'
+const FOTOS: ReadonlyArray<Foto> = ['frente', 'respaldo', 'fachada']
 
 async function sha256Hex(texto: string): Promise<string> {
   const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto))
   return Array.from(new Uint8Array(bytes), (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+type Vigente = {
+  id: string
+  negocioId: string
+  expiraEn: string
+  negocio: { nombre: string; contacto_datos: string }
+  ficha: FichaConfig
+}
+
+/** La solicitud del token si está ENVIADA, sin vencer y el negocio tiene contacto; si no, null. */
+async function vigente(admin: SupabaseClient, token: unknown): Promise<Vigente | null> {
+  if (typeof token !== 'string' || !FORMATO_TOKEN.test(token)) return null
+  const { data: s, error } = await admin
+    .from('solicitudes')
+    .select('id, negocio_id, estado, expira_en')
+    .eq('token_hash', await sha256Hex(token))
+    .maybeSingle()
+  if (error) throw new Error(`solicitud ${error.code}`)
+  if (!s || s.estado !== 'enviada' || new Date(s.expira_en).getTime() <= Date.now()) return null
+  const { data: n, error: e2 } = await admin
+    .from('negocios')
+    .select('nombre, contacto_datos, ficha_config')
+    .eq('id', s.negocio_id)
+    .single()
+  if (e2 || !n) throw new Error(`negocio ${e2?.code}`)
+  // Sin canal para ejercer los derechos no se puede pedir la autorización.
+  if (!n.contacto_datos) return null
+  return {
+    id: s.id,
+    negocioId: s.negocio_id,
+    expiraEn: s.expira_en,
+    negocio: { nombre: n.nombre, contacto_datos: n.contacto_datos },
+    ficha: leerFicha(n.ficha_config),
+  }
+}
+
+const ruta = (v: Vigente, foto: Foto) => `${v.negocioId}/${v.id}/${foto}.jpg`
+
+/** Fotos que la ficha permite pedir, según lo que autorizó el prospecto. */
+function fotoPermitida(v: Vigente, foto: Foto, autorizaRespaldo: boolean): boolean {
+  if (foto === 'frente') return true
+  if (foto === 'respaldo') return autorizaRespaldo && v.ficha.campos.cedula_reverso !== 'apagado'
+  return v.ficha.campos.foto_fachada !== 'apagado'
 }
 
 Deno.serve(async (req) => {
@@ -56,54 +102,100 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
   if (!supabaseUrl || !serviceKey) return json({ error: 'Configuración del servidor incompleta.' }, 500)
+  const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
 
-  let token: unknown
+  let body: Record<string, unknown>
   try {
-    token = ((await req.json()) as { token?: unknown })?.token
+    body = (await req.json()) as Record<string, unknown>
   } catch {
     return json(NO_DISPONIBLE)
   }
-  // Mal formado = no disponible (sin tocar la base ni decir por qué).
-  if (typeof token !== 'string' || !FORMATO_TOKEN.test(token)) return json(NO_DISPONIBLE)
 
-  const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
+  try {
+    const v = await vigente(admin, body.token)
+    if (!v) return json(NO_DISPONIBLE)
+    const accion = body.accion ?? 'abrir'
 
-  const { data: solicitud, error } = await admin
-    .from('solicitudes')
-    .select('estado, expira_en, completada_en, nombre_referencia, negocio_id')
-    .eq('token_hash', await sha256Hex(token))
-    .maybeSingle()
-  if (error) {
-    // Sin token ni hash en el log: solo el código del error.
-    console.error('ficha-publica: error al buscar la solicitud', error.code)
-    return json({ error: 'No pudimos revisar el enlace. Intente de nuevo.' }, 500)
-  }
-  if (!solicitud || solicitud.estado === 'anulada') return json(NO_DISPONIBLE)
+    if (accion === 'abrir') {
+      return json({ estado: 'activa', negocio: v.negocio, ficha: v.ficha, expira_en: v.expiraEn })
+    }
 
-  const { data: negocio, error: errorNegocio } = await admin
-    .from('negocios')
-    .select('nombre, ficha_config')
-    .eq('id', solicitud.negocio_id)
-    .single()
-  if (errorNegocio || !negocio) {
-    console.error('ficha-publica: error al leer el negocio', errorNegocio?.code)
-    return json({ error: 'No pudimos revisar el enlace. Intente de nuevo.' }, 500)
-  }
-  const negocioPublico = { nombre: negocio.nombre }
+    if (accion === 'subir') {
+      const autoriza = body.autoriza_respaldo === true
+      const pedidas = Array.isArray(body.fotos) ? body.fotos : []
+      const urls: Partial<Record<Foto, string>> = {}
+      for (const f of pedidas) {
+        if (!FOTOS.includes(f as Foto) || !fotoPermitida(v, f as Foto, autoriza)) {
+          return json({ estado: 'rechazada', error: 'Esa foto no se puede subir.' }, 400)
+        }
+        // upsert: el prospecto puede repetir la foto y reemplazarla.
+        const { data, error } = await admin.storage.from(BUCKET).createSignedUploadUrl(ruta(v, f as Foto), { upsert: true })
+        if (error || !data) throw new Error(`url firmada ${error?.message}`)
+        urls[f as Foto] = data.signedUrl
+      }
+      return json({ estado: 'ok', urls })
+    }
 
-  // completada / aprobada / rechazada: el prospecto ya envió sus datos.
-  if (solicitud.estado !== 'enviada') {
-    return json({ estado: 'usada', negocio: negocioPublico, enviada_en: solicitud.completada_en })
+    if (accion === 'enviar') {
+      const aut = (body.autorizacion ?? {}) as { version?: unknown; datos?: unknown; respaldo?: unknown }
+      if (typeof aut.version !== 'string' || !VERSIONES_AUTORIZACION.includes(aut.version) || aut.datos !== true) {
+        return json({ estado: 'invalida', errores: { autorizacion: 'Falta la autorización de datos personales.' } }, 400)
+      }
+      const autorizaRespaldo = aut.respaldo === true
+
+      // Fotos que existen de verdad en storage.
+      const { data: objetos, error: errLista } = await admin.storage.from(BUCKET).list(`${v.negocioId}/${v.id}`)
+      if (errLista) throw new Error(`listar ${errLista.message}`)
+      const hay = new Set((objetos ?? []).map((o) => o.name.replace(/\.jpg$/, '')))
+
+      // Respaldo sin autorización: se borra (tiene la huella) y no se guarda.
+      if (hay.has('respaldo') && !fotoPermitida(v, 'respaldo', autorizaRespaldo)) {
+        await admin.storage.from(BUCKET).remove([ruta(v, 'respaldo')])
+        hay.delete('respaldo')
+      }
+      if (hay.has('fachada') && v.ficha.campos.foto_fachada === 'apagado') {
+        await admin.storage.from(BUCKET).remove([ruta(v, 'fachada')])
+        hay.delete('fachada')
+      }
+      const errores: Record<string, string> = {}
+      if (!hay.has('frente')) errores.cedula_frente = 'Falta la foto de la cédula por delante.'
+      if (v.ficha.campos.foto_fachada === 'obligatorio' && !hay.has('fachada')) errores.foto_fachada = 'Falta la foto de la fachada.'
+
+      const resultado = validarEnvio(v.ficha, body.datos, body.origen, hay.has('respaldo'))
+      if (!resultado.ok) Object.assign(errores, resultado.errores)
+      if (Object.keys(errores).length || !resultado.ok) return json({ estado: 'invalida', errores }, 400)
+
+      const fotos: Partial<Record<Foto, string>> = {}
+      for (const f of FOTOS) if (hay.has(f)) fotos[f] = ruta(v, f)
+      const ahora = new Date().toISOString()
+
+      // Un solo UPDATE condicionado: si otra petición ya la completó (o venció), no hay fila.
+      const { data: guardada, error: errGuardar } = await admin
+        .from('solicitudes')
+        .update({
+          datos: resultado.datos,
+          origen: resultado.origen,
+          fotos,
+          autorizacion_en: ahora,
+          autorizacion_version: aut.version,
+          autorizacion_respaldo: autorizaRespaldo && hay.has('respaldo'),
+          estado: 'completada',
+          completada_en: ahora,
+        })
+        .eq('id', v.id)
+        .eq('estado', 'enviada')
+        .gt('expira_en', ahora)
+        .select('id')
+        .maybeSingle()
+      if (errGuardar) throw new Error(`guardar ${errGuardar.code}`)
+      if (!guardada) return json(NO_DISPONIBLE)
+      return json({ estado: 'enviada', negocio: v.negocio })
+    }
+
+    return json({ error: 'Acción desconocida.' }, 400)
+  } catch (e) {
+    // Sin token ni datos personales en el log: solo el tipo de falla.
+    console.error('ficha-publica:', e instanceof Error ? e.message : 'error')
+    return json({ error: 'No pudimos procesar la solicitud. Intente de nuevo.' }, 500)
   }
-  // "Vencida" no se guarda: es enviada con expira_en ya pasado.
-  if (new Date(solicitud.expira_en).getTime() <= Date.now()) {
-    return json({ estado: 'vencida', negocio: negocioPublico })
-  }
-  return json({
-    estado: 'activa',
-    negocio: negocioPublico,
-    ficha: negocio.ficha_config,
-    nombre_referencia: solicitud.nombre_referencia,
-    expira_en: solicitud.expira_en,
-  })
 })

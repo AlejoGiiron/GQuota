@@ -22,6 +22,8 @@ export const METODOS_PAGO: ReadonlyArray<{ valor: string; label: string }> = [
 export interface ConfiguracionInput {
   nombre_negocio: string | null
   metodos_pago: string[]
+  /** Contacto para datos personales (WhatsApp o correo). undefined = no se toca; null = vacío. */
+  contacto_datos?: string | null
 }
 
 /** Rol del miembro dentro del negocio (Fase de roles). */
@@ -99,7 +101,11 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
         .from('negocios')
         // `nombre` es NOT NULL: el nombre vacío se guarda como '' (no null),
         // que el getter nombreNegocio muestra como 'G-Quota'.
-        .update({ nombre: input.nombre_negocio?.trim() ?? '', metodos_pago: input.metodos_pago })
+        .update({
+          nombre: input.nombre_negocio?.trim() ?? '',
+          metodos_pago: input.metodos_pago,
+          ...(input.contacto_datos !== undefined ? { contacto_datos: input.contacto_datos } : {}),
+        })
         .eq('id', negocio.id)
         .select()
         .single()
