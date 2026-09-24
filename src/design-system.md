@@ -84,6 +84,8 @@ Clases en `@layer components` (src/index.css) y componentes React en `src/compon
 | Tarjeta | `<Tarjeta titulo acciones sinRelleno>` | `.tarjeta` (`.card` en código viejo) |
 | Tabla | `<Tabla columnas filas claveFila etiqueta>` — `numerica` alinea a la derecha; `total` en una columna agrega la fila de totales | `.tabla` `.num` |
 | Modal | `src/components/Modal.tsx` — velo de tinta, título 18/600, cuerpo con scroll, pie fijo con botones a la derecha | — |
+| Datos de una solicitud | `src/components/solicitud/TablaDatos.tsx` — Dato · Valor · Origen agrupado; `<Origen>`: «Leído de la cédula» (al día), «No coincide con el código» (mora), «Escrito a mano · sin verificar» (pendiente), «Corregido por el dueño» (azul); «Escrito por el prospecto» y «Del enlace» como texto gris. `compacta` apila todo (paneles angostos) | — |
+| Fotos de una solicitud | `src/components/solicitud/FotosSolicitud.tsx` — miniaturas con URL firmada (solo el dueño); tocar agranda en el Modal | — |
 | Guía de novedades | `src/components/novedades/GuiaNovedades.tsx` — hoja inferior en el celular, ventana de 480 px en escritorio; pasos con esquema (`IlustracionNovedad`), «Paso N de M», «Atrás»/«Siguiente», «Entendido» al final y «Ver después» (también con Esc). Textos por versión, rol y pantalla en `src/lib/novedades.ts` | — |
 
 **Tailwind y clases dinámicas:** Tailwind purga de `@layer components` las clases que no encuentra escritas literalmente. Nunca armes `estado--${x}`: usa un mapa con los nombres completos (como `EtiquetaEstado`).
