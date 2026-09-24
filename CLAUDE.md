@@ -33,6 +33,14 @@ Los cálculos de interés y pagos viven SOLO en src/lib/motor-prestamos.ts (lóg
 
 Hay dos modos de interés: sobre saldo (interés sobre el saldo de capital vigente) y sobre capital inicial (interés fijo calculado sobre el capital desembolsado). En ambos modos el interés NO capitaliza: nunca se suma al capital ni genera interés sobre interés.
 
+## Lo que ya existe no cambia de comportamiento (decisión del 2026-09-24)
+Luis, el negocio que usa la app hoy, recibe cada release como todos, sin versión aparte. Si algo sale mal, el punto de retorno es la etiqueta `v1-final` (`c10e735`, el último `main` con el diseño anterior). Regla obligatoria:
+
+- **Las 8 RPC y el cron calculan igual.** No cambia la lógica de las RPC de préstamos y equipo (`crear_prestamo`, `crear_prestamo_cuotas`, `crear_prestamo_cuota_fija`, `registrar_pago`, `registrar_pago_cuotas`, `registrar_pago_cuota_fija`, `asignar_cobrador` y `crear_mi_negocio`) ni la de las funciones del cron (`devengar_intereses`, `marcar_mora` y `marcar_cuotas_vencidas`). Los datos de Luis se siguen calculando igual.
+- **La lógica de negocio nueva va en funciones o configuración NUEVAS** (una `…_v2` o una opción en `negocios`) que solo aplican a los negocios que la activen. Un estado nuevo en un campo que ya se muestra solo se escribe en esos negocios.
+- **Cuidado con las sobrecargas.** No se agrega una sobrecarga de una función existente con parámetros opcionales: PostgREST no sabe cuál elegir y la llamada que ya existía falla.
+- **Si una migración toca una de estas funciones,** se comprueba en una transacción con rollback que, con los mismos datos, el resultado es idéntico antes y después.
+
 ## Decisiones de arquitectura
 
 ### 2026-06-06 — Modelo de préstamos por cuotas
@@ -116,6 +124,8 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] Borrar el usuario de prueba sin confirmar que quedó en Auth al verificar el guard de la 4A (`test-guard-1782185579@gmail.com`).
 - [x] HECHO (2026-06-22, migración 029): cron de mantenimiento programados con pg_cron, los TRES diarios (no mensual). Análisis: `devengar_intereses` está anclada al mes calendario (`ultimo_devengo < primer día del mes`) y es idempotente, así que correrla a diario solo actúa una vez por mes y se auto-corrige si un día falla el cron; `marcar_mora` y `marcar_cuotas_vencidas` también idempotentes. Horarios (pg_cron en UTC; Colombia UTC-5): devengo `0 8 * * *` (03:00 COT), marcar_mora `10 8 * * *` (03:10), marcar_cuotas_vencidas `15 8 * * *` (03:15) — devengo primero. Jobs con nombre (`*_diario`) → `cron.schedule` hace upsert, reaplicar no duplica. Verificado activo en `cron.job`. pg_cron ya estaba habilitado en el proyecto.
 - [ ] Confirmar que la URL de Vercel está en Supabase Auth > URL Configuration.
+- [ ] Próximo release de `develop` a `main` (diseño 2a y solicitudes), antes del merge:
+  - [ ] Guía de novedades lista y probada.
 - [ ] Borrar los préstamos de prueba (quedaron en estados artificiales de tanto UPDATE manual). Crear datos limpios.
 - [ ] (fase de limpieza) Borrar la tabla `configuracion`, reemplazada por `negocios` desde la 022, con una migración nueva (`drop table`), regenerar tipos y quitar el alias `Configuracion` de src/types/db.ts (hoy no lo usa nadie). Solo después del backup.
 
