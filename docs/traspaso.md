@@ -164,7 +164,7 @@ para todos los negocios en una pasada. NO usan mi_negocio() (bajo cron correría
   `tsc --noEmit`: su caché incremental deja pasar errores que el build limpio sí atrapa (causó un
   deploy roto). Lección registrada.
 - **CLI de Supabase conectado.** Flujo de migraciones: `npx supabase db push` (ya NO copiar-pegar en
-  el SQL Editor). Tipos: `npx supabase gen types typescript --linked > src/types/database.types.ts`.
+  el SQL Editor). Tipos: `npx supabase gen types typescript --linked --schema public > src/types/database.types.ts`.
   ⚠️ **`database.types.ts` es GENERADO, nunca editar a mano.** Los alias (Cliente, Prestamo,
   Movimiento, CuotaDB, Configuracion, Negocio, Miembro) se DERIVAN de `Database` en `src/types/db.ts`.
 - **Edge Functions:** `npx supabase functions deploy <nombre>`. La service_role va como env var de la
