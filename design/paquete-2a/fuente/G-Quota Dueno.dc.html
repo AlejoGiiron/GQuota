@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="./gq-comun.js"></script>
+<style>body{margin:0;background:#EDEEF1}a{color:#14181F}a:hover{color:#2446B8}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="padding:40px 44px 60px;display:flex;flex-direction:column;gap:44px;font-family:'IBM Plex Sans',sans-serif;color:#14181F;--marca:#127A3E;--marca-sobre:#FFFFFF;--marca-texto:#127A3E;--marca-suave:#E2EFE7;--acento:#F2B705;--acento-sobre:#17150F;--acento-texto:#8F6E0A">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:960px">
+    <div style="font-weight:600;font-size:24px">G-Quota · Escritorio del dueño · 1440 px</div>
+    <div style="font-size:14.5px;color:#3B4452;line-height:1.5;text-wrap:pretty">Dirección 2a Contable. Marca de muestra: {{ b.nombre }}. Cámbiela en Tweaks. Las etiquetas punteadas <span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472;vertical-align:middle;white-space:nowrap">dato nuevo</span> señalan información que la app todavía no guarda. Las vistas Tabla y Cuadrícula de las fichas de préstamo se pueden cambiar, y el formulario de Mi marca funciona.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">1a · Ingreso neutro · marca G-Quota</div>
+    <div data-screen-label="Ingreso neutro dueño" style="width:1440px;height:820px;display:flex;flex-direction:column;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="height:72px;flex:none;display:flex;align-items:center;gap:10px;padding:0 40px"><div style="width:32px;height:32px;flex:none;border-radius:8px;background:#14181F;color:#FFFFFF;display:grid;place-items:center;font-weight:700;font-size:15px">G</div><div style="font-weight:600;font-size:17px">G-Quota</div></div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center">
+        <div style="width:420px;box-sizing:border-box;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;padding:32px 36px 30px;display:flex;flex-direction:column;gap:18px">
+          <div><div style="font-weight:600;font-size:24px">Ingresar</div><div style="font-size:15px;color:#5B6472;margin-top:4px;line-height:1.45">Para dueños y cobradores. Al entrar verá la app con la marca de su negocio.</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Correo</div><div style="height:46px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 14px;display:flex;align-items:center;font-size:15px">jairo.londono@ejemplo.com</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>Contraseña</span><span style="color:#14181F;text-decoration:underline">¿La olvidó? Escríbanos a soporte</span></div><div style="height:46px;box-sizing:border-box;border:2px solid #14181F;border-radius:6px;padding:0 13px;display:flex;align-items:center;font-size:17px;letter-spacing:.15em">••••••••••</div></div>
+          <div style="height:48px;border-radius:6px;background:#14181F;color:#FFFFFF;display:grid;place-items:center;font-weight:600;font-size:15.5px">Ingresar</div>
+        </div>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;justify-content:center;font-size:12.5px;color:#5B6472">G-Quota · cartera y cobros para prestamistas</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">1b · Ingreso con la marca del negocio</div>
+    <div data-screen-label="Ingreso dueño" style="width:1440px;height:820px;display:flex;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:620px;flex:none;box-sizing:border-box;background:var(--marca);color:var(--marca-sobre);display:flex;flex-direction:column;justify-content:center;padding:0 72px;gap:20px">
+        <div style="width:84px;height:84px;border-radius:18px;background:var(--marca-sobre);color:var(--marca);display:grid;place-items:center;font-weight:700;font-size:30px">{{ b.mono }}</div>
+        <div style="font-weight:600;font-size:34px;line-height:1.15">{{ b.nombre }}</div>
+        <div style="font-size:16px;line-height:1.5;max-width:380px">{{ b.horario }}<br>WhatsApp {{ b.whatsapp }}</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center">
+          <div style="width:380px;display:flex;flex-direction:column;gap:18px">
+            <div><div style="font-weight:600;font-size:26px">Ingresar</div><div style="font-size:15px;color:#5B6472;margin-top:4px">Para el dueño y los cobradores del negocio.</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Correo</div><div style="height:46px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 14px;display:flex;align-items:center;font-size:15px">jairo.londono@ejemplo.com</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>Contraseña</span><span style="color:var(--marca-texto)">¿La olvidó? Escríbanos a soporte</span></div><div style="height:46px;box-sizing:border-box;border:2px solid var(--marca-texto);border-radius:6px;padding:0 13px;display:flex;align-items:center;font-size:17px;letter-spacing:.15em">••••••••••</div></div>
+            <div style="height:48px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:600;font-size:15.5px">Ingresar</div>
+          </div>
+        </div>
+        <div style="padding:0 0 24px;text-align:center;font-size:12px;color:#5B6472">con G-Quota</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">2 · Inicio</div>
+    <div data-screen-label="Inicio" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px">
+          <sc-for list="{{ navInicio }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for>
+        </div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:68px;flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;display:flex;align-items:center;gap:12px;padding:0 32px">
+          <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:20px">Inicio</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Miércoles 23/09/2026 · actualizado 9:20 a. m.</div></div>
+          <div style="width:300px;height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:14px;color:#5B6472"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L20 20"></path></svg>Buscar cliente, cédula o préstamo</div>
+          <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;background:#FFFFFF;display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px">+ Nuevo cliente</div>
+          <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px">+ Nuevo préstamo</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Prestado en la calle</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$18.450.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">112 préstamos activos</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Le deben</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$24.310.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">Capital más intereses</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Ganancia de septiembre</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$3.870.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">Agosto: $4.920.000</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#B3261E;font-weight:600"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>En mora</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums;color:#B3261E">$1.890.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">9 préstamos · más de 5 días</div></div>
+            <div style="padding:16px 20px"><div style="font-size:13px;color:#5B6472">Cobrado hoy</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$1.279.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">de $2.140.000 · 60 %</div></div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 20px">
+              <div style="flex:1;font-weight:600;font-size:16px">Cobros de hoy</div>
+              <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500"><div style="height:34px;padding:0 12px;display:flex;align-items:center;background:#14181F;color:#FFFFFF">Todos</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Con atrasos</div></div>
+              <div style="height:36px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:7px;font-weight:500;font-size:13.5px">Exportar</div>
+            </div>
+            <div style="padding:0 20px 16px;border-bottom:1px solid #E2E5EA">
+              <div style="display:flex;gap:3px;height:10px"><div style="width:55.2%;border-radius:5px 0 0 5px;background:#1A7431"></div><div style="width:5.2%;background:#2446B8"></div><div style="width:8.3%;background:#B3261E"></div><div style="flex:1;border-radius:0 5px 5px 0;background:#D5D9DF"></div></div>
+              <div style="display:flex;align-items:center;gap:22px;margin-top:10px;font-size:13.5px;font-variant-numeric:tabular-nums">
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Cobrado <b style="font-weight:600">53</b></span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#2446B8" stroke-width="1.6"></path><path d="M8 1.6a6.4 6.4 0 0 0 0 12.8Z" fill="#2446B8"></path></svg>Parcial <b style="font-weight:600">5</b></span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>Atrasado <b style="font-weight:600">8</b></span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#5B6472" stroke-width="1.6"></path></svg>Pendiente <b style="font-weight:600">30</b></span>
+                <span style="flex:1"></span><span style="color:#5B6472">96 préstamos con cobro hoy</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px 120px 120px 120px 170px 90px 100px;gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472">
+              <span style="display:flex;align-items:center;gap:6px">Cobrador · zona<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">zona: dato nuevo</span></span><span style="display:flex;align-items:center;justify-content:flex-end;gap:4px">Visitas<span style="display:inline-flex;align-items:center;height:18px;padding:0 4px;border:1px dashed #8C95A3;border-radius:4px;font-size:10px;font-weight:500">nuevo</span></span><span style="text-align:right">Meta del día</span><span style="text-align:right">Cobrado</span><span style="text-align:right">Por cobrar</span><span style="display:flex;align-items:center;gap:4px;color:#14181F">Avance ↓</span><span style="text-align:right">Atrasados</span><span style="text-align:right">Último cobro</span>
+            </div>
+            <sc-for list="{{ cobradores }}" as="c" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px 120px 120px 120px 170px 90px 100px;gap:16px;align-items:center;height:56px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;align-items:center;gap:10px;min-width:0"><div style="width:30px;height:30px;flex:none;border-radius:50%;background:#EEF0F3;display:grid;place-items:center;font-weight:600;font-size:11.5px;color:#3B4452">{{ c.ini }}</div><div style="min-width:0"><div style="font-weight:600">{{ c.nombre }}</div><div style="font-size:12.5px;color:#5B6472">{{ c.zona }}</div></div></div>
+                <span style="text-align:right">{{ c.visitas }}</span><span style="text-align:right;color:#5B6472">{{ c.meta }}</span><span style="text-align:right;font-weight:600">{{ c.cobrado }}</span><span style="text-align:right">{{ c.porCobrar }}</span>
+                <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="height:6px;background:#3B4452;width:{{ c.barW }}"></div></div><span style="width:40px;text-align:right;font-size:13.5px">{{ c.pct }}</span></div>
+                <span style="display:flex;align-items:center;justify-content:flex-end;gap:5px;color:#B3261E;font-weight:600"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>{{ c.atr }}</span>
+                <span style="text-align:right;color:#5B6472">{{ c.ultimo }}</span>
+              </div>
+            </sc-for>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px 120px 120px 120px 170px 90px 100px;gap:16px;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums">
+              <span>Total</span><span style="text-align:right">58 / 96</span><span style="text-align:right">$2.140.000</span><span style="text-align:right">$1.279.000</span><span style="text-align:right">$861.000</span>
+              <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="height:6px;width:60%;background:#14181F"></div></div><span style="width:40px;text-align:right;font-size:13.5px">60 %</span></div>
+              <span style="text-align:right">8</span><span></span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start">
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid #E2E5EA"><div style="flex:1;font-weight:600;font-size:16px">Préstamos en mora</div><div style="font-size:13px;color:#5B6472">Más de 5 días de gracia · días desde la cuota vencida más antigua</div></div>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px 70px 70px 110px;gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>Cliente</span><span>Cobrador</span><span style="text-align:right;color:#14181F">Días ↓</span><span style="text-align:right">Cuotas</span><span style="text-align:right">Debe</span></div>
+              <sc-for list="{{ mora }}" as="m" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px 70px 70px 110px;gap:16px;align-items:center;height:52px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums"><div style="min-width:0"><div style="font-weight:600">{{ m.nombre }}</div><div style="font-size:12.5px;color:#5B6472">{{ m.negocio }}</div></div><span style="color:#3B4452">{{ m.cobrador }}</span><span style="text-align:right;color:#B3261E;font-weight:600">{{ m.dias }}</span><span style="text-align:right">{{ m.cuotas }}</span><span style="text-align:right;font-weight:600">{{ m.debe }}</span></div>
+              </sc-for>
+              <div style="display:flex;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-size:14.5px;font-variant-numeric:tabular-nums"><span style="flex:1;color:#5B6472">Mostrando 5 de 9 · <span style="color:var(--marca-texto);font-weight:600">Ver todos</span></span><span style="font-weight:600">Total en mora&nbsp;&nbsp;$1.890.000</span></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:14px 20px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:16px">Septiembre, hasta hoy</div>
+              <div style="padding:4px 20px 0;font-size:14.5px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EDEFF2"><span>Prestado en el mes</span><span>$6.200.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EDEFF2"><span>Recaudado</span><span>$9.480.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0 11px 16px;border-bottom:1px solid #EDEFF2;color:#5B6472"><span>Capital recuperado</span><span>$5.610.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0 11px 16px;border-bottom:1px solid #EDEFF2;color:#5B6472"><span>Intereses y ganancia</span><span>$3.870.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EDEFF2"><span>Préstamos nuevos</span><span>23</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0"><span>Préstamos terminados</span><span>17</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums"><span>Ganancia del mes</span><span>$3.870.000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">3 · Inicio vacío · negocio recién creado</div>
+    <div data-screen-label="Inicio vacío" style="width:1440px;height:760px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px">
+          <sc-for list="{{ navInicio }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for>
+        </div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:68px;flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;display:flex;align-items:center;padding:0 32px"><div><div style="font-weight:600;font-size:20px">Inicio</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Miércoles 23/09/2026</div></div></div>
+        <div style="padding:40px 32px;display:flex;justify-content:center">
+          <div style="width:720px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+            <div style="padding:24px 28px 20px;border-bottom:1px solid #E2E5EA"><div style="font-weight:600;font-size:20px">Bienvenido, {{ b.saludo }}. Su negocio ya está creado.</div><div style="font-size:14.5px;color:#5B6472;margin-top:6px;line-height:1.5">Cuando registre el primer préstamo, aquí va a ver cuánto tiene en la calle, cuánto le deben, la ganancia del mes, la mora y los cobros del día.</div></div>
+            <div style="display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid #EDEFF2"><svg width="22" height="22" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><div style="flex:1"><div style="font-weight:600;font-size:15px;color:#5B6472;text-decoration:line-through">Crear el negocio</div></div><span style="font-size:13.5px;color:#5B6472">Listo</span></div>
+            <div style="display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid #EDEFF2"><div style="width:22px;height:22px;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF;display:grid;place-items:center;font-size:12px;font-weight:600;color:#5B6472">2</div><div style="flex:1"><div style="font-weight:600;font-size:15px">Ponga su logo y sus colores</div><div style="font-size:13.5px;color:#5B6472">Salen en la app, los comprobantes y las tarjetas de WhatsApp.</div></div><div style="height:38px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Ir a Mi marca</div></div>
+            <div style="display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid #EDEFF2"><div style="width:22px;height:22px;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF;display:grid;place-items:center;font-size:12px;font-weight:600;color:#5B6472">3</div><div style="flex:1"><div style="font-weight:600;font-size:15px">Registre su primer cliente</div><div style="font-size:13.5px;color:#5B6472">Nombre, cédula y WhatsApp.</div></div><div style="height:38px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Nuevo cliente</div></div>
+            <div style="display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid #EDEFF2"><div style="width:22px;height:22px;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF;display:grid;place-items:center;font-size:12px;font-weight:600;color:#5B6472">4</div><div style="flex:1"><div style="font-weight:600;font-size:15px">Cree el primer préstamo</div><div style="font-size:13.5px;color:#5B6472">Abierto, cuotas pactadas o cuota fija.</div></div><div style="height:38px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Nuevo préstamo</div></div>
+            <div style="display:flex;align-items:center;gap:14px;padding:16px 28px"><div style="width:22px;height:22px;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF;display:grid;place-items:center;font-size:12px;font-weight:600;color:#5B6472">5</div><div style="flex:1"><div style="font-weight:600;font-size:15px">Agregue a sus cobradores <span style="font-weight:400;color:#5B6472">(opcional)</span></div><div style="font-size:13.5px;color:#5B6472">Cada uno ve solo los préstamos que usted le asigne.</div></div><div style="height:38px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Ir a Equipo</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">4 · Ficha del préstamo · cuotas pactadas (cambie entre Tabla y Cuadrícula)</div>
+    <div data-screen-label="Ficha préstamo pactadas" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navPrest }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;padding:14px 32px 16px">
+          <div style="font-size:13px;color:#5B6472">Préstamos &nbsp;/&nbsp; P-0317</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+            <div style="font-weight:600;font-size:22px;white-space:nowrap">Carmen Rincón</div>
+            <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#FBE8E6;color:#B3261E;font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>En mora · 6 días</span>
+            <div style="flex:1"></div>
+            <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.6-4.5a8.4 8.4 0 1 1 15.4-4.4z"></path></svg>Enviar cronograma</div>
+            <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Registrar pago</div>
+          </div>
+          <div style="font-size:13.5px;color:#5B6472;margin-top:4px">Cuotas pactadas · diaria, todos los días · cobrador Yeison Arango</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Prestado</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$800.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Total a pagar</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$960.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Pagado</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$696.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Saldo</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$264.000</div></div>
+              <div style="padding:14px 18px;background:#FDF5F4;border-radius:0 8px 8px 0"><div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#B3261E;font-weight:600"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>Para quedar al día</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$168.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">Vencido $144.000 + hoy $24.000</div></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 14px 20px;border-bottom:1px solid #E2E5EA">
+                <div style="flex:1"><div style="font-weight:600;font-size:16px">Cronograma</div><div style="font-size:13px;color:#5B6472;margin-top:1px">29 pagadas · 6 vencidas desde el 17/09 · 1 vence hoy · 4 pendientes</div></div>
+                <sc-if value="{{ tP.esTabla }}" hint-placeholder-val="{{ true }}"><div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500"><div style="height:34px;padding:0 12px;display:flex;align-items:center;background:#EEF0F3">Todas</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Por pagar</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Vencidas</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Pagadas</div></div></sc-if>
+                <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500">
+                  <div onClick="{{ tP.verTabla }}" style="height:34px;padding:0 12px;display:flex;align-items:center;gap:6px;cursor:pointer;background:{{ tP.tablaBg }};color:{{ tP.tablaC }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>Tabla</div>
+                  <div onClick="{{ tP.verCuad }}" style="height:34px;padding:0 12px;display:flex;align-items:center;gap:6px;cursor:pointer;border-left:1px solid #CDD2D9;background:{{ tP.cuadBg }};color:{{ tP.cuadC }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"></path></svg>Cuadrícula</div>
+                </div>
+              </div>
+              <sc-if value="{{ tP.esTabla }}" hint-placeholder-val="{{ true }}">
+                <div>
+                  <div style="display:grid;grid-template-columns:44px 160px 120px 110px 120px minmax(0,1fr);gap:12px;align-items:center;height:40px;padding:0 16px 0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span style="color:#14181F"># ↑</span><span>Vence</span><span style="text-align:right">Capital</span><span style="text-align:right">Interés</span><span style="text-align:right">Cuota</span><span>Estado</span></div>
+                  <div style="display:grid;grid-template-columns:44px 160px 120px 110px 120px minmax(0,1fr);gap:12px;align-items:center;height:44px;padding:0 16px 0 20px;border-bottom:1px solid #EDEFF2;background:#FAFBFC;font-size:14px;color:#5B6472;font-variant-numeric:tabular-nums"><span>›</span><span>Cuotas 1 a 26</span><span style="text-align:right">$520.000</span><span style="text-align:right">$104.000</span><span style="text-align:right">$624.000</span><span>26 pagadas</span></div>
+                  <sc-for list="{{ cronoPVis }}" as="q" hint-placeholder-count="14">
+                    <div style="display:grid;grid-template-columns:44px 160px 120px 110px 120px minmax(0,1fr);gap:12px;align-items:center;height:44px;padding:0 16px 0 20px;border-bottom:1px solid #EDEFF2;background:{{ q.rowBg }};font-size:14px;font-variant-numeric:tabular-nums">
+                      <span style="color:#5B6472">{{ q.n }}</span><span><span style="display:inline-block;width:32px;color:#5B6472">{{ q.dia }}</span>{{ q.fecha }}</span><span style="text-align:right;color:#5B6472">{{ q.capital }}</span><span style="text-align:right;color:#5B6472">{{ q.interes }}</span><span style="text-align:right;font-weight:500">{{ q.cuota }}</span>
+                      <span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ q.st.bg }};color:{{ q.st.c }};font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ q.label }}</span></span>
+                    </div>
+                  </sc-for>
+                  <div style="display:grid;grid-template-columns:44px 160px 120px 110px 120px minmax(0,1fr);gap:12px;align-items:center;height:48px;padding:0 16px 0 20px;background:#F8F9FA;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums"><span></span><span>Total · 40 cuotas</span><span style="text-align:right">$800.000</span><span style="text-align:right">$160.000</span><span style="text-align:right">$960.000</span><span style="font-weight:500;color:#5B6472">Pagado $696.000 · saldo $264.000</span></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ tP.esCuad }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:16px 20px 18px">
+                  <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px">
+                    <sc-for list="{{ cronoP }}" as="q" hint-placeholder-count="40">
+                      <div style="box-sizing:border-box;border-radius:8px;background:{{ q.tileBg }};border:{{ q.tileBd }};padding:7px 8px 8px;font-variant-numeric:tabular-nums">
+                        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">{{ q.n }}</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:{{ q.st.c }}"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                        <div style="font-size:12.5px;margin-top:5px">{{ q.dia }} {{ q.fechaC }}</div>
+                        <div style="font-size:12px;color:#3B4452">{{ q.label }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:13px;color:#5B6472;margin-top:12px">Cada cuota: $24.000 · capital $20.000 + interés $4.000</div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:13px 18px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:15px">Condiciones</div>
+              <div style="padding:2px 18px 6px;font-size:14px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Tasa</span><span>15 % mensual, plano</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Cuotas</span><span>40 de $24.000</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Desembolso</span><span>18/08/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Primera cuota</span><span>19/08/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Última cuota</span><span>27/09/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Mora</span><span>Después de 5 días</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0"><span style="color:#5B6472">Cobrador</span><span>Yeison Arango · <span style="color:var(--marca-texto);font-weight:600">Cambiar</span></span></div>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:13px 18px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:15px">Cliente</div>
+              <div style="padding:12px 18px 14px;font-size:14px;line-height:1.6">
+                <div style="font-weight:600">Carmen Rincón</div>
+                <div style="color:#5B6472">C.C. 10.000.002 · WhatsApp 300 000 0001</div>
+                <div style="display:flex;align-items:center;gap:6px;color:#5B6472">Restaurante El Fogón<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">dato nuevo</span></div>
+                <div style="color:#5B6472">Cra. 11 # 18-08, Centro</div>
+                <div style="margin-top:8px;padding-top:8px;border-top:1px solid #EDEFF2"><span style="color:#5B6472">Codeudor:</span> Jorge Rincón · 300 000 0018</div>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #E2E5EA"><span style="font-weight:600;font-size:15px">Últimos pagos</span><span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472;white-space:nowrap">recibo: dato nuevo</span></div>
+              <sc-for list="{{ pagosP }}" as="p" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid #EDEFF2;font-size:14px;font-variant-numeric:tabular-nums"><div style="flex:1;min-width:0"><div>{{ p.fecha }}</div><div style="font-size:12.5px;color:#5B6472">{{ p.concepto }} · {{ p.metodo }} · N.º {{ p.rec }}</div></div><span style="font-weight:600">{{ p.monto }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">5 · Ficha del préstamo · cuota fija (abre en Cuadrícula)</div>
+    <div data-screen-label="Ficha préstamo cuota fija" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navPrest }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;padding:14px 32px 16px">
+          <div style="font-size:13px;color:#5B6472">Préstamos &nbsp;/&nbsp; P-0352</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+            <div style="font-weight:600;font-size:22px;white-space:nowrap">Hernán Darío Muñoz</div>
+            <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#1A7431" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Al día</span>
+            <div style="flex:1"></div>
+            <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.6-4.5a8.4 8.4 0 1 1 15.4-4.4z"></path></svg>Enviar cronograma</div>
+            <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Registrar pago</div>
+          </div>
+          <div style="font-size:13.5px;color:#5B6472;margin-top:4px">Cuota fija · diaria, todos los días · cobrador Yeison Arango</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Prestado</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$800.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Total a pagar</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$1.000.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">20 × $50.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Ganancia</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$200.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">25 % de lo prestado</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Pagado</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$930.000</div></div>
+              <div style="padding:14px 18px"><div style="font-size:13px;color:#5B6472">Saldo</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$70.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">Faltan $20.000 de la 19 y la 20</div></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 14px 20px;border-bottom:1px solid #E2E5EA">
+                <div style="flex:1"><div style="font-weight:600;font-size:16px">Cronograma</div><div style="font-size:13px;color:#5B6472;margin-top:1px">18 pagadas · 1 parcial · 1 pendiente · el pago llena las cuotas en orden</div></div>
+                <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500">
+                  <div onClick="{{ tF.verTabla }}" style="height:34px;padding:0 12px;display:flex;align-items:center;gap:6px;cursor:pointer;background:{{ tF.tablaBg }};color:{{ tF.tablaC }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>Tabla</div>
+                  <div onClick="{{ tF.verCuad }}" style="height:34px;padding:0 12px;display:flex;align-items:center;gap:6px;cursor:pointer;border-left:1px solid #CDD2D9;background:{{ tF.cuadBg }};color:{{ tF.cuadC }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"></path></svg>Cuadrícula</div>
+                </div>
+              </div>
+              <sc-if value="{{ tF.esCuad }}" hint-placeholder-val="{{ true }}">
+                <div style="padding:16px 20px 18px">
+                  <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px">
+                    <sc-for list="{{ cronoF }}" as="q" hint-placeholder-count="20">
+                      <div style="box-sizing:border-box;border-radius:8px;background:{{ q.tileBg }};border:{{ q.tileBd }};padding:7px 8px 8px;font-variant-numeric:tabular-nums">
+                        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">{{ q.n }}</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:{{ q.st.c }}"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                        <div style="font-size:12.5px;margin-top:5px">{{ q.dia }} {{ q.fechaC }}</div>
+                        <div style="font-size:12px;color:#3B4452">{{ q.label }}</div>
+                        <div style="font-size:11.5px;color:#2446B8;font-weight:600">{{ q.tileNota }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="font-size:13px;color:#5B6472;margin-top:12px">Cuota fija de $50.000 · sin tasa: la ganancia va dentro de la cuota</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ tF.esTabla }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="display:grid;grid-template-columns:44px 160px 130px 130px 130px minmax(0,1fr);gap:12px;align-items:center;height:40px;padding:0 16px 0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span style="color:#14181F"># ↑</span><span>Vence</span><span style="text-align:right">Valor</span><span style="text-align:right">Abonado</span><span style="text-align:right">Falta</span><span>Estado</span></div>
+                  <sc-for list="{{ cronoF }}" as="q" hint-placeholder-count="20">
+                    <div style="display:grid;grid-template-columns:44px 160px 130px 130px 130px minmax(0,1fr);gap:12px;align-items:center;height:42px;padding:0 16px 0 20px;border-bottom:1px solid #EDEFF2;background:{{ q.rowBg }};font-size:14px;font-variant-numeric:tabular-nums">
+                      <span style="color:#5B6472">{{ q.n }}</span><span><span style="display:inline-block;width:32px;color:#5B6472">{{ q.dia }}</span>{{ q.fecha }}</span><span style="text-align:right;color:#5B6472">{{ q.valor }}</span><span style="text-align:right">{{ q.abonado }}</span><span style="text-align:right;font-weight:500">{{ q.falta }}</span>
+                      <span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ q.st.bg }};color:{{ q.st.c }};font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ q.label }}</span></span>
+                    </div>
+                  </sc-for>
+                  <div style="display:grid;grid-template-columns:44px 160px 130px 130px 130px minmax(0,1fr);gap:12px;align-items:center;height:48px;padding:0 16px 0 20px;background:#F8F9FA;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums"><span></span><span>Total · 20 cuotas</span><span style="text-align:right">$1.000.000</span><span style="text-align:right">$930.000</span><span style="text-align:right">$70.000</span><span></span></div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:13px 18px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:15px">Condiciones</div>
+              <div style="padding:2px 18px 6px;font-size:14px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Tasa</span><span>No aplica</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Cuotas</span><span>20 de $50.000</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Desembolso</span><span>04/09/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Última cuota</span><span>24/09/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Mora</span><span>Sin gracia ni recargo</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0"><span style="color:#5B6472">Cobrador</span><span>Yeison Arango</span></div>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #E2E5EA"><span style="font-weight:600;font-size:15px">Últimos pagos</span><span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472;white-space:nowrap">recibo: dato nuevo</span></div>
+              <sc-for list="{{ pagosF }}" as="p" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid #EDEFF2;font-size:14px;font-variant-numeric:tabular-nums"><div style="flex:1;min-width:0"><div>{{ p.fecha }}</div><div style="font-size:12.5px;color:#5B6472">{{ p.concepto }} · {{ p.metodo }} · N.º {{ p.rec }}</div></div><span style="font-weight:600">{{ p.monto }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">6 · Ficha del préstamo · abierto (sin cronograma)</div>
+    <div data-screen-label="Ficha préstamo abierto" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navPrest }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;padding:14px 32px 16px">
+          <div style="font-size:13px;color:#5B6472">Préstamos &nbsp;/&nbsp; P-0188</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+            <div style="font-weight:600;font-size:22px;white-space:nowrap">Rubiela Agudelo</div>
+            <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#1A7431" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Al día</span>
+            <div style="flex:1"></div>
+            <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Enviar estado de cuenta</div>
+            <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Registrar pago</div>
+          </div>
+          <div style="font-size:13.5px;color:#5B6472;margin-top:4px">Abierto · 10 % mensual sobre el saldo · paga cuando puede · cobradora Luz Dary Cárdenas</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Capital prestado</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$2.000.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Saldo de capital</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$1.400.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Interés pendiente</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$140.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">Cargado el 12/09/2026</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Para cancelar hoy</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$1.540.000</div></div>
+              <div style="padding:14px 18px"><div style="font-size:13px;color:#5B6472">Intereses cobrados</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$700.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">Ganancia hasta hoy</div></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 16px 14px 20px;border-bottom:1px solid #E2E5EA">
+                <div style="flex:1"><div style="font-weight:600;font-size:16px">Movimientos</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Cada pago se aplica primero al interés pendiente y el resto a capital</div></div>
+                <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500"><div style="height:34px;padding:0 12px;display:flex;align-items:center;background:#EEF0F3">Todos</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Pagos</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Intereses</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:92px minmax(0,1fr) 96px 88px 92px 104px 96px;gap:12px;align-items:center;height:40px;padding:0 16px 0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span style="color:#14181F">Fecha ↑</span><span>Concepto</span><span style="text-align:right">Interés cargado</span><span style="text-align:right">A interés</span><span style="text-align:right">A capital</span><span style="text-align:right">Saldo capital</span><span style="text-align:right">Int. pendiente</span></div>
+              <sc-for list="{{ movA }}" as="m" hint-placeholder-count="9">
+                <div style="display:grid;grid-template-columns:92px minmax(0,1fr) 96px 88px 92px 104px 96px;gap:12px;align-items:center;min-height:48px;padding:6px 16px 6px 20px;box-sizing:border-box;border-bottom:1px solid #EDEFF2;font-size:14px;font-variant-numeric:tabular-nums">
+                  <span style="color:#5B6472">{{ m.fecha }}</span><div style="min-width:0"><div style="font-weight:500;white-space:nowrap">{{ m.concepto }}</div><div style="font-size:12.5px;color:#5B6472;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.det }}</div></div><span style="text-align:right">{{ m.cargo }}</span><span style="text-align:right">{{ m.aInt }}</span><span style="text-align:right">{{ m.aCap }}</span><span style="text-align:right;font-weight:500">{{ m.saldo }}</span><span style="text-align:right">{{ m.pend }}</span>
+                </div>
+              </sc-for>
+              <div style="display:grid;grid-template-columns:92px minmax(0,1fr) 96px 88px 92px 104px 96px;gap:12px;align-items:center;height:48px;padding:0 16px 0 20px;background:#F8F9FA;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums"><span></span><span>Total</span><span style="text-align:right">$840.000</span><span style="text-align:right">$700.000</span><span style="text-align:right">$600.000</span><span style="text-align:right">$1.400.000</span><span style="text-align:right">$140.000</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:13px 18px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:15px">Condiciones</div>
+              <div style="padding:2px 18px 6px;font-size:14px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Tasa</span><span>10 % mensual</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Modo de interés</span><span>Sobre el saldo</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Se carga</span><span>El 12 de cada mes</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Próximo cargo</span><span>12/10/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Desembolso</span><span>12/05/2026</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:9px 0"><span style="color:#5B6472">Cobradora</span><span>Luz Dary Cárdenas</span></div>
+              </div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;padding:14px 18px;font-size:14px;line-height:1.5;color:#3B4452">Si no abona a capital antes del 12/10/2026, el próximo cargo será de <b style="font-weight:600;color:#14181F">$140.000</b>. Con un abono de $400.000 a capital, bajaría a $100.000.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">7 · Clientes</div>
+    <div data-screen-label="Clientes" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navClientes }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:68px;flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;display:flex;align-items:center;gap:12px;padding:0 32px">
+          <div style="flex:1"><div style="font-weight:600;font-size:20px">Clientes</div><div style="font-size:13px;color:#5B6472;margin-top:1px">87 clientes · 112 préstamos activos</div></div>
+          <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Exportar</div>
+          <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">+ Nuevo cliente</div>
+        </div>
+        <div style="padding:24px 32px 32px">
+          <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #E2E5EA">
+              <div style="width:320px;height:38px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:14px;color:#5B6472"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L20 20"></path></svg>Nombre, cédula o WhatsApp</div>
+              <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500"><div style="height:36px;padding:0 12px;display:flex;align-items:center;background:#14181F;color:#FFFFFF">Todos 87</div><div style="height:36px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Con préstamo 74</div><div style="height:36px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">En mora 9</div><div style="height:36px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Sin cobrador 1</div></div>
+              <div style="flex:1"></div>
+              <div style="height:36px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:8px;font-size:13.5px"><span style="color:#5B6472">Cobrador:</span><span style="font-weight:600">Todos</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></div>
+            </div>
+            <div style="display:grid;grid-template-columns:minmax(0,1.4fr) 130px 120px 90px 120px 170px minmax(0,1fr);gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472">
+              <span style="display:flex;align-items:center;gap:6px">Cliente · negocio<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">negocio: dato nuevo</span></span><span>Cédula</span><span>WhatsApp</span><span style="text-align:right">Préstamos</span><span style="text-align:right">Saldo</span><span style="color:#14181F">Estado ↓</span><span>Cobrador</span>
+            </div>
+            <sc-for list="{{ clientes }}" as="c" hint-placeholder-count="12">
+              <div style="display:grid;grid-template-columns:minmax(0,1.4fr) 130px 120px 90px 120px 170px minmax(0,1fr);gap:16px;align-items:center;height:54px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums">
+                <div style="min-width:0"><div style="font-weight:600">{{ c.nombre }}</div><div style="font-size:12.5px;color:#5B6472">{{ c.negocio }}</div></div>
+                <span style="color:#3B4452">{{ c.cc }}</span><span style="color:#3B4452">{{ c.wa }}</span><span style="text-align:right">{{ c.prest }}</span><span style="text-align:right;font-weight:600">{{ c.saldo }}</span>
+                <span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ c.st.bg }};color:{{ c.st.c }};font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="{{ c.st.shape }}" fill="{{ c.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ c.st.mark }}" fill="{{ c.st.markFill }}" stroke="{{ c.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ c.label }}</span></span>
+                <span style="color:#3B4452">{{ c.cobrador }}</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;gap:16px;height:52px;padding:0 20px;background:#F8F9FA;font-size:14px;font-variant-numeric:tabular-nums">
+              <span style="color:#5B6472">Mostrando 1 a 12 de 87</span><span style="font-weight:600">Saldo de estos 12: {{ clientesTotal }}</span><span style="flex:1"></span>
+              <div style="display:flex;gap:4px;font-size:13.5px"><div style="width:32px;height:32px;border-radius:6px;background:#14181F;color:#FFFFFF;display:grid;place-items:center">1</div><div style="width:32px;height:32px;border-radius:6px;border:1px solid #CDD2D9;box-sizing:border-box;display:grid;place-items:center">2</div><div style="width:32px;height:32px;border-radius:6px;border:1px solid #CDD2D9;box-sizing:border-box;display:grid;place-items:center">3</div><div style="width:32px;height:32px;display:grid;place-items:center;color:#5B6472">…</div><div style="width:32px;height:32px;border-radius:6px;border:1px solid #CDD2D9;box-sizing:border-box;display:grid;place-items:center">8</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">8 · Ficha de cliente</div>
+    <div data-screen-label="Ficha de cliente" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navClientes }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;padding:14px 32px 16px">
+          <div style="font-size:13px;color:#5B6472">Clientes &nbsp;/&nbsp; Rubiela Agudelo</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+            <div style="font-weight:600;font-size:22px;white-space:nowrap">Rubiela Agudelo</div>
+            <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#1A7431" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Al día</span>
+            <div style="flex:1"></div>
+            <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.6-4.5a8.4 8.4 0 1 1 15.4-4.4z"></path></svg>Escribir por WhatsApp</div>
+            <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Editar</div>
+            <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">+ Nuevo préstamo</div>
+          </div>
+          <div style="font-size:13.5px;color:#5B6472;margin-top:4px">Cliente desde el 19/06/2025 · cobradora Luz Dary Cárdenas</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Le debe hoy</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$1.780.000</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Préstamos activos</div><div style="font-weight:600;font-size:22px;margin-top:5px">2</div></div>
+              <div style="padding:14px 18px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Prestado en total</div><div style="font-weight:600;font-size:22px;margin-top:5px;font-variant-numeric:tabular-nums">$3.350.000</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">4 préstamos desde 2025</div></div>
+              <div style="padding:14px 18px"><div style="font-size:13px;color:#5B6472">Veces en mora</div><div style="font-weight:600;font-size:22px;margin-top:5px">0</div></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:14px 20px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:16px">Préstamos</div>
+              <div style="display:grid;grid-template-columns:70px minmax(0,1fr) 100px 105px 105px 105px 150px;gap:14px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>N.º</span><span>Tipo</span><span style="color:#14181F">Desembolso ↓</span><span style="text-align:right">Prestado</span><span style="text-align:right">Saldo</span><span style="text-align:right">Avance</span><span>Estado</span></div>
+              <sc-for list="{{ prestR }}" as="p" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:70px minmax(0,1fr) 100px 105px 105px 105px 150px;gap:14px;align-items:center;height:50px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums">
+                  <span style="font-weight:600;color:var(--marca-texto)">{{ p.id }}</span><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.tipo }}</span><span style="color:#3B4452">{{ p.desembolso }}</span><span style="text-align:right">{{ p.prestado }}</span><span style="text-align:right;font-weight:600">{{ p.saldo }}</span><span style="text-align:right;color:#3B4452">{{ p.avance }}</span>
+                  <span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ p.st.bg }};color:{{ p.st.c }};font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="{{ p.st.shape }}" fill="{{ p.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ p.st.mark }}" fill="{{ p.st.markFill }}" stroke="{{ p.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ p.label }}</span></span>
+                </div>
+              </sc-for>
+              <div style="display:grid;grid-template-columns:70px minmax(0,1fr) 100px 105px 105px 105px 150px;gap:14px;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums"><span></span><span>Total</span><span></span><span style="text-align:right">$3.350.000</span><span style="text-align:right">$1.780.000</span><span></span><span></span></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:14px 20px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:16px">Pagos recientes</div>
+              <div style="display:grid;grid-template-columns:190px 80px minmax(0,1fr) 130px 120px 110px;gap:14px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span style="color:#14181F">Fecha ↓</span><span>Préstamo</span><span>Concepto</span><span>Método</span><span style="display:flex;align-items:center;gap:6px">Recibo<span style="display:inline-flex;align-items:center;height:18px;padding:0 4px;border:1px dashed #8C95A3;border-radius:4px;font-size:10px;font-weight:500">nuevo</span></span><span style="text-align:right">Monto</span></div>
+              <sc-for list="{{ movR }}" as="m" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:190px 80px minmax(0,1fr) 130px 120px 110px;gap:14px;align-items:center;height:46px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums"><span style="color:#3B4452">{{ m.fecha }}</span><span style="color:var(--marca-texto);font-weight:600">{{ m.prestamo }}</span><span>{{ m.concepto }}</span><span style="color:#3B4452">{{ m.metodo }}</span><span style="color:#3B4452">{{ m.rec }}</span><span style="text-align:right;font-weight:600">{{ m.monto }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:13px 18px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:15px">Datos</div>
+              <div style="padding:2px 18px 6px;font-size:14px">
+                <div style="padding:9px 0;border-bottom:1px solid #EDEFF2"><div style="font-size:12.5px;color:#5B6472">Cédula</div><div>10.000.006</div></div>
+                <div style="padding:9px 0;border-bottom:1px solid #EDEFF2"><div style="font-size:12.5px;color:#5B6472">WhatsApp</div><div>300 000 0003</div></div>
+                <div style="padding:9px 0;border-bottom:1px solid #EDEFF2"><div style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#5B6472">Negocio<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500">dato nuevo</span></div><div>Tienda Rubiela</div></div>
+                <div style="padding:9px 0"><div style="font-size:12.5px;color:#5B6472">Dirección</div><div>Cl. 34 # 8-21, Siloé</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">9 · Equipo y asignación de préstamos</div>
+    <div data-screen-label="Equipo" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navEquipo }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:68px;flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;display:flex;align-items:center;gap:12px;padding:0 32px">
+          <div style="flex:1"><div style="font-weight:600;font-size:20px">Equipo</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Cada cobrador ve solo los préstamos que usted le asigna</div></div>
+          <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">+ Nuevo cobrador</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:flex;flex-direction:column;gap:20px">
+          <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+            <div style="padding:14px 20px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:16px">Cobradores</div>
+            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 84px 140px 110px 110px 210px;gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>Cobrador · correo</span><span style="display:flex;align-items:center;gap:6px;white-space:nowrap">Zona<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">dato nuevo</span></span><span style="text-align:right">Préstamos</span><span style="text-align:right;color:#14181F">Cartera asignada ↓</span><span style="text-align:right">Meta de hoy</span><span>Estado</span><span></span></div>
+            <sc-for list="{{ equipo }}" as="e" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 84px 140px 110px 110px 210px;gap:16px;align-items:center;height:56px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums;color:{{ e.op }}">
+                <div style="display:flex;align-items:center;gap:10px;min-width:0"><div style="width:32px;height:32px;flex:none;border-radius:50%;background:#EEF0F3;display:grid;place-items:center;font-weight:600;font-size:12px;color:#3B4452">{{ e.ini }}</div><div style="min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.nombre }}</div><div style="font-size:12.5px;color:#5B6472;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.correo }}</div></div></div>
+                <span>{{ e.zona }}</span><span style="text-align:right">{{ e.n }}</span><span style="text-align:right;font-weight:600">{{ e.cartera }}</span><span style="text-align:right">{{ e.meta }}</span>
+                <span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:{{ e.st.bg }};color:{{ e.st.c }};font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="{{ e.st.shape }}" fill="{{ e.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ e.st.mark }}" fill="{{ e.st.markFill }}" stroke="{{ e.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ e.label }}</span></span>
+                <span style="display:flex;justify-content:flex-end;gap:14px;font-size:13.5px;font-weight:600;color:var(--marca-texto);white-space:nowrap"><span>Ver préstamos</span><span>Contraseña</span></span>
+              </div>
+            </sc-for>
+            <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 84px 140px 110px 110px 210px;gap:16px;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums"><span>Total asignado</span><span></span><span style="text-align:right">106</span><span style="text-align:right">$22.990.000</span><span style="text-align:right">$2.140.000</span><span></span><span></span></div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid #E2E5EA">
+              <div style="flex:1"><div style="font-weight:600;font-size:16px">Asignar préstamos</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Los préstamos sin asignar solo los ve usted</div></div>
+              <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500"><div style="height:34px;padding:0 12px;display:flex;align-items:center;background:#14181F;color:#FFFFFF">Sin asignar 6</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Todos 112</div></div>
+              <div style="height:34px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:8px;font-size:13.5px"><span style="color:#5B6472">Cobrador:</span><span style="font-weight:600">Cualquiera</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 20px;background:var(--marca-suave);border-bottom:1px solid #E2E5EA;font-size:14.5px;font-variant-numeric:tabular-nums">
+              <span style="font-weight:600">3 préstamos seleccionados</span><span style="color:#3B4452">· saldo $660.000</span><span style="flex:1"></span>
+              <span style="color:#3B4452">Asignar a</span>
+              <div style="height:38px;width:220px;padding:0 12px;box-sizing:border-box;border:1px solid #9AA3AF;border-radius:6px;background:#FFFFFF;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:14px">Yeison Arango<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></div>
+              <div style="height:38px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Asignar</div>
+            </div>
+            <div style="display:grid;grid-template-columns:24px minmax(0,1.2fr) 80px minmax(0,1fr) 100px 120px 110px 120px;gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span style="width:18px;height:18px;box-sizing:border-box;border:1.5px solid #14181F;border-radius:4px;background:#14181F;display:grid;place-items:center"><span style="width:8px;height:2px;background:#FFFFFF"></span></span><span>Cliente · negocio</span><span>N.º</span><span>Tipo</span><span style="text-align:right">Cuota</span><span style="text-align:right">Saldo</span><span style="color:#14181F">Desembolso ↓</span><span>Cobrador</span></div>
+            <sc-for list="{{ sinAsignar }}" as="p" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:24px minmax(0,1.2fr) 80px minmax(0,1fr) 100px 120px 110px 120px;gap:16px;align-items:center;height:52px;padding:0 20px;border-bottom:1px solid #EDEFF2;background:{{ p.rowBg }};font-size:14.5px;font-variant-numeric:tabular-nums">
+                <span style="width:18px;height:18px;box-sizing:border-box;border:1.5px solid {{ p.chkBd }};border-radius:4px;background:{{ p.chkBg }};display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+                <div style="min-width:0"><div style="font-weight:600">{{ p.nombre }}</div><div style="font-size:12.5px;color:#5B6472">{{ p.negocio }}</div></div>
+                <span style="color:var(--marca-texto);font-weight:600">{{ p.id }}</span><span style="color:#3B4452">{{ p.tipo }}</span><span style="text-align:right">{{ p.cuota }}</span><span style="text-align:right;font-weight:600">{{ p.saldo }}</span><span style="color:#3B4452">{{ p.fecha }}</span><span style="color:#5B6472">Sin asignar</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums"><span style="flex:1">6 préstamos sin asignar</span><span>Saldo $1.320.000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:12px;font-weight:600;color:#5B6472">10 · Mi marca · el formulario funciona y la vista previa cambia en vivo</div>
+    <div data-screen-label="Mi marca" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ b.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ b.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ b.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px"><sc-for list="{{ navMarca }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for></div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:68px;flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;display:flex;align-items:center;gap:12px;padding:0 32px">
+          <div style="flex:1"><div style="font-weight:600;font-size:20px">Mi marca</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Lo que ven sus clientes en los comprobantes y su equipo en la app. Solo usted puede cambiarlo.</div></div>
+          <div onClick="{{ restablecer }}" style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px;cursor:pointer">Descartar cambios</div>
+          <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Guardar</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:24px;align-items:start">
+          <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+
+            <div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 24px;border-bottom:1px solid #E2E5EA">
+              <div><div style="font-weight:600;font-size:15px">Identidad</div><div style="font-size:13px;color:#5B6472;margin-top:3px;line-height:1.45">Nombre y logo del negocio.</div></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Nombre del negocio</span><input value="{{ f.nombre }}" onChange="{{ onNombre }}" style="height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;background:#FFFFFF;outline:none" style-focus="border-color:#14181F;box-shadow:0 0 0 3px rgba(20,24,31,.12)"></label>
+                <div style="display:flex;align-items:center;gap:14px">
+                  <div style="width:64px;height:64px;flex:none;border-radius:14px;background:{{ pv.marca }};color:{{ pv.sobre }};display:grid;place-items:center;font-weight:700;font-size:22px">{{ mono }}</div>
+                  <div style="flex:1;height:64px;box-sizing:border-box;border:1.5px dashed #9AA3AF;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:#3B4452"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"></path></svg>Subir logo · PNG o SVG, fondo transparente</div>
+                </div>
+                <div style="font-size:13px;color:#5B6472">Sin logo usamos el monograma con sus iniciales: <b style="font-weight:600;color:#14181F">{{ mono }}</b></div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 24px;border-bottom:1px solid #E2E5EA">
+              <div><div style="font-weight:600;font-size:15px">Colores</div><div style="font-size:13px;color:#5B6472;margin-top:3px;line-height:1.45">Usted elige dos. La app calcula el resto y el color del texto para que siempre se lea.</div></div>
+              <div style="display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-size:13px;font-weight:600">Color principal</span>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <sc-for list="{{ swP }}" as="s" hint-placeholder-count="8"><div onClick="{{ s.pick }}" style="width:30px;height:30px;border-radius:50%;cursor:pointer;background:{{ s.c }};box-shadow:{{ s.ring }}"></div></sc-for>
+                    <input value="{{ f.hexM }}" onChange="{{ onHexM }}" style="width:110px;height:36px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 10px;margin-left:6px;font:inherit;font-size:14px;font-variant-numeric:tabular-nums;color:#14181F;outline:none" style-focus="border-color:#14181F">
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-size:13px;font-weight:600">Color de acento</span>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <sc-for list="{{ swA }}" as="s" hint-placeholder-count="6"><div onClick="{{ s.pick }}" style="width:30px;height:30px;border-radius:50%;cursor:pointer;background:{{ s.c }};box-shadow:{{ s.ring }}"></div></sc-for>
+                    <input value="{{ f.hexA }}" onChange="{{ onHexA }}" style="width:110px;height:36px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 10px;margin-left:6px;font:inherit;font-size:14px;color:#14181F;outline:none" style-focus="border-color:#14181F">
+                  </div>
+                </div>
+                <div style="border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+                  <div style="padding:8px 14px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-size:12.5px;font-weight:600;color:#5B6472">Colores que calcula la app</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr">
+                    <sc-for list="{{ tokList }}" as="t" hint-placeholder-count="6">
+                      <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #EDEFF2"><div style="width:26px;height:26px;flex:none;border-radius:6px;background:{{ t.v }};box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)"></div><div style="flex:1;min-width:0;font-size:13px;line-height:1.3"><div>{{ t.nombre }}</div><div style="color:#5B6472;font-variant-numeric:tabular-nums">{{ t.v }} · {{ t.k }}</div></div><span style="font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.nota }}</span></div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="font-size:13.5px;color:#3B4452;line-height:1.5">Sobre su color principal el texto va en <b style="font-weight:600">{{ sobreNombre }}</b> ({{ ratioSobre }}). Mínimo pedido: 4,5:1.</div>
+                <sc-if value="{{ tieneParecido }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:10px;padding:10px 12px;border-radius:8px;background:#F8F9FA;border:1px solid #E2E5EA;font-size:13.5px;line-height:1.45;color:#3B4452"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B4452" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 7.5v.1"></path></svg><span>Su color se parece al del estado «{{ parecido }}». No hay problema: los estados siempre llevan su ícono y su etiqueta, y su color nunca se usa en ellos.</span></div></sc-if>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 24px;border-bottom:1px solid #E2E5EA">
+              <div><div style="font-weight:600;font-size:15px">Contacto</div><div style="font-size:13px;color:#5B6472;margin-top:3px;line-height:1.45">Sale en comprobantes y tarjetas.</div></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">WhatsApp</span><input value="{{ f.whatsapp }}" onChange="{{ onWa }}" style="height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;outline:none" style-focus="border-color:#14181F"></label>
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">NIT o cédula <span style="font-weight:400;color:#5B6472">(opcional)</span></span><input value="{{ f.doc }}" onChange="{{ onDoc }}" style="height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;outline:none" style-focus="border-color:#14181F"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;grid-column:1 / -1"><span style="font-size:13px;font-weight:600">Dirección <span style="font-weight:400;color:#5B6472">(opcional)</span></span><input value="{{ f.direccion }}" onChange="{{ onDir }}" style="height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;outline:none" style-focus="border-color:#14181F"></label>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 24px;border-bottom:1px solid #E2E5EA">
+              <div><div style="font-weight:600;font-size:15px">Horario de cobro</div><div style="font-size:13px;color:#5B6472;margin-top:3px;line-height:1.45">Días y horas en que pasa el cobrador.</div></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;gap:8px"><sc-for list="{{ diasChips }}" as="d" hint-placeholder-count="7"><div onClick="{{ d.toggle }}" style="width:44px;height:40px;box-sizing:border-box;border-radius:6px;border:1px solid {{ d.bd }};background:{{ d.bg }};color:{{ d.color }};display:grid;place-items:center;font-weight:600;font-size:14px;cursor:pointer">{{ d.l }}</div></sc-for></div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:14px"><span style="color:#5B6472">De</span><input value="{{ f.desde }}" onChange="{{ onDesde }}" style="width:120px;height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;outline:none"><span style="color:#5B6472">a</span><input value="{{ f.hasta }}" onChange="{{ onHasta }}" style="width:120px;height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;outline:none"></div>
+                <div style="font-size:13px;color:#5B6472">Se muestra así: {{ horarioTxt }}</div>
+                <div style="display:flex;gap:10px;padding:10px 12px;border-radius:8px;background:#F8F9FA;border:1px solid #E2E5EA;font-size:13.5px;line-height:1.45;color:#3B4452"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B4452" stroke-width="2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 7.5v.1"></path></svg><span>Es informativo: sale en los comprobantes, las tarjetas y los mensajes. No cambia las fechas de las cuotas; esas se fijan al crear cada préstamo.</span></div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 24px;border-bottom:1px solid #E2E5EA">
+              <div><div style="font-weight:600;font-size:15px">Métodos de pago</div><div style="font-size:13px;color:#5B6472;margin-top:3px;line-height:1.45">Los que el cobrador puede registrar.</div></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <sc-for list="{{ metodos }}" as="m" hint-placeholder-count="4">
+                  <div onClick="{{ m.toggle }}" style="display:flex;align-items:center;gap:10px;height:52px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;cursor:pointer"><span style="width:18px;height:18px;flex:none;box-sizing:border-box;border:1.5px solid {{ m.chkBd }};border-radius:4px;background:{{ m.chkBg }};display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span><div><div style="font-weight:600;font-size:14.5px">{{ m.m }}</div><div style="font-size:12.5px;color:#5B6472">{{ m.sub }}</div></div></div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;padding:20px 24px">
+              <div><div style="font-weight:600;font-size:15px">Mensajes</div><div style="font-size:13px;color:#5B6472;margin-top:3px;line-height:1.45">Trato de usted con el cliente. El aviso de recargo por atraso lo agrega la app y no se puede quitar.</div></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Saludo del recordatorio</span><input value="{{ f.recordatorio }}" onChange="{{ onRec }}" style="height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;font:inherit;font-size:14.5px;color:#14181F;outline:none" style-focus="border-color:#14181F"><span style="font-size:12.5px;color:#5B6472">Escriba {cliente} donde va el nombre.</span></label>
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Pie del comprobante</span><textarea value="{{ f.pie }}" onChange="{{ onPie }}" rows="2" style="box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:10px 12px;font:inherit;font-size:14.5px;line-height:1.45;color:#14181F;outline:none;resize:vertical" style-focus="border-color:#14181F"></textarea></label>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="font-weight:600;font-size:15px">Vista previa</div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="height:56px;display:flex;align-items:center;gap:10px;padding:0 16px;background:{{ pv.marca }};color:{{ pv.sobre }}"><div style="width:32px;height:32px;border-radius:8px;background:{{ pv.sobre }};color:{{ pv.marca }};display:grid;place-items:center;font-weight:700;font-size:13px">{{ mono }}</div><div style="flex:1;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.nombre }}</div><div style="height:24px;padding:0 8px;border-radius:12px;background:{{ pv.acento }};color:{{ pv.acSobre }};display:flex;align-items:center;font-size:12px;font-weight:600">Hoy 23/09</div></div>
+              <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;gap:10px;align-items:center"><div style="flex:1;height:40px;border-radius:6px;background:{{ pv.suave }};display:flex;align-items:center;padding:0 12px;font-weight:600;font-size:14px;color:#14181F">Cobros de hoy</div><div style="height:40px;padding:0 14px;border-radius:6px;background:{{ pv.marca }};color:{{ pv.sobre }};display:flex;align-items:center;font-weight:600;font-size:14px">Registrar pago</div></div>
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagado</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#FBE8E6;color:#B3261E;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>En mora</span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E8EDFB;color:#2446B8;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#2446B8" stroke-width="1.6"></path><path d="M8 1.6a6.4 6.4 0 0 0 0 12.8Z" fill="#2446B8"></path></svg>Parcial</span>
+                  <span style="font-size:13px;font-weight:600;color:{{ pv.texto }};margin-left:auto">Ver todos</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#E9EBEE;border-radius:8px;padding:18px;display:flex;justify-content:center">
+              <div style="width:340px;background:#FFFFFF;border-top:6px solid {{ pv.marca }};box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -14px rgba(0,0,0,.25)">
+                <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid #E2E5EA"><div style="width:38px;height:38px;flex:none;border-radius:9px;background:{{ pv.marca }};color:{{ pv.sobre }};display:grid;place-items:center;font-weight:700;font-size:14px">{{ mono }}</div><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:15.5px;line-height:1.2">{{ f.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px">WhatsApp {{ f.whatsapp }}</div></div></div>
+                <div style="padding:12px 18px 0">
+                  <div style="display:flex;align-items:center;justify-content:space-between"><div style="font-weight:600;font-size:14px;white-space:nowrap">Comprobante de pago</div><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:11px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagado</span></div>
+                  <div style="font-size:12.5px;color:#5B6472;margin-top:10px">Recibimos de</div><div style="font-weight:600;font-size:16px">Carmen Rincón</div>
+                  <div style="font-size:12.5px;color:#5B6472;margin-top:8px">La suma de</div><div style="font-weight:600;font-size:28px;font-variant-numeric:tabular-nums">$24.000</div>
+                  <div style="display:flex;justify-content:space-between;padding:8px 0;margin-top:8px;border-top:1px solid #E2E5EA;font-size:13px"><span style="color:#5B6472">Concepto</span><span>Cuota 30 de 40</span></div>
+                </div>
+                <div style="padding:10px 18px 12px;background:#F8F9FA;border-top:1px solid #E2E5EA">
+                  <div style="font-size:13px;line-height:1.45">{{ f.pie }}</div>
+                  <sc-if value="{{ tieneDatosTxt }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:#5B6472;margin-top:3px">{{ datosTxt }}</div></sc-if>
+                  <div style="font-size:12px;color:#5B6472;margin-top:3px">{{ horarioTxt }}</div>
+                  <div style="font-size:11px;color:#5B6472;margin-top:8px;text-align:right">con G-Quota</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#EFEAE2;border-radius:8px;padding:16px">
+              <div style="font-size:12.5px;font-weight:600;color:#3B4452;margin-bottom:8px">Recordatorio por WhatsApp</div>
+              <div style="background:#FFFFFF;border-radius:0 8px 8px 8px;padding:10px 12px;font-size:14px;line-height:1.5;box-shadow:0 1px 1px rgba(0,0,0,.08);max-width:360px">{{ recordatorioTxt }} Le recordamos que hoy vence su cuota de $24.000 (36 de 40). {{ metodosTxt }} <b style="font-weight:600">Si se pasa de la fecha se cobra un valor adicional.</b><div style="color:#5B6472;margin-top:4px">{{ f.nombre }} · {{ f.whatsapp }}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;marca&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Créditos La 14 · verde&quot;,&quot;Inversiones Morales · azul marino&quot;,&quot;Préstamos Doña Rosa · amarillo&quot;,&quot;Créditos Ramírez · rojo&quot;,&quot;Multicréditos Yeni · fucsia&quot;],&quot;default&quot;:&quot;Créditos La 14 · verde&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca de prueba&quot;}}">
+const SW_P = ['#127A3E', '#16284A', '#F6C90E', '#D21F3C', '#C8177A', '#5B3FD1', '#0E7490', '#E8590C'];
+const SW_A = ['#F2B705', '#D4A017', '#D6336C', '#1F2A44', '#00A19A', '#E8590C'];
+const DIAS_L = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+const DIAS_N = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+const METODOS = ['Efectivo', 'Nequi', 'Daviplata', 'Transferencia'];
+const norm = v => { v = v.trim().replace('#', '').toUpperCase(); if (v.length === 3) v = v.split('').map(c => c + c).join(''); return '#' + v; };
+const vista = (v, set) => ({
+  esTabla: v === 'tabla', esCuad: v === 'cuadricula',
+  tablaBg: v === 'tabla' ? '#14181F' : '#FFFFFF', tablaC: v === 'tabla' ? '#FFFFFF' : '#14181F',
+  cuadBg: v === 'cuadricula' ? '#14181F' : '#FFFFFF', cuadC: v === 'cuadricula' ? '#FFFFFF' : '#14181F',
+  verTabla: () => set('tabla'), verCuad: () => set('cuadricula'),
+});
+
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  state = { f: null, vistaP: 'tabla', vistaF: 'cuadricula' };
+  componentDidMount() { this.esperar(); }
+  componentWillUnmount() { clearTimeout(this.t); }
+  componentDidUpdate(pp) { if (pp.marca !== this.props.marca && this.state.f) this.setState({ f: null }); this.aplicar(); }
+  esperar() { if (window.GQ) { this.forceUpdate(); this.aplicar(); } else this.t = setTimeout(() => this.esperar(), 40); }
+  aplicar() { const G = window.GQ; if (G) G.aplicar(this.rootRef.current, G.marca(this.props.marca)); }
+  fDe(m) {
+    const [d, h] = m.horario.split(', ');
+    const [desde, hasta] = (h || '').split(' a ');
+    return { nombre: m.nombre, marca: m.marca, acento: m.acento, hexM: m.marca, hexA: m.acento, whatsapp: m.whatsapp, direccion: m.direccion, doc: m.doc, pie: m.pie, recordatorio: m.recordatorio, desde, hasta, dias: d === 'Lunes a sábado' ? [1, 1, 1, 1, 1, 1, 0] : [1, 1, 1, 1, 1, 1, 1], metodos: [1, 1, 1, 0] };
+  }
+  f() { return this.state.f || this.fDe(window.GQ.marca(this.props.marca)); }
+  set(patch) { this.setState(() => ({ f: { ...this.f(), ...patch } })); }
+  renderVals() {
+    const G = window.GQ;
+    if (!G) return { rootRef: this.rootRef, b: {}, f: {}, pv: {}, tP: {}, tF: {} };
+    const b = G.marca(this.props.marca);
+    const f = this.f();
+    const t = G.tokens(f.marca, f.acento);
+    const pv = { marca: t['--marca'], sobre: t['--marca-sobre'], texto: t['--marca-texto'], suave: t['--marca-suave'], acento: t['--acento'], acSobre: t['--acento-sobre'] };
+    const tokList = [
+      ['Principal', '--marca', ''], ['Texto sobre el principal', '--marca-sobre', G.ratio(pv.sobre, pv.marca)], ['Principal como texto', '--marca-texto', G.ratio(pv.texto, '#FFFFFF')],
+      ['Principal suave', '--marca-suave', ''], ['Acento', '--acento', ''], ['Texto sobre el acento', '--acento-sobre', G.ratio(pv.acSobre, pv.acento)],
+    ].map(([nombre, k, nota]) => ({ nombre, k, v: t[k], nota }));
+    const dias = f.dias;
+    const n = dias.reduce((a, x) => a + x, 0);
+    const diasTxt = n === 7 ? 'Todos los días' : n === 6 && !dias[6] ? 'Lunes a sábado' : n === 5 && !dias[5] && !dias[6] ? 'Lunes a viernes' : DIAS_N.filter((_, i) => dias[i]).join(', ').replace(/^./, c => c.toUpperCase());
+    const sel = METODOS.filter((_, i) => f.metodos[i]).map(x => x === 'Efectivo' ? 'en efectivo' : x === 'Transferencia' ? 'por transferencia' : 'por ' + x);
+    const metodosTxt = sel.length ? 'Puede pagar ' + (sel.length > 1 ? sel.slice(0, -1).join(', ') + ' o ' + sel[sel.length - 1] : sel[0]) + '.' : '';
+    const datosTxt = [f.direccion, f.doc].filter(Boolean).join(' · ');
+    const parecido = G.parecidoA(f.marca);
+    const sw = (lista, cual, key, hexKey) => lista.map(c => ({ c, pick: () => this.set({ [key]: c, [hexKey]: c }), ring: c === f[key] ? '0 0 0 2px #FFFFFF, 0 0 0 4px #14181F' : 'inset 0 0 0 1px rgba(0,0,0,.14)' }));
+    const onHex = (hexKey, key) => e => { const v = e.target.value; this.set(G.valido(v) ? { [hexKey]: v, [key]: norm(v) } : { [hexKey]: v }); };
+    const on = k => e => this.set({ [k]: e.target.value });
+    return {
+      rootRef: this.rootRef, b,
+      navInicio: G.nav('Inicio'), navPrest: G.nav('Préstamos'), navClientes: G.nav('Clientes'), navEquipo: G.nav('Equipo'), navMarca: G.nav('Mi marca'),
+      cobradores: G.COBRADORES, mora: G.MORA,
+      cronoP: G.CRONO_P, cronoPVis: G.CRONO_P.slice(26), pagosP: G.PAGOS_P, cronoF: G.CRONO_F, pagosF: G.PAGOS_F, movA: G.MOV_A,
+      clientes: G.CLIENTES, clientesTotal: G.CLIENTES_TOTAL, prestR: G.PREST_RUBIELA, movR: G.MOV_RUBIELA, equipo: G.EQUIPO, sinAsignar: G.SIN_ASIGNAR,
+      tP: vista(this.state.vistaP, v => this.setState({ vistaP: v })), tF: vista(this.state.vistaF, v => this.setState({ vistaF: v })),
+      f, pv, tokList, sobreNombre: pv.sobre === '#FFFFFF' ? 'blanco' : 'tinta', ratioSobre: G.ratio(pv.sobre, pv.marca),
+      parecido, tieneParecido: !!parecido, mono: G.monograma(f.nombre),
+      swP: sw(SW_P, 'p', 'marca', 'hexM'), swA: sw(SW_A, 'a', 'acento', 'hexA'),
+      diasChips: DIAS_L.map((l, i) => ({ l, toggle: () => this.set({ dias: dias.map((x, j) => (j === i ? 1 - x : x)) }), bg: dias[i] ? '#14181F' : '#FFFFFF', color: dias[i] ? '#FFFFFF' : '#14181F', bd: dias[i] ? '#14181F' : '#CDD2D9' })),
+      metodos: METODOS.map((m, i) => ({ m, sub: m === 'Efectivo' ? 'Lo recibe el cobrador' : m === 'Transferencia' ? 'Cuenta de ahorros' : 'Al ' + f.whatsapp, toggle: () => this.set({ metodos: f.metodos.map((x, j) => (j === i ? 1 - x : x)) }), on: !!f.metodos[i], chkBg: f.metodos[i] ? '#14181F' : '#FFFFFF', chkBd: f.metodos[i] ? '#14181F' : '#9AA3AF' })),
+      horarioTxt: `${diasTxt}, ${f.desde} a ${f.hasta}`, metodosTxt, datosTxt, tieneDatosTxt: !!datosTxt,
+      recordatorioTxt: (f.recordatorio || '').replace('{cliente}', 'doña Carmen'),
+      onNombre: on('nombre'), onWa: on('whatsapp'), onDir: on('direccion'), onDoc: on('doc'), onPie: on('pie'), onRec: on('recordatorio'), onDesde: on('desde'), onHasta: on('hasta'),
+      onHexM: onHex('hexM', 'marca'), onHexA: onHex('hexA', 'acento'),
+      restablecer: () => this.setState({ f: null }),
+    };
+  }
+}
+</script>
+</body>
+</html>

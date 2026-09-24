@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="./gq-comun.js"></script>
+<style>body{margin:0;background:#EDEEF1}a{color:#14181F}a:hover{color:#2446B8}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="padding:40px 44px 60px;display:flex;flex-direction:column;gap:48px;font-family:'IBM Plex Sans',sans-serif;color:#14181F;--marca:#127A3E;--marca-sobre:#FFFFFF;--marca-texto:#127A3E;--marca-suave:#E2EFE7;--acento:#F2B705;--acento-sobre:#17150F;--acento-texto:#8F6E0A">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:900px">
+    <div style="font-weight:600;font-size:24px">G-Quota · Cobrador (móvil) e imágenes para WhatsApp</div>
+    <div style="font-size:14.5px;color:#3B4452;line-height:1.5;text-wrap:pretty">Dirección 2a Contable. Marca de muestra: {{ b.nombre }}. Cámbiela en Tweaks. Las etiquetas punteadas <span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472;vertical-align:middle;white-space:nowrap">dato nuevo</span> señalan información que la app todavía no guarda.</div>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div style="font-weight:600;font-size:17px">Móvil · 390 px</div>
+    <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap">
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Ingreso neutro · marca G-Quota</div>
+        <div data-screen-label="Ingreso neutro cobrador" style="width:390px;height:844px;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>6:52</span><span>●●●</span></div>
+          <div style="height:190px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px"><div style="width:56px;height:56px;flex:none;border-radius:14px;background:#14181F;color:#FFFFFF;display:grid;place-items:center;font-weight:700;font-size:24px">G</div><div style="font-weight:600;font-size:19px">G-Quota</div></div>
+          <div style="flex:1;margin:0 12px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:12px 12px 0 0;border-bottom:0;padding:26px 20px 0;display:flex;flex-direction:column;gap:16px">
+            <div><div style="font-weight:600;font-size:20px">Ingresar</div><div style="font-size:14.5px;color:#5B6472;margin-top:2px;line-height:1.45">Al entrar verá la app con la marca de su negocio.</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Correo</div><div style="height:50px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:8px;padding:0 14px;display:flex;align-items:center;font-size:16px">yeison.arango@ejemplo.com</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Contraseña</div><div style="height:50px;box-sizing:border-box;border:2px solid #14181F;border-radius:8px;padding:0 13px;display:flex;align-items:center;font-size:18px;letter-spacing:.15em">••••••••</div></div>
+            <div style="height:52px;border-radius:8px;background:#14181F;color:#FFFFFF;display:grid;place-items:center;font-weight:600;font-size:16px;margin-top:4px">Ingresar</div>
+            <div style="font-size:13.5px;color:#5B6472;text-align:center;line-height:1.45">¿Olvidó la contraseña? El dueño del negocio se la puede restablecer.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Ingreso con la marca del negocio</div>
+        <div data-screen-label="Ingreso cobrador" style="width:390px;height:844px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="background:var(--marca);color:var(--marca-sobre);height:300px;flex:none;display:flex;flex-direction:column">
+            <div style="height:32px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>6:52</span><span>●●●</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px">
+              <div style="width:72px;height:72px;border-radius:16px;background:var(--marca-sobre);color:var(--marca);display:grid;place-items:center;font-weight:700;font-size:26px">{{ b.mono }}</div>
+              <div style="font-weight:600;font-size:22px;white-space:nowrap">{{ b.nombre }}</div>
+            </div>
+          </div>
+          <div style="flex:1;padding:28px 24px 0;display:flex;flex-direction:column;gap:16px">
+            <div><div style="font-weight:600;font-size:20px">Ingresar</div><div style="font-size:14.5px;color:#5B6472;margin-top:2px">Use el correo que le dio {{ b.saludo }}.</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Correo</div><div style="height:50px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:8px;padding:0 14px;display:flex;align-items:center;font-size:16px">yeison.arango@ejemplo.com</div></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:13px;font-weight:600">Contraseña</div><div style="height:50px;box-sizing:border-box;border:2px solid var(--marca-texto);border-radius:8px;padding:0 6px 0 13px;display:flex;align-items:center;font-size:18px;letter-spacing:.15em"><span style="flex:1">••••••••</span><span style="width:44px;height:44px;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B6472" stroke-width="2"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"></path><circle cx="12" cy="12" r="3"></circle></svg></span></div></div>
+            <div style="height:52px;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:600;font-size:16px;margin-top:4px">Ingresar</div>
+            <div style="font-size:13.5px;color:#5B6472;text-align:center;line-height:1.45">¿Olvidó la contraseña? {{ b.saludo }} se la puede restablecer desde Equipo.</div>
+          </div>
+          <div style="padding:0 0 22px;text-align:center;font-size:12px;color:#5B6472">con G-Quota</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Cobros de hoy · pantalla completa</div>
+        <div data-screen-label="Cobros de hoy" style="width:390px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>9:20</span><span>●●●</span></div>
+          <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 10px 0 16px">
+            <div style="width:30px;height:30px;flex:none;border-radius:7px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:12px">{{ b.mono }}</div>
+            <div style="flex:1;min-width:0;font-weight:600;font-size:15px">{{ b.nombre }}</div>
+            <div style="width:44px;height:44px;display:grid;place-items:center"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#14181F" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L20 20"></path></svg></div>
+          </div>
+          <div style="padding:6px 20px 14px">
+            <div style="font-weight:600;font-size:22px;white-space:nowrap">Cobros de hoy</div>
+            <div style="font-size:13.5px;color:#5B6472;margin-top:2px">Miércoles 23/09/2026 · Yeison Arango</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:14px;border:1px solid #E2E5EA;border-radius:8px;font-variant-numeric:tabular-nums">
+              <div style="padding:10px 12px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Por cobrar</div><div style="font-weight:600;font-size:18px;margin-top:2px">$190.000</div></div>
+              <div style="padding:10px 12px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Cobrado</div><div style="font-weight:600;font-size:18px;margin-top:2px">$93.000</div></div>
+              <div style="padding:10px 12px"><div style="font-size:12.5px;color:#5B6472">Meta del día</div><div style="font-weight:600;font-size:18px;margin-top:2px">$283.000</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:12px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="width:33%;height:6px;background:#3B4452"></div></div><span style="font-size:13px;color:#5B6472;font-variant-numeric:tabular-nums;white-space:nowrap">6 de 14 visitas</span><span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472;white-space:nowrap">dato nuevo</span></div>
+          </div>
+          <div style="padding:0 12px 12px;border-bottom:1px solid #E2E5EA">
+            <div style="display:grid;grid-template-columns:repeat(4,auto);border:1px solid #CDD2D9;border-radius:8px;padding:3px;font-size:13px;font-weight:600;white-space:nowrap">
+              <div style="height:40px;border-radius:6px;background:#14181F;color:#FFFFFF;display:grid;place-items:center;padding:0 5px">Todos 14</div>
+              <div style="height:40px;display:grid;place-items:center;padding:0 5px">Atrasados 2</div>
+              <div style="height:40px;display:grid;place-items:center;padding:0 5px">Por cobrar 7</div>
+              <div style="height:40px;display:grid;place-items:center;padding:0 5px">Cobrados 5</div>
+            </div>
+          </div>
+          <sc-for list="{{ secciones }}" as="s" hint-placeholder-count="3">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;height:40px;padding:0 20px;background:#F5F6F8;border-bottom:1px solid #E2E5EA;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums"><span>{{ s.titulo }}</span><span style="color:#5B6472;font-weight:500">{{ s.n }}</span><span style="flex:1"></span><span>{{ s.total }}</span></div>
+              <sc-for list="{{ s.rows }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;min-height:66px;padding:10px 12px 10px 20px;box-sizing:border-box;border-bottom:1px solid #EDEFF2">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:15.5px;line-height:1.25">{{ r.nombre }}</div>
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:#5B6472;margin-top:1px"><span>{{ r.sub }}</span><sc-if value="{{ r.tag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472;white-space:nowrap">negocio: dato nuevo</span></sc-if></div>
+                    <sc-if value="{{ r.badge }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:6px;font-size:13px;font-variant-numeric:tabular-nums"><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:11px;background:{{ r.st.bg }};color:{{ r.st.c }};font-weight:600;font-size:12px;white-space:nowrap"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="{{ r.st.shape }}" fill="{{ r.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ r.st.mark }}" fill="{{ r.st.markFill }}" stroke="{{ r.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ r.label }}</span><span style="color:#3B4452">{{ r.extra }}</span></div></sc-if>
+                  </div>
+                  <sc-if value="{{ r.cobrar }}" hint-placeholder-val="{{ true }}"><div style="height:44px;flex:none;padding:0 12px;box-sizing:border-box;border:1px solid #9AA3AF;border-radius:8px;display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px;font-variant-numeric:tabular-nums"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{ r.monto }}</div></sc-if>
+                  <sc-if value="{{ r.noCobrar }}" hint-placeholder-val="{{ false }}"><div style="font-weight:600;font-size:15px;padding-right:8px;font-variant-numeric:tabular-nums;color:#3B4452">{{ r.monto }}</div></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+          <div style="height:76px;box-sizing:border-box;border-top:1px solid #E2E5EA;display:grid;grid-template-columns:repeat(3,1fr);padding-bottom:14px">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:600;font-size:12px"><div style="position:absolute;top:-1px;left:34%;right:34%;height:3px;background:var(--marca)"></div><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"></path></svg>Cobros</div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:500;font-size:12px;color:#5B6472"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 11.5a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7ZM2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.9c1.7.8 2.7 2.4 3 5.1"></path></svg>Clientes</div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:500;font-size:12px;color:#5B6472"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"></path></svg>Cuenta</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Registrar pago · cuotas pactadas</div>
+        <div data-screen-label="Registrar pago pactadas" style="width:390px;min-height:844px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>9:34</span><span>●●●</span></div>
+          <div style="height:52px;flex:none;display:flex;align-items:center;gap:4px;padding:0 12px 0 4px;border-bottom:1px solid #E2E5EA">
+            <div style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14181F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div>
+            <div style="font-weight:600;font-size:17px">Registrar pago</div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:16px 20px 0;display:flex;flex-direction:column;gap:16px">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-weight:600;font-size:20px">Carmen Rincón</div><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#FBE8E6;color:#B3261E;font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>En mora · 6 días</span></div>
+              <div style="font-size:13.5px;color:#5B6472;margin-top:2px">P-0317 · cuotas pactadas · diaria</div>
+            </div>
+            <div style="border:1px solid #E2E5EA;border-radius:8px;font-size:14.5px;font-variant-numeric:tabular-nums">
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Cuota de hoy · 36 de 40</span><span>$24.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Vencido · 6 cuotas desde 17/09</span><span>$144.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EDEFF2;font-weight:600"><span>Para quedar al día</span><span>$168.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 14px"><span style="color:#5B6472">Saldo del préstamo</span><span>$264.000</span></div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:8px">¿Cuánto paga?</div>
+              <div style="display:flex;flex-direction:column;border:1px solid #CDD2D9;border-radius:8px;overflow:hidden;font-variant-numeric:tabular-nums">
+                <div style="display:flex;align-items:center;gap:12px;height:54px;padding:0 14px;background:var(--marca-suave);border-bottom:1px solid #CDD2D9"><span style="width:20px;height:20px;box-sizing:border-box;border-radius:50%;border:6px solid #14181F;background:#FFFFFF"></span><span style="flex:1;font-weight:600;font-size:15px">Una cuota</span><span style="font-weight:600;font-size:15px">$24.000</span></div>
+                <div style="display:flex;align-items:center;gap:12px;height:54px;padding:0 14px;border-bottom:1px solid #CDD2D9"><span style="width:20px;height:20px;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF"></span><span style="flex:1;font-size:15px">Para quedar al día</span><span style="font-size:15px">$168.000</span></div>
+                <div style="display:flex;align-items:flex-start;gap:12px;padding:16px 14px;border-bottom:1px solid #CDD2D9"><span style="width:20px;height:20px;flex:none;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF"></span><div style="flex:1;min-width:0"><div style="font-size:15px">Solo interés</div><div style="font-size:12.5px;color:#5B6472;line-height:1.4;margin-top:3px">El capital de la cuota 30 pasa a una cuota nueva, la 41, el 28/09/2026, con el mismo interés. El total del préstamo sube a $964.000.</div></div><span style="font-size:15px">$4.000</span></div>
+                <div style="display:flex;align-items:center;gap:12px;height:54px;padding:0 14px"><span style="width:20px;height:20px;box-sizing:border-box;border-radius:50%;border:1.5px solid #9AA3AF"></span><span style="flex:1;font-size:15px">Otro monto</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B6472" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+              </div>
+              <div style="font-size:13px;color:#5B6472;margin-top:8px;line-height:1.45">El pago se aplica primero a la cuota vencida más antigua: la 30, del 17/09/2026.</div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:8px">Método</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #CDD2D9;border-radius:8px;padding:3px;font-size:14px;font-weight:600">
+                <div style="height:40px;border-radius:6px;background:#14181F;color:#FFFFFF;display:grid;place-items:center">Efectivo</div><div style="height:40px;display:grid;place-items:center">Nequi</div><div style="height:40px;display:grid;place-items:center">Daviplata</div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;padding:12px 16px 26px;border-top:1px solid #E2E5EA">
+            <div style="height:54px;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:600;font-size:17px;font-variant-numeric:tabular-nums">Registrar $24.000</div>
+            <div style="font-size:12.5px;color:#5B6472;text-align:center;margin-top:8px">Después puede enviar el comprobante al 300 000 0001</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Registrar pago · cuota fija</div>
+        <div data-screen-label="Registrar pago cuota fija" style="width:390px;min-height:844px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>9:41</span><span>●●●</span></div>
+          <div style="height:52px;flex:none;display:flex;align-items:center;gap:4px;padding:0 12px 0 4px;border-bottom:1px solid #E2E5EA"><div style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14181F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div><div style="font-weight:600;font-size:17px">Registrar pago</div></div>
+          <div style="flex:1;padding:16px 20px 16px;display:flex;flex-direction:column;gap:16px">
+            <div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-weight:600;font-size:20px;white-space:nowrap">Hernán Darío Muñoz</div><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#1A7431" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Al día</span></div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">P-0352 · cuota fija · 20 de $50.000</div></div>
+            <div style="border:1px solid #E2E5EA;border-radius:8px;font-size:14.5px;font-variant-numeric:tabular-nums"><div style="display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid #EDEFF2;"><span style="color:#5B6472">Cuota 19 · hoy 23/09</span><span>falta $20.000</span></div><div style="display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid #EDEFF2;"><span style="color:#5B6472">Cuota 20 · 24/09</span><span>$50.000</span></div><div style="display:flex;justify-content:space-between;gap:10px;padding:10px 14px;font-weight:600;"><span style="">Saldo del préstamo</span><span>$70.000</span></div></div>
+            <div><div style="font-size:13px;font-weight:600;margin-bottom:8px">¿Cuánto paga?</div><div style="height:58px;box-sizing:border-box;border:2px solid var(--marca-texto);border-radius:8px;padding:0 14px;display:flex;align-items:center;gap:6px;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums"><span style="color:#5B6472;font-weight:500">$</span>60.000</div></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:-6px"><div style="height:40px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;background:#FFFFFF;border-radius:20px;display:flex;align-items:center;gap:5px;font-size:13.5px;font-variant-numeric:tabular-nums"><b style="font-weight:600">$20.000</b><span style="color:#5B6472">completa la 19</span></div><div style="height:40px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;background:#FFFFFF;border-radius:20px;display:flex;align-items:center;gap:5px;font-size:13.5px;font-variant-numeric:tabular-nums"><b style="font-weight:600">$70.000</b><span style="color:#5B6472">paga todo</span></div></div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:8px">Así quedan las cuotas</div>
+              <div style="border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;font-size:14px;font-variant-numeric:tabular-nums">
+                <div style="display:grid;grid-template-columns:34px minmax(0,1fr) 86px 104px;gap:8px;align-items:center;height:34px;padding:0 12px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-size:12px;font-weight:600;color:#5B6472"><span>#</span><span>Este pago</span><span style="text-align:right">Falta</span><span>Queda</span></div>
+                <div style="display:grid;grid-template-columns:34px minmax(0,1fr) 86px 104px;gap:8px;align-items:center;min-height:46px;padding:6px 12px;box-sizing:border-box;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">19</span><span>+$20.000</span><span style="text-align:right">—</span><span><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:11px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12px;white-space:nowrap"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagada</span></span></div>
+                <div style="display:grid;grid-template-columns:34px minmax(0,1fr) 86px 104px;gap:8px;align-items:center;min-height:46px;padding:6px 12px;box-sizing:border-box"><span style="color:#5B6472">20</span><span>+$40.000</span><span style="text-align:right">$10.000</span><span><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:11px;background:#E8EDFB;color:#2446B8;font-weight:600;font-size:12px;white-space:nowrap"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#2446B8" stroke-width="1.6"></path><path d="M8 1.6a6.4 6.4 0 0 0 0 12.8Z" fill="#2446B8"></path></svg>Parcial</span></span></div>
+              </div>
+              <div style="font-size:13px;color:#5B6472;margin-top:8px;line-height:1.45">El pago llena las cuotas en orden. Saldo después del pago: <b style="font-weight:600;color:#14181F">$10.000</b>.</div>
+            </div>
+            <div><div style="font-size:13px;font-weight:600;margin-bottom:8px">Método</div><div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #CDD2D9;border-radius:8px;padding:3px;font-size:14px;font-weight:600"><div style="height:40px;border-radius:6px;background:#14181F;color:#FFFFFF;display:grid;place-items:center">Efectivo</div><div style="height:40px;display:grid;place-items:center">Nequi</div><div style="height:40px;display:grid;place-items:center">Daviplata</div></div></div>
+          </div>
+          <div style="flex:none;padding:12px 16px 26px;border-top:1px solid #E2E5EA"><div style="height:54px;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:600;font-size:17px;font-variant-numeric:tabular-nums">Registrar $60.000</div><div style="font-size:12.5px;color:#5B6472;text-align:center;margin-top:8px">Después puede enviar el comprobante al 300 000 0002</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Registrar pago · abierto</div>
+        <div data-screen-label="Registrar pago abierto" style="width:390px;min-height:844px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>9:41</span><span>●●●</span></div>
+          <div style="height:52px;flex:none;display:flex;align-items:center;gap:4px;padding:0 12px 0 4px;border-bottom:1px solid #E2E5EA"><div style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14181F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg></div><div style="font-weight:600;font-size:17px">Registrar pago</div></div>
+          <div style="flex:1;padding:16px 20px 16px;display:flex;flex-direction:column;gap:16px">
+            <div><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-weight:600;font-size:20px;white-space:nowrap">Rubiela Agudelo</div><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px;white-space:nowrap"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#1A7431" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Al día</span></div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">P-0188 · abierto · 10 % mensual sobre el saldo</div></div>
+            <div style="border:1px solid #E2E5EA;border-radius:8px;font-size:14.5px;font-variant-numeric:tabular-nums"><div style="display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid #EDEFF2;"><span style="color:#5B6472">Interés pendiente</span><span>$140.000</span></div><div style="display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid #EDEFF2;"><span style="color:#5B6472">Saldo de capital</span><span>$1.400.000</span></div><div style="display:flex;justify-content:space-between;gap:10px;padding:10px 14px;font-weight:600;"><span style="">Para cancelar hoy</span><span>$1.540.000</span></div></div>
+            <div><div style="font-size:13px;font-weight:600;margin-bottom:8px">¿Cuánto paga?</div><div style="height:58px;box-sizing:border-box;border:2px solid var(--marca-texto);border-radius:8px;padding:0 14px;display:flex;align-items:center;gap:6px;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums"><span style="color:#5B6472;font-weight:500">$</span>400.000</div></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:-6px"><div style="height:40px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;background:#FFFFFF;border-radius:20px;display:flex;align-items:center;gap:5px;font-size:13.5px;font-variant-numeric:tabular-nums"><b style="font-weight:600">$140.000</b><span style="color:#5B6472">solo interés</span></div><div style="height:40px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;background:#FFFFFF;border-radius:20px;display:flex;align-items:center;gap:5px;font-size:13.5px;font-variant-numeric:tabular-nums"><b style="font-weight:600">$1.540.000</b><span style="color:#5B6472">cancela</span></div></div>
+            <div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:8px">Así se reparte</div>
+              <div style="border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;font-size:14.5px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EDEFF2"><span><span style="color:#5B6472">1.</span> A interés pendiente</span><span>$140.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #E2E5EA"><span><span style="color:#5B6472">2.</span> A capital</span><span>$260.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px 14px;background:#F8F9FA;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Interés pendiente después</span><span>$0</span></div>
+                <div style="display:flex;justify-content:space-between;padding:10px 14px;background:#F8F9FA;font-weight:600"><span>Saldo de capital después</span><span>$1.140.000</span></div>
+              </div>
+              <div style="font-size:13px;color:#5B6472;margin-top:8px;line-height:1.45">Primero se paga el interés pendiente y el resto baja el capital. El próximo cargo, el 12/10/2026, sería de <b style="font-weight:600;color:#14181F">$114.000</b> en vez de $140.000.</div>
+            </div>
+            <div><div style="font-size:13px;font-weight:600;margin-bottom:8px">Método</div><div style="display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #CDD2D9;border-radius:8px;padding:3px;font-size:14px;font-weight:600"><div style="height:40px;border-radius:6px;background:#14181F;color:#FFFFFF;display:grid;place-items:center">Efectivo</div><div style="height:40px;display:grid;place-items:center">Nequi</div><div style="height:40px;display:grid;place-items:center">Daviplata</div></div></div>
+          </div>
+          <div style="flex:none;padding:12px 16px 26px;border-top:1px solid #E2E5EA"><div style="height:54px;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:600;font-size:17px;font-variant-numeric:tabular-nums">Registrar $400.000</div><div style="font-size:12.5px;color:#5B6472;text-align:center;margin-top:8px">Después puede enviar el comprobante al 300 000 0003</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Pago registrado</div>
+        <div data-screen-label="Pago registrado" style="width:390px;height:844px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>9:34</span><span>●●●</span></div>
+          <div style="height:52px;flex:none;display:flex;align-items:center;justify-content:flex-end;padding:0 8px"><div style="width:44px;height:44px;display:grid;place-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14181F" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></div></div>
+          <div style="flex:1;padding:8px 24px 0;display:flex;flex-direction:column;align-items:center;text-align:center">
+            <svg width="56" height="56" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <div style="font-weight:600;font-size:21px;margin-top:14px">Pago registrado</div>
+            <div style="font-weight:600;font-size:38px;letter-spacing:-.01em;margin-top:6px;font-variant-numeric:tabular-nums">$24.000</div>
+            <div style="font-size:14.5px;color:#3B4452;margin-top:2px">Carmen Rincón · cuota 30 de 40 · efectivo</div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13.5px;color:#5B6472;margin-top:4px">Recibo N.º 000483<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;color:#5B6472">dato nuevo</span></div>
+            <div style="align-self:stretch;margin-top:22px;border:1px solid #E2E5EA;border-radius:8px;text-align:left;font-size:14.5px;font-variant-numeric:tabular-nums">
+              <div style="padding:9px 14px;border-bottom:1px solid #EDEFF2;font-size:12.5px;font-weight:600;color:#5B6472">Así queda el préstamo</div>
+              <div style="display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Vencido · 5 cuotas</span><span>$120.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 14px;border-bottom:1px solid #EDEFF2;font-weight:600"><span>Para quedar al día</span><span>$144.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 14px"><span style="color:#5B6472">Saldo</span><span>$240.000</span></div>
+            </div>
+          </div>
+          <div style="flex:none;padding:12px 16px 26px;display:flex;flex-direction:column;gap:8px">
+            <div style="height:54px;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;justify-content:center;gap:9px;font-weight:600;font-size:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.6-4.5a8.4 8.4 0 1 1 15.4-4.4z"></path></svg>Enviar comprobante por WhatsApp</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="height:48px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:8px;display:grid;place-items:center;font-weight:600;font-size:14.5px">Deshacer pago</div>
+              <div style="height:48px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:8px;display:grid;place-items:center;font-weight:600;font-size:14.5px">Volver a cobros</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Estado vacío · cobrador sin préstamos asignados</div>
+        <div data-screen-label="Cobrador sin préstamos" style="width:390px;height:844px;background:#FFFFFF;border:1px solid #E2E5EA;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 40px -24px rgba(0,0,0,.3)">
+          <div style="height:32px;flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 2px;font-weight:600;font-size:14px"><span>7:05</span><span>●●●</span></div>
+          <div style="height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 16px">
+            <div style="width:30px;height:30px;flex:none;border-radius:7px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:12px">{{ b.mono }}</div>
+            <div style="flex:1;min-width:0;font-weight:600;font-size:15px">{{ b.nombre }}</div>
+          </div>
+          <div style="padding:6px 20px 0"><div style="font-weight:600;font-size:22px;white-space:nowrap">Cobros de hoy</div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">Miércoles 23/09/2026 · Julián Ocampo</div></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 36px;text-align:center">
+            <div style="width:64px;height:64px;border-radius:50%;background:#EEF0F3;display:grid;place-items:center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5B6472" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"></path></svg></div>
+            <div style="font-weight:600;font-size:18px;margin-top:16px">Todavía no tiene préstamos asignados</div>
+            <div style="font-size:14.5px;color:#5B6472;line-height:1.5;margin-top:6px;text-wrap:pretty">Cuando {{ b.saludo }} le asigne clientes, aquí va a ver a quién cobrarle cada día y cuánto.</div>
+            <div style="height:48px;padding:0 18px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:8px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px;margin-top:20px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.6-4.5a8.4 8.4 0 1 1 15.4-4.4z"></path></svg>Escribirle a {{ b.saludo }}</div>
+          </div>
+          <div style="height:76px;flex:none;box-sizing:border-box;border-top:1px solid #E2E5EA;display:grid;grid-template-columns:repeat(3,1fr);padding-bottom:14px">
+            <div style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:600;font-size:12px"><div style="position:absolute;top:-1px;left:34%;right:34%;height:3px;background:var(--marca)"></div><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17"></path></svg>Cobros</div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:500;font-size:12px;color:#5B6472"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 11.5a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7ZM2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.9c1.7.8 2.7 2.4 3 5.1"></path></svg>Clientes</div>
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-weight:500;font-size:12px;color:#5B6472"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"></path></svg>Cuenta</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div style="font-weight:600;font-size:17px">Imágenes para WhatsApp</div>
+    <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap">
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Comprobante de pago · 1080 px de ancho</div>
+        <div data-screen-label="Comprobante" style="width:360px;background:#FFFFFF;border-top:6px solid var(--marca);box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -14px rgba(0,0,0,.25)">
+          <div style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid #E2E5EA">
+            <div style="width:42px;height:42px;flex:none;border-radius:9px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:16px">{{ b.mono }}</div>
+            <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:17px;line-height:1.2">{{ b.nombre }}</div><div style="font-size:13px;color:#5B6472;margin-top:2px">WhatsApp {{ b.whatsapp }}</div></div>
+          </div>
+          <div style="padding:16px 22px 0">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="font-weight:600;font-size:15px;white-space:nowrap">Comprobante de pago</div><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagado</span></div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#5B6472;margin-top:2px;font-variant-numeric:tabular-nums">N.º 000483 · 23/09/2026, 9:34 a. m.<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">N.º: dato nuevo</span></div>
+            <div style="margin-top:16px;font-size:12.5px;color:#5B6472">Recibimos de</div>
+            <div style="font-weight:600;font-size:18px;margin-top:1px">Carmen Rincón</div>
+            <div style="margin-top:14px;font-size:12.5px;color:#5B6472">La suma de</div>
+            <div style="font-weight:600;font-size:36px;letter-spacing:-.01em;margin-top:1px;font-variant-numeric:tabular-nums">$24.000</div>
+            <div style="font-size:13.5px;color:#5B6472">Veinticuatro mil pesos m/cte.</div>
+            <div style="margin-top:16px;border-top:1px solid #E2E5EA;font-size:14px;font-variant-numeric:tabular-nums">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Concepto</span><span>Cuota 30 de 40</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Método</span><span>Efectivo</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Saldo</span><span>$240.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Para quedar al día</span><span>$144.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0"><span style="color:#5B6472">Cobró</span><span>Yeison Arango</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="width:75%;height:6px;background:#3B4452"></div></div><span style="font-size:13px;color:#5B6472;font-variant-numeric:tabular-nums">30 de 40 cuotas</span></div>
+          </div>
+          <div style="margin-top:18px;padding:14px 22px 16px;background:#F8F9FA;border-top:1px solid #E2E5EA">
+            <div style="font-size:13.5px;line-height:1.45;text-wrap:pretty">{{ b.pie }}</div>
+            <sc-if value="{{ b.tieneDatos }}" hint-placeholder-val="{{ true }}"><div style="font-size:12.5px;color:#5B6472;margin-top:4px">{{ b.datos }}</div></sc-if>
+            <div style="font-size:11.5px;color:#5B6472;margin-top:10px;text-align:right">con G-Quota</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:12px;font-weight:600;color:#5B6472">Tarjeta del cronograma · 1440 px de ancho</div>
+        <div data-screen-label="Tarjeta del cronograma" style="width:720px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -14px rgba(0,0,0,.25)">
+          <div style="background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;gap:14px;padding:18px 26px">
+            <div style="width:44px;height:44px;flex:none;border-radius:10px;background:var(--marca-sobre);color:var(--marca);display:grid;place-items:center;font-weight:700;font-size:16px">{{ b.mono }}</div>
+            <div style="flex:1;font-weight:600;font-size:19px">{{ b.nombre }}</div>
+            <div style="font-size:14px;font-weight:500">WhatsApp {{ b.whatsapp }}</div>
+          </div>
+          <div style="padding:20px 26px 0">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><div><div style="font-size:13px;color:#5B6472">Cronograma de pagos</div><div style="font-weight:600;font-size:22px;margin-top:2px">Carmen Rincón</div></div><div style="font-size:13.5px;color:#5B6472;text-align:right">Préstamo P-0317 · 40 cuotas diarias de $24.000<br>Actualizado el 23/09/2026</div></div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:16px;border:1px solid #E2E5EA;border-radius:8px;font-variant-numeric:tabular-nums">
+              <div style="padding:11px 14px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Monto prestado</div><div style="font-weight:600;font-size:19px;margin-top:2px">$800.000</div></div>
+              <div style="padding:11px 14px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Total a pagar</div><div style="font-weight:600;font-size:19px;margin-top:2px">$960.000</div></div>
+              <div style="padding:11px 14px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Avance</div><div style="font-weight:600;font-size:19px;margin-top:2px">29/40</div></div>
+              <div style="padding:11px 14px"><div style="font-size:12.5px;color:#5B6472">Saldo</div><div style="font-weight:600;font-size:19px;margin-top:2px">$264.000</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin-top:16px">
+              <sc-for list="{{ cronoP }}" as="q" hint-placeholder-count="40">
+                <div style="box-sizing:border-box;border-radius:7px;background:{{ q.tileBg }};border:{{ q.tileBd }};padding:6px 7px 7px;font-variant-numeric:tabular-nums">
+                  <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:600;font-size:12px">{{ q.n }}</span><svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="color:{{ q.st.c }}"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                  <div style="font-size:12px;margin-top:4px">{{ q.fechaC }}</div>
+                  <div style="font-size:11px;color:#3B4452">{{ q.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12.5px;color:#3B4452">
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagada · 29</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>Vencida · 6</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#8A5300" stroke-width="1.6"></path><path d="M8 4.8V8l2.2 1.5" stroke="#8A5300" stroke-width="1.7" stroke-linecap="round"></path></svg>Vence hoy · 1</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#5B6472" stroke-width="1.6"></path></svg>Pendiente · 4</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;margin:16px 26px 0;padding:12px 16px;border-radius:8px;background:#FDF5F4;font-variant-numeric:tabular-nums">
+            <div style="flex:1;font-size:14px;line-height:1.45"><span style="font-weight:600">Para quedar al día: $168.000</span><br><span style="color:#3B4452">6 cuotas vencidas desde el 17/09/2026 más la de hoy. Si se pasa de la fecha se cobra un valor adicional.</span></div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:16px;padding:14px 26px 18px">
+            <div style="flex:1;font-size:13px;color:#3B4452;line-height:1.5">{{ b.pie }}<br><span style="color:#5B6472">{{ b.horario }}</span></div>
+            <div style="font-size:11.5px;color:#5B6472">con G-Quota</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;marca&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Créditos La 14 · verde&quot;,&quot;Inversiones Morales · azul marino&quot;,&quot;Préstamos Doña Rosa · amarillo&quot;,&quot;Créditos Ramírez · rojo&quot;,&quot;Multicréditos Yeni · fucsia&quot;],&quot;default&quot;:&quot;Créditos La 14 · verde&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca de prueba&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  componentDidMount() { this.esperar(); }
+  componentWillUnmount() { clearTimeout(this.t); }
+  componentDidUpdate() { this.aplicar(); }
+  esperar() { if (window.GQ) { this.forceUpdate(); this.aplicar(); } else this.t = setTimeout(() => this.esperar(), 40); }
+  aplicar() { const G = window.GQ; if (G) G.aplicar(this.rootRef.current, G.marca(this.props.marca)); }
+  renderVals() {
+    const G = window.GQ;
+    if (!G) return { rootRef: this.rootRef, b: {} };
+    return { rootRef: this.rootRef, b: G.marca(this.props.marca), secciones: G.SECCIONES, cronoP: G.CRONO_P };
+  }
+}
+</script>
+</body>
+</html>
