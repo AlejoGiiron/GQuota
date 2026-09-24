@@ -4,7 +4,10 @@ import type { ReactNode } from 'react'
  * Estados del sistema: color fijo (no depende de la marca), forma de ícono propia
  * y palabra. Se distinguen aunque la marca sea verde o roja, y también sin color.
  */
-export type Estado = 'pagado' | 'al-dia' | 'por-vencer' | 'mora' | 'parcial' | 'pendiente' | 'inactivo'
+export type Estado =
+  | 'pagado' | 'al-dia' | 'por-vencer' | 'mora' | 'parcial' | 'pendiente' | 'inactivo'
+  // Solicitudes (ficha por enlace): mismos colores fijos, íconos propios.
+  | 'enviada' | 'completada' | 'rechazada'
 
 // Nombres de clase COMPLETOS (no armados con plantillas): Tailwind purga de
 // @layer components las clases que no encuentra literalmente en el código.
@@ -16,6 +19,9 @@ const CLASE: Record<Estado, string> = {
   parcial: 'estado estado--parcial',
   pendiente: 'estado estado--pendiente',
   inactivo: 'estado estado--inactivo',
+  enviada: 'estado estado--pendiente',
+  completada: 'estado estado--parcial',
+  rechazada: 'estado estado--mora',
 }
 
 const PALABRA: Record<Estado, string> = {
@@ -26,6 +32,9 @@ const PALABRA: Record<Estado, string> = {
   parcial: 'Parcial',
   pendiente: 'Pendiente',
   inactivo: 'Inactivo',
+  enviada: 'Enviada',
+  completada: 'Completada',
+  rechazada: 'Rechazada',
 }
 
 const CIRCULO = 'M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z'
@@ -41,6 +50,9 @@ const FORMA: Record<Estado, { forma: string; relleno: boolean; marca?: string; m
   parcial: { forma: CIRCULO, relleno: false, marca: 'M8 1.6a6.4 6.4 0 0 0 0 12.8Z', marcaLlena: true },
   pendiente: { forma: CIRCULO, relleno: false },
   inactivo: { forma: CIRCULO, relleno: false, marca: 'M5.2 10.8l5.6-5.6' },
+  enviada: { forma: CIRCULO, relleno: false, marca: 'M5.4 8h5M8.4 5.8L10.6 8l-2.2 2.2' },
+  completada: { forma: CIRCULO, relleno: false, marca: 'M8 5.6a2.4 2.4 0 1 1 0 4.8a2.4 2.4 0 1 1 0-4.8Z', marcaLlena: true },
+  rechazada: { forma: CIRCULO, relleno: false, marca: 'M5.9 5.9l4.2 4.2M10.1 5.9l-4.2 4.2' },
 }
 
 /** Solo el ícono del estado (para cuadrículas de cuotas); siempre acompañado de texto cerca. */

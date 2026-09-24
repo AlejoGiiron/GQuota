@@ -56,6 +56,8 @@ Los derivados se calculan con **`tokensDeMarca(principal, acento)`** de `src/lib
 
 En Tailwind: `text-estado-mora`, `bg-estado-mora-fondo`, etc.
 
+**Solicitudes (ficha por enlace)** reusan esos colores con íconos propios en `EtiquetaEstado`: `enviada` (gris, flecha), `completada` (azul, punto — «Completada / por revisar»), `rechazada` (rojo, X); la vencida usa `inactivo` y la aprobada `pagado`.
+
 ### Forma y tipografía
 
 - **Fuente:** IBM Plex Sans (400/500/600/700), servida desde el proyecto con `@fontsource/ibm-plex-sans` (sin CDN). **Todas las cifras con números tabulares** (`.cifra`, o `.mono` en código viejo) y los montos alineados a la derecha. Ya no hay fuente monoespaciada.
