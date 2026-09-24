@@ -290,7 +290,7 @@ body {
   }
   .segmentado__opcion {
     @apply flex shrink-0 items-center whitespace-nowrap;
-    height: 40px;
+    height: 44px;
     padding: 0 12px;
     gap: 6px;
     color: var(--tinta);

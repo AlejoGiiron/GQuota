@@ -97,7 +97,7 @@ function MenuCuenta({ enLateral }: { enLateral: boolean }) {
     }
   }
 
-  const itemMenu = 'flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-tinta hover:bg-superficie-2'
+  const itemMenu = 'flex min-h-11 w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-tinta hover:bg-superficie-2'
 
   return (
     <div className="relative">
@@ -156,7 +156,7 @@ function MenuCuenta({ enLateral }: { enLateral: boolean }) {
               type="button"
               role="menuitem"
               onClick={cerrarSesion}
-              className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold text-estado-mora hover:bg-estado-mora-fondo"
+              className="flex min-h-11 w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold text-estado-mora hover:bg-estado-mora-fondo"
             >
               <IconSalir className="h-[18px] w-[18px]" />
               Cerrar sesión

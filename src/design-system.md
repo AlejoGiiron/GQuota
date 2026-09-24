@@ -62,6 +62,7 @@ En Tailwind: `text-estado-mora`, `bg-estado-mora-fondo`, etc.
 - **Escala:** comprobante 36/600 · cifra de resumen 26/600 · nombre en ficha 22/600 · título de pantalla 20/600 · título de sección 16/600 · cuerpo y celdas 14,5/400 · secundario 13/400 · encabezado de tabla 12,5/600.
 - **Radios:** 6 px controles (`rounded-control`) · 8 px tarjetas, tablas y modales (`rounded-tarjeta`) · 12 px insignias de estado (`rounded-estado`).
 - **Alturas:** controles 44 px en el celular y 40 px en escritorio; acción principal del celular 54 px (`btn-grande`). Filas de tabla 44 a 56 px.
+- **Área de toque mínima (obligatoria):** en el celular, **todo** botón y campo mide al menos 44 px de alto (en escritorio, 40), también los enlaces-botón de texto y los de solo ícono. No achiques los primitivos con `!h-9` ni similares. Para un botón de texto que no debe engordar la fila: `min-h-11 -my-3 inline-flex items-center` (el margen negativo conserva el espacio). La excepción es el control segmentado en escritorio (36 px, como en el diseño).
 - **Espaciado** base de 4 px (8, 12, 16, 20, 24, 32).
 - **Sombras:** solo lo que flota (modal, menús): `shadow-flotante`. Las tarjetas van con borde, sin sombra.
 

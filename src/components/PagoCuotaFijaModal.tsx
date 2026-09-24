@@ -299,7 +299,7 @@ export default function PagoCuotaFijaModal({
                   key={m.valor}
                   type="button"
                   onClick={() => setMetodo(m.valor)}
-                  className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${
+                  className={`min-h-11 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors md:min-h-10 ${
                     metodo === m.valor
                       ? 'border-green bg-green-tint text-green-700'
                       : 'border-line bg-card text-text-2 hover:bg-bg'

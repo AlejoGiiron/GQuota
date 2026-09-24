@@ -290,7 +290,7 @@ export default function InicioPage() {
                   ) : (
                     <button
                       type="button"
-                      className="btn-primary shrink-0 !h-9 !px-3 !text-[13px]"
+                      className="btn-primary shrink-0 !px-3 !text-[13px]"
                       onClick={() => setPagoPrestamo(prestamo)}
                     >
                       Registrar pago

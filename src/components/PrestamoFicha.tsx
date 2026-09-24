@@ -164,7 +164,7 @@ export default function PrestamoFicha() {
       <button
         type="button"
         onClick={() => navigate('/prestamos')}
-        className="flex items-center gap-1 self-start text-sm font-semibold text-green-700 md:hidden"
+        className="flex min-h-11 -my-3 items-center gap-1 self-start text-sm font-semibold text-green-700 md:hidden"
       >
         {IconAtras} Volver
       </button>

@@ -52,7 +52,7 @@ export default function Modal({
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="grid h-10 w-10 place-items-center rounded-control text-tinta-3 transition-colors hover:bg-superficie-2 hover:text-tinta"
+            className="grid h-11 w-11 place-items-center rounded-control md:h-10 md:w-10 text-tinta-3 transition-colors hover:bg-superficie-2 hover:text-tinta"
           >
             {IconCerrar}
           </button>

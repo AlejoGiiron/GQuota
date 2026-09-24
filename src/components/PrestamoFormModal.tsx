@@ -262,7 +262,7 @@ export default function PrestamoFormModal({
                   key={t}
                   type="button"
                   onClick={() => setTipo(t)}
-                  className={`flex-1 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors ${
+                  className={`min-h-11 flex-1 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors ${
                     tipo === t
                       ? 'border-green bg-green-tint text-green-700'
                       : 'border-line bg-card text-text-2 hover:bg-bg'

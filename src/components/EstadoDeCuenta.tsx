@@ -148,7 +148,7 @@ export default function EstadoDeCuenta({
                       {esPago(m) ? (
                         <button
                           type="button"
-                          className="text-xs font-semibold text-green-700 hover:underline disabled:opacity-50"
+                          className="-my-3 inline-flex min-h-11 items-center text-xs font-semibold text-green-700 hover:underline disabled:opacity-50 md:min-h-10"
                           onClick={() => enviarComprobante(m)}
                           disabled={enviandoId === m.id}
                         >
