@@ -43,6 +43,25 @@ Al mostrar el MVP se descubrió que el negocio NO opera con "interés mensual fl
 
 Implementación: el motor (src/lib/motor-prestamos.ts) NO se reescribe; se le AGREGA la lógica de cronograma de cuotas (generar + aplicar pago + solo-interés), con pruebas nuevas. Las 6 pruebas actuales siguen válidas (cubren "abierto"). Esquema: tabla `cuotas` nueva + campo `tipo` en prestamos. Como no hay datos reales en producción, se reemplaza limpio sin convivencia de datos viejos.
 
+### 2026-09-24 — Lectura automática de la cédula (onboarding de prospectos)
+Prueba técnica (sin tocar la base ni producción) para leer la cédula colombiana desde fotos de celular.
+
+**Decisión: método A** — decodificar el PDF417 del RESPALDO con zxing (`zxing-wasm`), en el navegador del prospecto. Si no logra leer, el prospecto escribe los datos a mano y quedan marcados como **"sin verificar"** para el dueño. El método B (visión con la API de Anthropic sobre el frente) queda **descartado por ahora**: la foto completa de la cédula saldría del dispositivo hacia un tercero, tiene costo por lectura y no se llegó a medir.
+
+**Evidencia (limitada):** 1 cédula amarilla, 2 fotos reenviadas por WhatsApp (1600 px, comprimidas). El método A decodificó el respaldo al primer intento (sin preprocesado, ~0,25 s, sin red) y leyó **6/6 campos correctos** contra la verdad: número, apellidos, nombres, sexo, fecha de nacimiento, RH. Autoprueba con códigos sintéticos: 12/12 byte a byte, pero el PDF417 NO se lee con ~8° de inclinación sin enderezar (se resolvió probando giros de ±3° a ±20°; el QR aguanta 20° solo).
+
+**NO probado (riesgos abiertos):** fotos originales de cámara, fotos inclinadas con perspectiva, poca luz/reflejos, la **cédula digital** (se desconoce qué código trae y si sus datos vienen legibles o firmados/cifrados), y más de una cédula amarilla (las posiciones de los campos salen de UNA sola; confirmar con un solo apellido y nombres largos). Antes de dar la función por buena, probar al menos eso.
+
+**Reglas para producción (obligatorias):**
+- La lectura corre en el navegador del prospecto; la foto no sale del dispositivo. Al backend solo llegan los campos extraídos.
+- `zxing-wasm` por defecto DESCARGA su `.wasm` del CDN jsDelivr (`locateFile`). Servir el `.wasm` desde nuestro dominio (asset de Vite) y pasarlo con `prepareZXingModule({ overrides: { locateFile } })` o `wasmBinary`. Verificar en la pestaña de red: cero peticiones a terceros durante la lectura.
+- **Huella:** en el PDF417 de la cédula amarilla, desde el byte 169 hay un bloque binario (~360 bytes, probablemente la plantilla de la huella dactilar = dato biométrico). Parsear solo los bytes 0–168 y descartar el buffer completo en memoria: nunca se guarda, loguea ni envía.
+- Formato del PDF417 amarillo (campos de ancho fijo rellenos con NUL; offset, longitud): marcador `PubDSK_1` en [24,8] (validar que esté; si no, no parsear); número [48,10] sin ceros a la izquierda; primer y segundo apellido [58,23] y [81,23]; primer y segundo nombre [104,23] y [127,23]; sexo [151,1]; fecha de nacimiento [152,8] como AAAAMMDD; RH [166,2].
+- El código NO trae estatura ni fecha/lugar de expedición. El lugar de nacimiento (viene como código) NO se captura: no hace falta para el préstamo.
+- Ley 1581 de 2012 (habeas data): aunque la imagen no salga del dispositivo, los datos extraídos llegan al backend; se necesita la autorización del titular para su tratamiento.
+
+**Scripts de la prueba:** en `pruebas-cedula/` (IGNORADO por git: solo existe en el equipo donde se hizo). `metodo-a.mjs` (con `--autoprueba`), `metodo-b.mjs`, `comparar.mjs`, `convertir-verdad.mjs`, `limpiar.mjs`. Las fotos y resultados con datos personales se borraron al cerrar la prueba.
+
 ## Design system
 Antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones. No inventar colores, tipografías ni estilos nuevos. Ese archivo es la fuente de verdad visual.
 
@@ -59,6 +78,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 ### Funcionalidad pendiente (pedida por el negocio, aplazada)
 - [ ] (prioridad ALTA al abrir el registro al público) "Olvidé contraseña": hoy muestra "disponible pronto" (src/pages/LoginPage.tsx). Un usuario que olvida la clave queda fuera sin salida (hoy el dueño sí puede resetear la de sus cobradores desde Equipo). Depende de configurar Resend (o SMTP) en Supabase Auth para enviar el correo de recuperación.
+- [ ] Lectura automática de la cédula en el onboarding del prospecto (método A, ver "Decisiones de arquitectura" 2026-09-24): PDF417 del respaldo con zxing en el navegador, sin CDN, huella descartada; si falla, captura manual marcada "sin verificar". Antes de construir: probar cédula digital, fotos de cámara inclinadas y con poca luz, y más cédulas amarillas.
 - [ ] Rutas de cobro: organizar a qué clientes visita cada cobrador y en qué orden. Fase propia, alcance por definir (¿fijas o por día?, ¿por zona?, ¿mapa o lista?).
 - [ ] Cancelar/archivar préstamos desde la app (hoy no hay borrado, intencional; falta un estado 'cancelado' accesible desde la ficha, sin borrado físico).
 - [ ] Recargo por mora: el modelo de cuotas y el abierto dejan el espacio reservado, pero aún no se cobra recargo. Definir con el negocio cuándo se active.
