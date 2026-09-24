@@ -23,7 +23,7 @@ import {
   type Referencia,
 } from '@/lib/ficha'
 import { ErrorDeRed, abrirFicha, enviarFicha, subirFoto, type FotoFicha as NombreFoto } from '@/lib/ficha-publica'
-import { comprimirFoto } from '@/lib/imagen'
+import { LADO_MAXIMO_RESPALDO, comprimirFoto } from '@/lib/imagen'
 import { leerCedulaDeFoto } from '@/lib/lector-cedula'
 import { formatearCelular, hora } from '@/lib/solicitudes'
 import { fmtCOP } from '@/lib/formatters'
@@ -257,7 +257,8 @@ function Formulario({
     }
     setFoto(nombre, { estado: 'procesando', mensaje: 'Subiendo la foto…' })
     try {
-      const comprimida = await comprimirFoto(archivo)
+      // El respaldo va más grande: el dueño relee su código al revisar (1C).
+      const comprimida = await comprimirFoto(archivo, nombre === 'respaldo' ? LADO_MAXIMO_RESPALDO : undefined)
       await subirFoto(token, nombre, comprimida, autorizaRespaldo)
       const vista = URL.createObjectURL(comprimida)
       vistas.current.push(vista)
