@@ -39,10 +39,10 @@ const IconoReloj = (
 )
 
 export default function SolicitudesPage() {
-  const { loading: cargandoConfig, esDueno, nombreNegocio, negocio } = useConfiguracion()
+  const { loading: cargandoConfig, esDueno, nombreNegocio, negocio, solicitudesActivas } = useConfiguracion()
   // Sin contacto para datos personales no se puede pedir la autorización (Ley 1581).
   const sinContacto = !cargandoConfig && !negocio?.contacto_datos
-  const { solicitudes, loading, error, recargar, crearEnlace } = useSolicitudes(esDueno)
+  const { solicitudes, loading, error, recargar, crearEnlace } = useSolicitudes(esDueno && solicitudesActivas)
 
   const [filtro, setFiltro] = useState<Filtro>('todas')
   const [busqueda, setBusqueda] = useState('')
@@ -73,7 +73,8 @@ export default function SolicitudesPage() {
     )
   }, [conEstado, filtro, busqueda])
 
-  if (!cargandoConfig && !esDueno) return <Navigate to="/cobros" replace />
+  // Solo el dueño, y solo si el negocio activó las solicitudes (migración 038).
+  if (!cargandoConfig && (!esDueno || !solicitudesActivas)) return <Navigate to={esDueno ? '/' : '/cobros'} replace />
 
   function abrirNuevo() {
     setGenerado(null)

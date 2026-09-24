@@ -61,6 +61,7 @@ En Tailwind: `text-estado-mora`, `bg-estado-mora-fondo`, etc.
 ### Forma y tipografía
 
 - **Fuente:** IBM Plex Sans (400/500/600/700), servida desde el proyecto con `@fontsource/ibm-plex-sans` (sin CDN). **Todas las cifras con números tabulares** (`.cifra`, o `.mono` en código viejo) y los montos alineados a la derecha. Ya no hay fuente monoespaciada.
+- **Excepción: las imágenes que se comparten** (comprobante y cronograma, dibujadas en canvas en `src/lib/comprobante.ts` y `tarjeta-cronograma.ts`) conservan Plus Jakarta Sans y JetBrains Mono y sus colores de antes: lo que reciben los clientes no cambió con el sistema 2a. Esas fuentes se sirven desde el proyecto (`@fontsource`) y se cargan solo al generar la primera imagen.
 - **Escala:** comprobante 36/600 · cifra de resumen 26/600 · nombre en ficha 22/600 · título de pantalla 20/600 · título de sección 16/600 · cuerpo y celdas 14,5/400 · secundario 13/400 · encabezado de tabla 12,5/600.
 - **Radios:** 6 px controles (`rounded-control`) · 8 px tarjetas, tablas y modales (`rounded-tarjeta`) · 12 px insignias de estado (`rounded-estado`).
 - **Alturas:** controles 44 px en el celular y 40 px en escritorio; acción principal del celular 54 px (`btn-grande`). Filas de tabla 44 a 56 px.
@@ -83,14 +84,17 @@ Clases en `@layer components` (src/index.css) y componentes React en `src/compon
 | Tarjeta | `<Tarjeta titulo acciones sinRelleno>` | `.tarjeta` (`.card` en código viejo) |
 | Tabla | `<Tabla columnas filas claveFila etiqueta>` — `numerica` alinea a la derecha; `total` en una columna agrega la fila de totales | `.tabla` `.num` |
 | Modal | `src/components/Modal.tsx` — velo de tinta, título 18/600, cuerpo con scroll, pie fijo con botones a la derecha | — |
+| Guía de novedades | `src/components/novedades/GuiaNovedades.tsx` — hoja inferior en el celular, ventana de 480 px en escritorio; pasos con esquema (`IlustracionNovedad`), «Paso N de M», «Atrás»/«Siguiente», «Entendido» al final y «Ver después» (también con Esc). Textos por versión, rol y pantalla en `src/lib/novedades.ts` | — |
 
 **Tailwind y clases dinámicas:** Tailwind purga de `@layer components` las clases que no encuentra escritas literalmente. Nunca armes `estado--${x}`: usa un mapa con los nombres completos (como `EtiquetaEstado`).
 
 ## Layout
 
-- **Escritorio (≥ 768 px):** menú lateral blanco de 232 px — monograma de la marca, nombre del negocio y rol; ítems de 40 px con ícono; el activo lleva `--marca-suave` y una barra de 3 px de la marca a la izquierda. Abajo, la cuenta (correo, rol, cerrar sesión) y «con G-Quota». Sin barra superior: cada página pone su título.
-- **Móvil:** encabezado de 52 px (monograma, nombre del negocio, cuenta) y **barra inferior** con lo operativo; el activo lleva una raya de 3 px de la marca arriba. Equipo y Configuración van en el menú de la cuenta.
-- **Permisos:** el dueño ve Inicio, Cobros, Clientes, Préstamos, Equipo y Configuración; el cobrador, Cobros, Clientes y Préstamos. Solicitudes, Plantillas y Mi marca llegan con sus fases.
+- **Escritorio (≥ 768 px):** menú lateral blanco de 232 px — monograma de la marca, nombre del negocio y rol; ítems de 40 px con ícono; el activo lleva `--marca-suave` y una barra de 3 px de la marca a la izquierda. Abajo, la cuenta (correo, rol, novedades, cerrar sesión) y «con G-Quota». Sin barra superior: cada página pone su título.
+- **Móvil:** encabezado de 52 px (monograma, nombre del negocio, cuenta) y **barra inferior** con lo operativo; el activo lleva una raya de 3 px de la marca arriba. Equipo, Configuración y Novedades van en el menú de la cuenta.
+- **Orden del menú:** el de siempre, que los usuarios ya conocen: **Inicio, Clientes, Préstamos, Cobros**, y después Equipo y Configuración. Solicitudes va junto a Clientes y solo aparece si el negocio la activó (`negocios.solicitudes_activas`).
+- **Permisos:** el dueño ve Inicio, Clientes, Préstamos, Cobros, Equipo y Configuración (y Solicitudes si está activa); el cobrador, Clientes, Préstamos y Cobros. Plantillas y Mi marca llegan con sus fases.
+- **Novedades:** «Novedades» aparece en el menú de la cuenta solo si al usuario le corresponde una guía, con un punto de la marca mientras no la vea (también en el botón de la cuenta).
 - **Lista + detalle:** 60/40 en escritorio; apilado en móvil.
 
 ## Tokens viejos (transición)

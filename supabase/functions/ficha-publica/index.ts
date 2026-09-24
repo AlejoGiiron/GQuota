@@ -18,7 +18,8 @@
 //    - El token solo existe en el navegador del prospecto; aquí se calcula su
 //      sha256 y se busca con service_role.
 //    - Cualquier token que no sirva (inexistente, mal formado, anulado, vencido,
-//      usado) recibe la MISMA respuesta: { estado: 'no_disponible' }.
+//      usado, o de un negocio con la función apagada) recibe la MISMA respuesta:
+//      { estado: 'no_disponible' }.
 //    - No devuelve el celular ni el nombre de referencia. No registra tokens.
 //    - La foto del respaldo (con la huella) solo se acepta si se autorizó; si no,
 //      se borra antes de guardar.
@@ -59,7 +60,10 @@ type Vigente = {
   ficha: FichaConfig
 }
 
-/** La solicitud del token si está ENVIADA, sin vencer y el negocio tiene contacto; si no, null. */
+/**
+ * La solicitud del token si está ENVIADA, sin vencer, y su negocio tiene la función
+ * activa (negocios.solicitudes_activas, migración 038) y el contacto; si no, null.
+ */
 async function vigente(admin: SupabaseClient, token: unknown): Promise<Vigente | null> {
   if (typeof token !== 'string' || !FORMATO_TOKEN.test(token)) return null
   const { data: s, error } = await admin
@@ -71,10 +75,12 @@ async function vigente(admin: SupabaseClient, token: unknown): Promise<Vigente |
   if (!s || s.estado !== 'enviada' || new Date(s.expira_en).getTime() <= Date.now()) return null
   const { data: n, error: e2 } = await admin
     .from('negocios')
-    .select('nombre, contacto_datos, ficha_config')
+    .select('nombre, contacto_datos, ficha_config, solicitudes_activas')
     .eq('id', s.negocio_id)
     .single()
   if (e2 || !n) throw new Error(`negocio ${e2?.code}`)
+  // Negocio con la función apagada: el enlace deja de servir.
+  if (!n.solicitudes_activas) return null
   // Sin canal para ejercer los derechos no se puede pedir la autorización.
   if (!n.contacto_datos) return null
   return {

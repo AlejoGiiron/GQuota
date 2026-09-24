@@ -251,6 +251,7 @@ export type Database = {
           id: string
           metodos_pago: string[]
           nombre: string
+          solicitudes_activas: boolean
         }
         Insert: {
           contacto_datos?: string | null
@@ -259,6 +260,7 @@ export type Database = {
           id?: string
           metodos_pago?: string[]
           nombre: string
+          solicitudes_activas?: boolean
         }
         Update: {
           contacto_datos?: string | null
@@ -267,6 +269,28 @@ export type Database = {
           id?: string
           metodos_pago?: string[]
           nombre?: string
+          solicitudes_activas?: boolean
+        }
+        Relationships: []
+      }
+      novedades_usuario: {
+        Row: {
+          estado: string
+          mostrar_desde: string
+          user_id: string
+          version: string
+        }
+        Insert: {
+          estado?: string
+          mostrar_desde?: string
+          user_id: string
+          version: string
+        }
+        Update: {
+          estado?: string
+          mostrar_desde?: string
+          user_id?: string
+          version?: string
         }
         Relationships: []
       }
@@ -495,6 +519,7 @@ export type Database = {
           id: string
           metodos_pago: string[]
           nombre: string
+          solicitudes_activas: boolean
         }
         SetofOptions: {
           from: "*"

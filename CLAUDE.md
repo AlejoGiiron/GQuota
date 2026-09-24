@@ -93,6 +93,14 @@ El dueño escribe el celular de un prospecto; la app genera un enlace de 24 hora
 - **Borrar fotos:** por SQL está bloqueado (`storage.protect_delete`). Usar el CLI: `npx supabase storage rm -r ss:///solicitudes/<negocio_id> --experimental --linked --yes` (SIN barra final).
 - Verificado (2026-09-24) contra la base real con cuentas LAB y una cédula SINTÉTICA (PDF417 con datos inventados, girado 5°): lectura, edición → manual, 3 fotos, envío, doble envío rechazado, respaldo sin autorización borrado, red del prospecto solo hacia ficha-publica y URLs firmadas. Datos de prueba borrados.
 
+### 2026-09-24 — Luis recibe el diseño 2a como todos (guía de novedades, migración 038)
+No hay versión aparte para Luis: recibe el release con una guía de novedades, y todo lo que se pudo quedó como él lo tenía.
+- **Quedó como antes:** el orden del menú (Inicio, Clientes, Préstamos, Cobros; Solicitudes junto a Clientes si está activa), la barra de progreso de Inicio en verde (valores fijos, no la marca) y las **imágenes que se comparten** (comprobante y cronograma), que conservan Plus Jakarta Sans y JetBrains Mono. La fase 0 las había roto: pedían esas fuentes pero ya nadie las cargaba y salían con la del sistema. Ahora `asegurarFuentes()` las registra desde `@fontsource` (sin CDN) solo al generar la imagen. Comparadas píxel a píxel contra `main` (`v1-final`): 0,01–0,02 % distinto, solo en el suavizado de los bordes. Los colores de su marca ya eran los de G-Quota por defecto.
+- **Solicitudes por negocio** (`negocios.solicitudes_activas`, 038): apagada en todos los negocios, menos LAB. Apagada: no aparece en el menú, `/solicitudes` y `/solicitudes/ficha` llevan a Inicio, Configuración no muestra ni toca el contacto, `crear_solicitud` la rechaza y `ficha-publica` responde `no_disponible` (verificado en vivo). El interruptor en Configuración llega con la 1C; entonces el valor por defecto pasa a `true` para los negocios nuevos.
+- **Guía de novedades:** tabla `novedades_usuario` (`user_id`, `version`, `estado` pendiente|vista, `mostrar_desde`). RLS: cada usuario lee y actualiza solo lo suyo, y solo `estado` y `mostrar_desde` (permiso por columna); ni la app inserta ni borra; `anon` sin ningún permiso. La 038 insertó `diseno-2a` pendiente para los 8 usuarios que existían; quien se crea después no tiene fila y no la ve. Se abre sola si está pendiente y `mostrar_desde <= now()`; "Entendido" = vista; "Ver después" (o Esc) = `mostrar_desde` mañana a las 00:00, sin tope. "Novedades" en el menú de la cuenta (con punto mientras esté pendiente) la reabre. Textos por versión, rol (dueño 4 pasos, cobrador 3) y pantalla en `src/lib/novedades.ts`; componente `src/components/novedades/GuiaNovedades.tsx`.
+- **Una versión nueva de la guía** = una migración que inserta sus filas (`pendiente` para los usuarios de ese momento) + sus pasos en `src/lib/novedades.ts` + subir `VERSION_NOVEDADES`.
+- Verificado (2026-09-24): ensayo de la 038 con rollback (25/25: préstamos, cuotas, movimientos, clientes, miembros, cron y el código de las 8 RPC y del cron sin cambios; RLS con impersonación) y E2E con LAB, dueño y cobrador, en celular y escritorio (49/49: guía, 44 px, teclado, orden del menú, Solicitudes apagada/activa, usuario sin fila).
+
 ## Design system
 Antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones. No inventar colores, tipografías ni estilos nuevos. Ese archivo es la fuente de verdad visual.
 
@@ -142,6 +150,8 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] Confirmar que la URL de Vercel está en Supabase Auth > URL Configuration.
 - [ ] Próximo release de `develop` a `main` (diseño 2a y solicitudes), antes del merge:
   - [ ] Guía de novedades lista y probada.
+  - [ ] Poner el contacto real de soporte en `CONTACTO_SOPORTE` (`src/lib/novedades.ts`; hoy dice `[TU CONTACTO]`).
+  - [ ] Usuarios creados después de la 038 no tienen la guía. Si deben verla (usaron el diseño anterior), insertarles la fila: `insert into novedades_usuario (user_id, version) select id, 'diseno-2a' from auth.users on conflict do nothing`.
 - [ ] Borrar los préstamos de prueba (quedaron en estados artificiales de tanto UPDATE manual). Crear datos limpios.
 - [ ] (fase de limpieza) Borrar la tabla `configuracion`, reemplazada por `negocios` desde la 022, con una migración nueva (`drop table`), regenerar tipos y quitar el alias `Configuracion` de src/types/db.ts (hoy no lo usa nadie). Solo después del backup.
 

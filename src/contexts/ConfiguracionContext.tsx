@@ -43,6 +43,8 @@ interface ConfiguracionContextValue {
   nombreNegocio: string
   /** Métodos de pago activos; si no hay negocio, el catálogo completo. */
   metodosActivos: string[]
+  /** Solicitudes por enlace activas en el negocio (negocios.solicitudes_activas, migración 038). */
+  solicitudesActivas: boolean
   guardar: (input: ConfiguracionInput) => Promise<{ error: string | null }>
   /**
    * Registro self-service: el usuario autenticado crea su negocio y queda como
@@ -149,6 +151,7 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
       loading,
       nombreNegocio: negocio?.nombre?.trim() || NOMBRE_POR_DEFECTO,
       metodosActivos: metodos,
+      solicitudesActivas: negocio?.solicitudes_activas === true,
       guardar,
       crearNegocio,
       refrescar: cargar,
