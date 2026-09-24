@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="./gq-comun.js"></script>
+<style>body{margin:0;background:#EDEEF1}a{color:#14181F}a:hover{color:#2446B8}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="padding:40px 44px 60px;display:flex;flex-direction:column;gap:48px;font-family:'IBM Plex Sans',sans-serif;color:#14181F">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:960px">
+    <div style="font-weight:600;font-size:24px">G-Quota · Prueba de marca blanca con tres negocios</div>
+    <div style="font-size:14.5px;color:#3B4452;line-height:1.5;text-wrap:pretty">La misma pantalla y los mismos datos con Créditos La 14 (verde), Inversiones Morales (azul marino) y Préstamos Doña Rosa (amarillo). Solo cambian el color principal, el acento, el monograma y los textos del negocio. Los estados y los neutros quedan iguales en las tres.</div>
+  </div>
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div style="font-weight:600;font-size:17px">Comprobante de pago</div>
+    <div style="display:flex;gap:40px;align-items:flex-start">
+      <sc-for list="{{ marcas }}" as="mk" hint-placeholder-count="3">
+        <div data-marca-k="{{ mk.key }}" style="flex:none;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;color:#5B6472">{{ mk.nombre }} · {{ mk.colorNombre }}</div>
+          <div data-screen-label="Comprobante {{ mk.nombre }}" style="width:360px;background:#FFFFFF;border-top:6px solid var(--marca);box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -14px rgba(0,0,0,.25)">
+          <div style="display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid #E2E5EA">
+            <div style="width:42px;height:42px;flex:none;border-radius:9px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:16px">{{ mk.mono }}</div>
+            <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:17px;line-height:1.2">{{ mk.nombre }}</div><div style="font-size:13px;color:#5B6472;margin-top:2px">WhatsApp {{ mk.whatsapp }}</div></div>
+          </div>
+          <div style="padding:16px 22px 0">
+            <div style="display:flex;align-items:center;justify-content:space-between"><div style="font-weight:600;font-size:15px;white-space:nowrap">Comprobante de pago</div><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E7F3EA;color:#1A7431;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431" stroke="#1A7431" stroke-width="1.6"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagado</span></div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#5B6472;margin-top:2px;font-variant-numeric:tabular-nums">N.º 000483 · 23/09/2026, 9:34 a. m.<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">N.º: dato nuevo</span></div>
+            <div style="margin-top:16px;font-size:12.5px;color:#5B6472">Recibimos de</div>
+            <div style="font-weight:600;font-size:18px;margin-top:1px">Carmen Rincón</div>
+            <div style="margin-top:14px;font-size:12.5px;color:#5B6472">La suma de</div>
+            <div style="font-weight:600;font-size:36px;letter-spacing:-.01em;margin-top:1px;font-variant-numeric:tabular-nums">$24.000</div>
+            <div style="font-size:13.5px;color:#5B6472">Veinticuatro mil pesos m/cte.</div>
+            <div style="margin-top:16px;border-top:1px solid #E2E5EA;font-size:14px;font-variant-numeric:tabular-nums">
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Concepto</span><span>Cuota 30 de 40</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Método</span><span>Efectivo</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Saldo</span><span>$240.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #EDEFF2"><span style="color:#5B6472">Para quedar al día</span><span>$144.000</span></div>
+              <div style="display:flex;justify-content:space-between;padding:9px 0"><span style="color:#5B6472">Cobró</span><span>Yeison Arango</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="width:75%;height:6px;background:#3B4452"></div></div><span style="font-size:13px;color:#5B6472;font-variant-numeric:tabular-nums">30 de 40 cuotas</span></div>
+          </div>
+          <div style="margin-top:18px;padding:14px 22px 16px;background:#F8F9FA;border-top:1px solid #E2E5EA">
+            <div style="font-size:13.5px;line-height:1.45;text-wrap:pretty">{{ mk.pie }}</div>
+            <sc-if value="{{ mk.tieneDatos }}" hint-placeholder-val="{{ true }}"><div style="font-size:12.5px;color:#5B6472;margin-top:4px">{{ mk.datos }}</div></sc-if>
+            <div style="font-size:11.5px;color:#5B6472;margin-top:10px;text-align:right">con G-Quota</div>
+          </div>
+        </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div style="font-weight:600;font-size:17px">Tarjeta del cronograma</div>
+    <div style="display:flex;gap:40px;align-items:flex-start">
+      <sc-for list="{{ marcas }}" as="mk" hint-placeholder-count="3">
+        <div data-marca-k="{{ mk.key }}" style="flex:none;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;color:#5B6472">{{ mk.nombre }} · {{ mk.colorNombre }}</div>
+          <div data-screen-label="Tarjeta {{ mk.nombre }}" style="width:720px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -14px rgba(0,0,0,.25)">
+          <div style="background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;gap:14px;padding:18px 26px">
+            <div style="width:44px;height:44px;flex:none;border-radius:10px;background:var(--marca-sobre);color:var(--marca);display:grid;place-items:center;font-weight:700;font-size:16px">{{ mk.mono }}</div>
+            <div style="flex:1;font-weight:600;font-size:19px">{{ mk.nombre }}</div>
+            <div style="font-size:14px;font-weight:500">WhatsApp {{ mk.whatsapp }}</div>
+          </div>
+          <div style="padding:20px 26px 0">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><div><div style="font-size:13px;color:#5B6472">Cronograma de pagos</div><div style="font-weight:600;font-size:22px;margin-top:2px">Carmen Rincón</div></div><div style="font-size:13.5px;color:#5B6472;text-align:right">Préstamo P-0317 · 40 cuotas diarias de $24.000<br>Actualizado el 23/09/2026</div></div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:16px;border:1px solid #E2E5EA;border-radius:8px;font-variant-numeric:tabular-nums">
+              <div style="padding:11px 14px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Monto prestado</div><div style="font-weight:600;font-size:19px;margin-top:2px">$800.000</div></div>
+              <div style="padding:11px 14px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Total a pagar</div><div style="font-weight:600;font-size:19px;margin-top:2px">$960.000</div></div>
+              <div style="padding:11px 14px;border-right:1px solid #E2E5EA"><div style="font-size:12.5px;color:#5B6472">Avance</div><div style="font-weight:600;font-size:19px;margin-top:2px">29/40</div></div>
+              <div style="padding:11px 14px"><div style="font-size:12.5px;color:#5B6472">Saldo</div><div style="font-weight:600;font-size:19px;margin-top:2px">$264.000</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin-top:16px">
+              <sc-for list="{{ cronoP }}" as="q" hint-placeholder-count="40">
+                <div style="box-sizing:border-box;border-radius:7px;background:{{ q.tileBg }};border:{{ q.tileBd }};padding:6px 7px 7px;font-variant-numeric:tabular-nums">
+                  <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:600;font-size:12px">{{ q.n }}</span><svg width="13" height="13" viewBox="0 0 16 16" fill="none" style="color:{{ q.st.c }}"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+                  <div style="font-size:12px;margin-top:4px">{{ q.fechaC }}</div>
+                  <div style="font-size:11px;color:#3B4452">{{ q.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12.5px;color:#3B4452">
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Pagada · 29</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>Vencida · 6</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#8A5300" stroke-width="1.6"></path><path d="M8 4.8V8l2.2 1.5" stroke="#8A5300" stroke-width="1.7" stroke-linecap="round"></path></svg>Vence hoy · 1</span>
+              <span style="display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#5B6472" stroke-width="1.6"></path></svg>Pendiente · 4</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;margin:16px 26px 0;padding:12px 16px;border-radius:8px;background:#FDF5F4;font-variant-numeric:tabular-nums">
+            <div style="flex:1;font-size:14px;line-height:1.45"><span style="font-weight:600">Para quedar al día: $168.000</span><br><span style="color:#3B4452">6 cuotas vencidas desde el 17/09/2026 más la de hoy. Si se pasa de la fecha se cobra un valor adicional.</span></div>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:16px;padding:14px 26px 18px">
+            <div style="flex:1;font-size:13px;color:#3B4452;line-height:1.5">{{ mk.pie }}<br><span style="color:#5B6472">{{ mk.horario }}</span></div>
+            <div style="font-size:11.5px;color:#5B6472">con G-Quota</div>
+          </div>
+        </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div style="font-weight:600;font-size:17px">Inicio del dueño · 1440 px</div>
+    <div style="display:flex;flex-direction:column;gap:40px;align-items:flex-start">
+      <sc-for list="{{ marcas }}" as="mk" hint-placeholder-count="3">
+        <div data-marca-k="{{ mk.key }}" style="flex:none;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;color:#5B6472">{{ mk.nombre }} · {{ mk.colorNombre }}</div>
+          <div data-screen-label="Inicio {{ mk.nombre }}" style="width:1440px;display:flex;background:#F5F6F8;border:1px solid #E2E5EA;border-radius:10px;overflow:hidden">
+      <div style="width:232px;flex:none;background:#FFFFFF;border-right:1px solid #E2E5EA;display:flex;flex-direction:column;padding:20px 14px 18px;box-sizing:border-box">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid #E2E5EA"><div style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:grid;place-items:center;font-weight:700;font-size:14px">{{ mk.mono }}</div><div style="min-width:0"><div style="font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap">{{ mk.nombre }}</div><div style="font-size:12.5px;color:#5B6472;margin-top:2px;white-space:nowrap">{{ mk.dueno }} · Dueño</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px">
+          <sc-for list="{{ navInicio }}" as="n" hint-placeholder-count="6"><div style="position:relative;height:40px;display:flex;align-items:center;gap:11px;padding:0 10px;border-radius:6px;background:{{ n.bg }};font-weight:{{ n.fw }};font-size:14.5px;white-space:nowrap"><div style="position:absolute;left:-14px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:{{ n.bar }}"></div><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{ n.d }}"></path></svg>{{ n.t }}</div></sc-for>
+        </div>
+        <div style="margin-top:auto;font-size:12px;color:#5B6472;padding:0 6px">con G-Quota</div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="height:68px;flex:none;background:#FFFFFF;border-bottom:1px solid #E2E5EA;display:flex;align-items:center;gap:12px;padding:0 32px">
+          <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:20px">Inicio</div><div style="font-size:13px;color:#5B6472;margin-top:1px">Miércoles 23/09/2026 · actualizado 9:20 a. m.</div></div>
+          <div style="width:300px;height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:14px;color:#5B6472"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L20 20"></path></svg>Buscar cliente, cédula o préstamo</div>
+          <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;background:#FFFFFF;display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px">+ Nuevo cliente</div>
+          <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;gap:7px;font-weight:600;font-size:14px">+ Nuevo préstamo</div>
+        </div>
+        <div style="padding:24px 32px 32px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px">
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Prestado en la calle</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$18.450.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">112 préstamos activos</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Le deben</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$24.310.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">Capital más intereses</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="font-size:13px;color:#5B6472">Ganancia de septiembre</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$3.870.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">Agosto: $4.920.000</div></div>
+            <div style="padding:16px 20px;border-right:1px solid #E2E5EA"><div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#B3261E;font-weight:600"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>En mora</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums;color:#B3261E">$1.890.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">9 préstamos · más de 5 días</div></div>
+            <div style="padding:16px 20px"><div style="font-size:13px;color:#5B6472">Cobrado hoy</div><div style="font-weight:600;font-size:26px;margin-top:6px;font-variant-numeric:tabular-nums">$1.279.000</div><div style="font-size:13px;color:#5B6472;margin-top:4px">de $2.140.000 · 60 %</div></div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:12px;padding:14px 20px">
+              <div style="flex:1;font-weight:600;font-size:16px">Cobros de hoy</div>
+              <div style="display:flex;border:1px solid #CDD2D9;border-radius:6px;overflow:hidden;font-size:13.5px;font-weight:500"><div style="height:34px;padding:0 12px;display:flex;align-items:center;background:#14181F;color:#FFFFFF">Todos</div><div style="height:34px;padding:0 12px;display:flex;align-items:center;border-left:1px solid #CDD2D9">Con atrasos</div></div>
+              <div style="height:36px;padding:0 12px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;gap:7px;font-weight:500;font-size:13.5px">Exportar</div>
+            </div>
+            <div style="padding:0 20px 16px;border-bottom:1px solid #E2E5EA">
+              <div style="display:flex;gap:3px;height:10px"><div style="width:55.2%;border-radius:5px 0 0 5px;background:#1A7431"></div><div style="width:5.2%;background:#2446B8"></div><div style="width:8.3%;background:#B3261E"></div><div style="flex:1;border-radius:0 5px 5px 0;background:#D5D9DF"></div></div>
+              <div style="display:flex;align-items:center;gap:22px;margin-top:10px;font-size:13.5px;font-variant-numeric:tabular-nums">
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" fill="#1A7431"></path><path d="M5 8.2l2 2 4-4.3" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>Cobrado <b style="font-weight:600">53</b></span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#2446B8" stroke-width="1.6"></path><path d="M8 1.6a6.4 6.4 0 0 0 0 12.8Z" fill="#2446B8"></path></svg>Parcial <b style="font-weight:600">5</b></span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>Atrasado <b style="font-weight:600">8</b></span>
+                <span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#5B6472" stroke-width="1.6"></path></svg>Pendiente <b style="font-weight:600">30</b></span>
+                <span style="flex:1"></span><span style="color:#5B6472">96 préstamos con cobro hoy</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px 120px 120px 120px 170px 90px 100px;gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472">
+              <span style="display:flex;align-items:center;gap:6px">Cobrador · zona<span style="display:inline-flex;align-items:center;height:18px;padding:0 6px;border:1px dashed #8C95A3;border-radius:4px;font-size:10.5px;font-weight:500;white-space:nowrap">zona: dato nuevo</span></span><span style="display:flex;align-items:center;justify-content:flex-end;gap:4px">Visitas<span style="display:inline-flex;align-items:center;height:18px;padding:0 4px;border:1px dashed #8C95A3;border-radius:4px;font-size:10px;font-weight:500">nuevo</span></span><span style="text-align:right">Meta del día</span><span style="text-align:right">Cobrado</span><span style="text-align:right">Por cobrar</span><span style="display:flex;align-items:center;gap:4px;color:#14181F">Avance ↓</span><span style="text-align:right">Atrasados</span><span style="text-align:right">Último cobro</span>
+            </div>
+            <sc-for list="{{ cobradores }}" as="c" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px 120px 120px 120px 170px 90px 100px;gap:16px;align-items:center;height:56px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;align-items:center;gap:10px;min-width:0"><div style="width:30px;height:30px;flex:none;border-radius:50%;background:#EEF0F3;display:grid;place-items:center;font-weight:600;font-size:11.5px;color:#3B4452">{{ c.ini }}</div><div style="min-width:0"><div style="font-weight:600">{{ c.nombre }}</div><div style="font-size:12.5px;color:#5B6472">{{ c.zona }}</div></div></div>
+                <span style="text-align:right">{{ c.visitas }}</span><span style="text-align:right;color:#5B6472">{{ c.meta }}</span><span style="text-align:right;font-weight:600">{{ c.cobrado }}</span><span style="text-align:right">{{ c.porCobrar }}</span>
+                <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="height:6px;background:#3B4452;width:{{ c.barW }}"></div></div><span style="width:40px;text-align:right;font-size:13.5px">{{ c.pct }}</span></div>
+                <span style="display:flex;align-items:center;justify-content:flex-end;gap:5px;color:#B3261E;font-weight:600"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E" stroke="#B3261E" stroke-width="1.6" stroke-linejoin="round"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>{{ c.atr }}</span>
+                <span style="text-align:right;color:#5B6472">{{ c.ultimo }}</span>
+              </div>
+            </sc-for>
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 90px 120px 120px 120px 170px 90px 100px;gap:16px;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums">
+              <span>Total</span><span style="text-align:right">58 / 96</span><span style="text-align:right">$2.140.000</span><span style="text-align:right">$1.279.000</span><span style="text-align:right">$861.000</span>
+              <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;height:6px;border-radius:3px;background:#E6E9ED;overflow:hidden"><div style="height:6px;width:60%;background:#14181F"></div></div><span style="width:40px;text-align:right;font-size:13.5px">60 %</span></div>
+              <span style="text-align:right">8</span><span></span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start">
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid #E2E5EA"><div style="flex:1;font-weight:600;font-size:16px">Préstamos en mora</div><div style="font-size:13px;color:#5B6472">Más de 5 días de gracia · días desde la cuota vencida más antigua</div></div>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px 70px 70px 110px;gap:16px;align-items:center;height:40px;padding:0 20px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>Cliente</span><span>Cobrador</span><span style="text-align:right;color:#14181F">Días ↓</span><span style="text-align:right">Cuotas</span><span style="text-align:right">Debe</span></div>
+              <sc-for list="{{ mora }}" as="m" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px 70px 70px 110px;gap:16px;align-items:center;height:52px;padding:0 20px;border-bottom:1px solid #EDEFF2;font-size:14.5px;font-variant-numeric:tabular-nums"><div style="min-width:0"><div style="font-weight:600">{{ m.nombre }}</div><div style="font-size:12.5px;color:#5B6472">{{ m.negocio }}</div></div><span style="color:#3B4452">{{ m.cobrador }}</span><span style="text-align:right;color:#B3261E;font-weight:600">{{ m.dias }}</span><span style="text-align:right">{{ m.cuotas }}</span><span style="text-align:right;font-weight:600">{{ m.debe }}</span></div>
+              </sc-for>
+              <div style="display:flex;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-size:14.5px;font-variant-numeric:tabular-nums"><span style="flex:1;color:#5B6472">Mostrando 5 de 9 · <span style="color:var(--marca-texto);font-weight:600">Ver todos</span></span><span style="font-weight:600">Total en mora&nbsp;&nbsp;$1.890.000</span></div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+              <div style="padding:14px 20px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:16px">Septiembre, hasta hoy</div>
+              <div style="padding:4px 20px 0;font-size:14.5px;font-variant-numeric:tabular-nums">
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EDEFF2"><span>Prestado en el mes</span><span>$6.200.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EDEFF2"><span>Recaudado</span><span>$9.480.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0 11px 16px;border-bottom:1px solid #EDEFF2;color:#5B6472"><span>Capital recuperado</span><span>$5.610.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0 11px 16px;border-bottom:1px solid #EDEFF2;color:#5B6472"><span>Intereses y ganancia</span><span>$3.870.000</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid #EDEFF2"><span>Préstamos nuevos</span><span>23</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0"><span>Préstamos terminados</span><span>17</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;height:48px;padding:0 20px;background:#F8F9FA;font-weight:600;font-size:14.5px;font-variant-numeric:tabular-nums"><span>Ganancia del mes</span><span>$3.870.000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEYS = ['Créditos La 14 · verde', 'Inversiones Morales · azul marino', 'Préstamos Doña Rosa · amarillo'];
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  componentDidMount() { this.esperar(); }
+  componentWillUnmount() { clearTimeout(this.t); }
+  componentDidUpdate() { this.aplicar(); }
+  esperar() { if (window.GQ) { this.forceUpdate(); setTimeout(() => this.aplicar(), 0); } else this.t = setTimeout(() => this.esperar(), 40); }
+  aplicar() {
+    const G = window.GQ, root = this.rootRef.current; if (!G || !root) return;
+    root.querySelectorAll('[data-marca-k]').forEach(el => G.aplicar(el, G.marca(el.getAttribute('data-marca-k'))));
+  }
+  renderVals() {
+    const G = window.GQ;
+    if (!G) return { rootRef: this.rootRef, marcas: [] };
+    return {
+      rootRef: this.rootRef,
+      marcas: KEYS.map(k => ({ ...G.marca(k), key: k })),
+      cronoP: G.CRONO_P, navInicio: G.nav('Inicio'), cobradores: G.COBRADORES, mora: G.MORA,
+    };
+  }
+}
+</script>
+</body>
+</html>

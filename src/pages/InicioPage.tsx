@@ -52,14 +52,14 @@ function fechaLarga(d: Date): string {
 type Tono = 'verde' | 'pizarra' | 'ambar' | 'rojo'
 const CHIP: Record<Tono, string> = {
   verde: 'bg-green-tint text-green',
-  pizarra: 'bg-[#eef2f0] text-[#3f5b50]',
-  ambar: 'bg-amber-tint text-amber',
+  pizarra: 'bg-estado-pendiente-fondo text-estado-pendiente',
+  ambar: 'bg-estado-por-vencer-fondo text-estado-por-vencer',
   rojo: 'bg-red-tint-2 text-red',
 }
 const VALOR: Record<Tono, string> = {
   verde: 'text-text',
   pizarra: 'text-text',
-  ambar: 'text-amber',
+  ambar: 'text-estado-por-vencer',
   rojo: 'text-red',
 }
 
@@ -252,8 +252,10 @@ export default function InicioPage() {
                 <b className="text-green-700">{cobros.cobrados}</b> de {cobros.programados} cobrados
               </span>
               <div className="h-2 w-[150px] overflow-hidden rounded-full bg-line">
+                {/* El verde de siempre, con valores fijos: es una barra de datos y no
+                    sigue la marca del negocio (regla 1 del sistema 2a). */}
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#10b981] to-green"
+                  className="h-full rounded-full bg-gradient-to-r from-[#10b981] to-[#047857]"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -275,7 +277,7 @@ export default function InicioPage() {
                   <div className="min-w-0 flex-1 leading-tight">
                     <Link
                       to={`/prestamos/${prestamo.id}`}
-                      className="truncate text-[15px] font-bold text-text hover:underline"
+                      className="block truncate text-[15px] font-bold text-text hover:underline"
                     >
                       {nombreDe(prestamo)}
                     </Link>
@@ -290,7 +292,7 @@ export default function InicioPage() {
                   ) : (
                     <button
                       type="button"
-                      className="btn-primary shrink-0 !h-9 !px-3 !text-[13px]"
+                      className="btn-primary shrink-0 !px-3 !text-[13px]"
                       onClick={() => setPagoPrestamo(prestamo)}
                     >
                       Registrar pago

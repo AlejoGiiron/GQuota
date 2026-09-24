@@ -4,7 +4,7 @@ import type { ClienteInput } from '@/hooks/useClientes'
 import type { Cliente } from '@/types/db'
 
 const textareaClass =
-  'w-full rounded-xl border-[1.5px] border-line bg-card px-4 py-3 text-[15px] font-medium text-text outline-none transition-colors placeholder:text-muted placeholder:font-medium focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)]'
+  'w-full rounded-control border border-borde-control bg-card px-4 py-3 text-[15px] font-medium text-text outline-none transition-colors placeholder:text-muted placeholder:font-medium focus:border-marca-texto focus:shadow-[inset_0_0_0_1px_var(--marca-texto)]'
 
 function aTexto(valor: string): string | null {
   const limpio = valor.trim()

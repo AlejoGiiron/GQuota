@@ -3,61 +3,36 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useConfiguracion } from '@/contexts/ConfiguracionContext'
+import GuiaNovedades from '@/components/novedades/GuiaNovedades'
+import { useEsEscritorio } from '@/hooks/useEsEscritorio'
+import { useNovedades } from '@/hooks/useNovedades'
+import { monograma } from '@/lib/marca'
+import { VERSION_NOVEDADES, pasosDe, seAbreSola } from '@/lib/novedades'
 
-/* Íconos de línea (mismo set y trazo del dashboard V2 aprobado). */
+/* Íconos de línea del sistema 2a (design/paquete-2a, GQ.NAV). */
 type IconProps = { className?: string }
-const IconHome = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 10.5L12 3l9 7.5" />
-    <path d="M5 9.5V20h14V9.5" />
-    <path d="M9.5 20v-5.5h5V20" />
-  </svg>
+const icono = (d: string) =>
+  function Icono({ className }: IconProps) {
+    return (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d={d} />
+      </svg>
+    )
+  }
+const IconInicio = icono('M4 10.5L12 4l8 6.5V20h-5.5v-6h-5v6H4z')
+const IconCobros = icono('M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5L7.5 5M3.5 12l1.5 1.5L7.5 11M3.5 18l1.5 1.5L7.5 17')
+const IconClientes = icono(
+  'M9 11.5a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7ZM2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.9c1.7.8 2.7 2.4 3 5.1',
 )
-const IconUsers = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="9" cy="8" r="3.2" />
-    <path d="M3.5 19c.6-3 2.9-4.5 5.5-4.5S13.9 16 14.5 19" />
-    <path d="M16 5.2A3 3 0 0118 11M21 19c-.4-2.2-1.6-3.6-3.3-4.2" />
-  </svg>
+const IconSolicitudes = icono('M6 3h9l4 4v14H6zM14 3v5h5M9 14l2 2 4-4')
+const IconPrestamos = icono('M2.5 6h19v12h-19zM12 9.4a2.6 2.6 0 1 0 0 5.2a2.6 2.6 0 1 0 0-5.2Z')
+const IconEquipo = icono('M4 3h16v18H4zM12 7a3 3 0 1 0 0 6a3 3 0 1 0 0-6ZM8 17c.8-1.8 2.2-2.6 4-2.6s3.2.8 4 2.6')
+const IconConfiguracion = icono(
+  'M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6ZM12 2.5v2.5M12 19v2.5M21.5 12H19M5 12H2.5M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8M18.4 18.4l-1.8-1.8M7.4 7.4L5.6 5.6',
 )
-const IconLoan = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="4" y="4" width="16" height="16" rx="2.5" />
-    <path d="M8 9h8M8 13h8M8 17h5" />
-  </svg>
-)
-const IconCash = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2.5" y="6" width="19" height="12" rx="2.5" />
-    <circle cx="12" cy="12" r="2.6" />
-    <path d="M6 9.5v0M18 14.5v0" />
-  </svg>
-)
-const IconTeam = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="8" cy="8" r="3" />
-    <path d="M2.5 19c.5-2.8 2.7-4.3 5.5-4.3S13 16.2 13.5 19" />
-    <circle cx="17" cy="9" r="2.5" />
-    <path d="M15.5 14.8c2 .3 3.4 1.6 3.9 4.2" />
-  </svg>
-)
-const IconGear = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="3" />
-    <path d="M12 2.5v2.5M12 19v2.5M21.5 12H19M5 12H2.5M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8M18.4 18.4l-1.8-1.8M7.4 7.4L5.6 5.6" />
-  </svg>
-)
-const IconChevron = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-)
-const IconLogout = ({ className }: IconProps) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3" />
-    <path d="M10 17l5-5-5-5M15 12H3" />
-  </svg>
-)
+const IconNovedades = icono('M12 3.5l1.9 4.6 4.6 1.9-4.6 1.9L12 16.5l-1.9-4.6L5.5 10l4.6-1.9zM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z')
+const IconSalir = icono('M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 17l5-5-5-5M15 12H3')
+const IconChevron = icono('M6 9l6 6 6-6')
 
 type NavItem = {
   to: string
@@ -66,46 +41,75 @@ type NavItem = {
   end?: boolean
 }
 
+// El orden de siempre (el que los usuarios ya conocen de antes del sistema 2a):
+// Inicio, Clientes, Préstamos, Cobros. Solicitudes, si el negocio la activó, va
+// junto a Clientes. Plantillas y Mi marca llegan con sus fases.
 const NAV: NavItem[] = [
-  { to: '/', label: 'Inicio', Icon: IconHome, end: true },
-  { to: '/clientes', label: 'Clientes', Icon: IconUsers },
-  { to: '/prestamos', label: 'Préstamos', Icon: IconLoan },
-  { to: '/cobros', label: 'Cobros', Icon: IconCash },
-  { to: '/equipo', label: 'Equipo', Icon: IconTeam },
-  { to: '/configuracion', label: 'Configuración', Icon: IconGear },
+  { to: '/', label: 'Inicio', Icon: IconInicio, end: true },
+  { to: '/clientes', label: 'Clientes', Icon: IconClientes },
+  { to: '/solicitudes', label: 'Solicitudes', Icon: IconSolicitudes },
+  { to: '/prestamos', label: 'Préstamos', Icon: IconPrestamos },
+  { to: '/cobros', label: 'Cobros', Icon: IconCobros },
+  { to: '/equipo', label: 'Equipo', Icon: IconEquipo },
+  { to: '/configuracion', label: 'Configuración', Icon: IconConfiguracion },
 ]
-// El cobrador no ve Inicio (dashboard de ganancias), Equipo ni Configuración
-// (admin del negocio): su navegación es lo operativo (clientes, préstamos, cobros).
-const SOLO_DUENO = new Set(['/', '/equipo', '/configuracion'])
+// El cobrador no ve Inicio (dashboard de ganancias), Solicitudes (alta de
+// prospectos), Equipo ni Configuración: su navegación es lo operativo.
+const SOLO_DUENO = new Set(['/', '/solicitudes', '/equipo', '/configuracion'])
+// En móvil, Equipo y Configuración (admin) van en el menú de la cuenta, no en la
+// barra inferior: ahí solo lo operativo del día a día.
+const SOLO_MENU_CUENTA = new Set(['/equipo', '/configuracion'])
 
-const navItemClass = ({ isActive }: { isActive: boolean }) =>
+/* Menú lateral: el ítem activo lleva el fondo suave y la barra de la marca. */
+const itemLateral = ({ isActive }: { isActive: boolean }) =>
   [
-    'flex items-center gap-3 rounded-[10px] px-3 py-[11px] text-[14.5px] font-semibold transition-colors',
-    isActive
-      ? 'bg-green text-white shadow-[0_4px_12px_rgba(4,120,87,0.3)]'
-      : 'text-[#a9c4ba] hover:bg-white/5 hover:text-[#e6f3ee]',
+    'group relative flex h-10 items-center gap-[11px] rounded-control px-2.5 text-[14.5px] transition-colors',
+    isActive ? 'bg-marca-suave font-semibold text-tinta' : 'font-medium text-tinta hover:bg-superficie-2',
   ].join(' ')
 
-const bottomItemClass = ({ isActive }: { isActive: boolean }) =>
+/* Barra inferior: el activo lleva una raya de la marca arriba y el texto en tinta. */
+const itemInferior = ({ isActive }: { isActive: boolean }) =>
   [
-    'flex flex-1 flex-col items-center gap-1 py-1 text-[11px] font-semibold transition-colors',
-    isActive ? 'text-green' : 'text-muted',
+    'relative flex flex-1 flex-col items-center justify-center gap-[3px] text-xs transition-colors',
+    isActive ? 'font-semibold text-tinta' : 'font-medium text-tinta-3',
   ].join(' ')
 
-export default function Layout() {
+function Monograma({ nombre, className }: { nombre: string; className: string }) {
+  return (
+    <div
+      className={`grid shrink-0 place-items-center bg-marca font-bold text-marca-sobre ${className}`}
+      aria-hidden="true"
+    >
+      {monograma(nombre)}
+    </div>
+  )
+}
+
+/** Lo que el menú de la cuenta necesita de la guía de novedades. */
+type NovedadesMenu = {
+  /** El usuario tiene una guía (creado antes de la versión): muestra "Novedades". */
+  hay: boolean
+  /** Todavía no la marcó como vista: lleva un punto. */
+  pendiente: boolean
+  abrir: () => void
+}
+
+/** Punto de "sin ver" (marca: es parte del marco, no un estado). */
+const PuntoNuevo = ({ className = '' }: { className?: string }) => (
+  <span className={`h-2 w-2 shrink-0 rounded-full bg-marca ${className}`} aria-hidden="true" />
+)
+
+/** Menú de la cuenta: correo, rol, accesos de admin (en móvil), novedades y cerrar sesión. */
+function MenuCuenta({ enLateral, novedades }: { enLateral: boolean; novedades: NovedadesMenu }) {
   const { user, signOut } = useAuth()
-  const { nombreNegocio, esDueno } = useConfiguracion()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const { esDueno } = useConfiguracion()
+  const [abierto, setAbierto] = useState(false)
+  const correo = user?.email ?? 'Mi cuenta'
+  const iniciales = (user?.email?.split('@')[0]?.slice(0, 2) || 'U').toUpperCase()
+  const rol = esDueno ? 'Dueño' : 'Cobrador'
 
-  const nav = esDueno ? NAV : NAV.filter((n) => !SOLO_DUENO.has(n.to))
-  // En móvil, Equipo y Configuración (admin) van en el menú de perfil, no en la
-  // barra inferior: ahí solo lo operativo del día a día.
-  const navBottom = nav.filter((n) => n.to !== '/configuracion' && n.to !== '/equipo')
-
-  const inicialaes = (user?.email?.split('@')[0]?.slice(0, 2) || 'U').toUpperCase()
-
-  async function handleSignOut() {
-    setMenuOpen(false)
+  async function cerrarSesion() {
+    setAbierto(false)
     try {
       await signOut()
       toast.success('Sesión cerrada.')
@@ -115,145 +119,206 @@ export default function Layout() {
     }
   }
 
+  const itemMenu = 'flex min-h-11 w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-medium text-tinta hover:bg-superficie-2'
+
   return (
-    <div className="flex h-screen bg-bg text-text">
-      {/* ── Sidebar (desktop) ── */}
-      <aside className="hidden w-[248px] shrink-0 flex-col bg-ink px-[18px] pb-5 pt-[26px] md:flex">
-        <div className="mb-[30px] flex items-center gap-3 px-2">
-          <div className="grid h-[38px] w-[38px] place-items-center rounded-[11px] bg-gradient-to-br from-[#10b981] to-green text-[19px] font-extrabold text-white shadow-[0_4px_12px_rgba(4,120,87,0.35)]">
-            G
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setAbierto((a) => !a)}
+        className={
+          enLateral
+            ? 'flex w-full items-center gap-2.5 rounded-control px-1.5 py-1.5 text-left transition-colors hover:bg-superficie-2'
+            : 'grid h-11 w-11 place-items-center rounded-control'
+        }
+        aria-haspopup="menu"
+        aria-expanded={abierto}
+        aria-label={novedades.pendiente ? 'Abrir menú de la cuenta (hay novedades sin ver)' : 'Abrir menú de la cuenta'}
+      >
+        <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-borde-control bg-superficie-2 text-xs font-semibold text-tinta-2">
+          {iniciales}
+          {novedades.pendiente && <PuntoNuevo className="absolute -right-0.5 -top-0.5 ring-2 ring-superficie" />}
+        </span>
+        {enLateral && (
+          <>
+            <span className="min-w-0 flex-1 leading-tight">
+              <span className="block truncate text-[13px] font-semibold text-tinta">{correo}</span>
+              <span className="block text-xs text-tinta-3">{rol}</span>
+            </span>
+            <IconChevron className={`h-4 w-4 shrink-0 text-tinta-3 transition-transform ${abierto ? '' : 'rotate-180'}`} />
+          </>
+        )}
+      </button>
+
+      {abierto && (
+        <>
+          <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setAbierto(false)} />
+          <div
+            role="menu"
+            className={`absolute z-20 w-60 overflow-hidden rounded-tarjeta border border-borde bg-superficie shadow-flotante ${
+              enLateral ? 'bottom-full left-0 mb-2' : 'right-0 top-full mt-1'
+            }`}
+          >
+            <div className="border-b border-borde-fila px-4 py-3">
+              <p className="text-xs font-semibold text-tinta-3">Sesión · {rol}</p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-tinta">{correo}</p>
+            </div>
+            {esDueno && !enLateral && (
+              <>
+                <NavLink to="/equipo" role="menuitem" onClick={() => setAbierto(false)} className={itemMenu}>
+                  <IconEquipo className="h-[18px] w-[18px] text-tinta-3" />
+                  Equipo
+                </NavLink>
+                <NavLink to="/configuracion" role="menuitem" onClick={() => setAbierto(false)} className={itemMenu}>
+                  <IconConfiguracion className="h-[18px] w-[18px] text-tinta-3" />
+                  Configuración
+                </NavLink>
+              </>
+            )}
+            {novedades.hay && (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setAbierto(false)
+                  novedades.abrir()
+                }}
+                className={itemMenu}
+              >
+                <IconNovedades className="h-[18px] w-[18px] text-tinta-3" />
+                Novedades
+                {novedades.pendiente && (
+                  <>
+                    <PuntoNuevo className="ml-auto" />
+                    <span className="sr-only">(sin ver)</span>
+                  </>
+                )}
+              </button>
+            )}
+            <button
+              type="button"
+              role="menuitem"
+              onClick={cerrarSesion}
+              className="flex min-h-11 w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold text-estado-mora hover:bg-estado-mora-fondo"
+            >
+              <IconSalir className="h-[18px] w-[18px]" />
+              Cerrar sesión
+            </button>
           </div>
-          <div className="text-xl font-extrabold tracking-tight text-white">
-            G<span className="text-[#34d399]">·</span>Quota
+        </>
+      )}
+    </div>
+  )
+}
+
+export default function Layout() {
+  const { nombreNegocio, esDueno, rol, solicitudesActivas } = useConfiguracion()
+  const escritorio = useEsEscritorio()
+
+  // Solicitudes solo aparece si el negocio la activó (negocios.solicitudes_activas).
+  const nav = NAV.filter(
+    (n) => (esDueno || !SOLO_DUENO.has(n.to)) && (n.to !== '/solicitudes' || solicitudesActivas),
+  )
+  const navInferior = nav.filter((n) => !SOLO_MENU_CUENTA.has(n.to))
+
+  // Guía de novedades: se abre sola si está pendiente y llegó su fecha; "Entendido"
+  // la marca vista y "Ver después" la corre a mañana, así que deja de abrirse sola.
+  // Desde el menú se puede volver a abrir cuando se quiera.
+  const novedades = useNovedades()
+  const [guiaDesdeMenu, setGuiaDesdeMenu] = useState(false)
+  const guiaAbierta = rol !== null && (guiaDesdeMenu || seAbreSola(novedades.fila, new Date()))
+  const menuNovedades: NovedadesMenu = {
+    hay: novedades.fila !== null,
+    pendiente: novedades.pendiente,
+    abrir: () => setGuiaDesdeMenu(true),
+  }
+
+  return (
+    <div className="flex h-screen bg-fondo text-tinta">
+      {/* ── Menú lateral (escritorio) ── */}
+      <aside className="hidden w-[232px] shrink-0 flex-col border-r border-borde bg-superficie px-3.5 pb-3 pt-5 md:flex">
+        <div className="flex items-center gap-2.5 border-b border-borde px-1.5 pb-[18px]">
+          <Monograma nombre={nombreNegocio} className="h-9 w-9 rounded-tarjeta text-sm" />
+          <div className="min-w-0">
+            <div className="truncate text-[15px] font-semibold leading-tight">{nombreNegocio}</div>
+            <div className="mt-0.5 text-[12.5px] text-tinta-3">{esDueno ? 'Dueño' : 'Cobrador'}</div>
           </div>
         </div>
 
-        <nav className="flex flex-col gap-[3px]">
-          <div className="px-3 pb-2 pt-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#5e7d72]">
-            Menú
-          </div>
+        <nav aria-label="Menú principal" className="mt-3.5 flex flex-col gap-0.5">
           {nav.map(({ to, label, Icon, end }) => (
-            <NavLink key={to} to={to} end={end} className={navItemClass}>
-              <Icon className="h-[19px] w-[19px] shrink-0" />
-              <span>{label}</span>
+            <NavLink key={to} to={to} end={end} className={itemLateral}>
+              {({ isActive }) => (
+                <>
+                  <span
+                    className={`absolute -left-3.5 bottom-2 top-2 w-[3px] rounded-r-sm ${isActive ? 'bg-marca' : 'bg-transparent'}`}
+                    aria-hidden="true"
+                  />
+                  <Icon className="h-[19px] w-[19px] shrink-0" />
+                  <span>{label}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        <div className="mt-auto pt-[18px]">
-          <div className="flex items-center gap-3 rounded-xl bg-white/[0.04] p-[10px]">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#1f8a5b] text-sm font-bold text-white">
-              {inicialaes}
-            </div>
-            <div className="min-w-0 leading-tight">
-              <div className="truncate text-[13.5px] font-bold text-white">
-                {user?.email ?? 'Mi cuenta'}
-              </div>
-              <div className="text-xs text-[#6f9085]">{esDueno ? 'Dueño' : 'Cobrador'}</div>
-            </div>
-          </div>
+        <div className="mt-auto flex flex-col gap-2 pt-4">
+          <MenuCuenta enLateral novedades={menuNovedades} />
+          <div className="px-1.5 text-xs text-tinta-3">con G-Quota</div>
         </div>
       </aside>
 
       {/* ── Columna principal ── */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Header */}
-        <header className="flex shrink-0 items-center justify-between border-b border-line bg-card px-5 py-3">
-          <div className="truncate text-base font-extrabold tracking-tight text-text">
-            {nombreNegocio}
-          </div>
-
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setMenuOpen((o) => !o)}
-              className="flex items-center gap-2 rounded-xl border border-line bg-card py-1.5 pl-1.5 pr-2.5 transition-colors hover:border-[#d8d2c8]"
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-              aria-label="Abrir menú de perfil"
-            >
-              <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#1f8a5b] text-xs font-bold text-white">
-                {inicialaes}
-              </span>
-              <span className="hidden max-w-[160px] truncate text-sm font-semibold text-text sm:block">
-                {user?.email ?? 'Mi cuenta'}
-              </span>
-              <IconChevron
-                className={`h-4 w-4 text-muted transition-transform ${menuOpen ? 'rotate-180' : ''}`}
-              />
-            </button>
-
-            {menuOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  aria-hidden="true"
-                  onClick={() => setMenuOpen(false)}
-                />
-                <div
-                  role="menu"
-                  className="absolute right-0 z-20 mt-2 w-60 overflow-hidden rounded-[14px] border border-line bg-card shadow-pop"
-                >
-                  <div className="border-b border-line-soft px-4 py-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">
-                      Sesión
-                    </p>
-                    <p className="mt-0.5 truncate text-sm font-semibold text-text">
-                      {user?.email ?? 'Mi cuenta'}
-                    </p>
-                  </div>
-                  {esDueno && (
-                    <>
-                      <NavLink
-                        to="/equipo"
-                        role="menuitem"
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
-                      >
-                        <IconTeam className="h-[18px] w-[18px] text-muted" />
-                        Equipo
-                      </NavLink>
-                      <NavLink
-                        to="/configuracion"
-                        role="menuitem"
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm font-semibold text-text hover:bg-bg"
-                      >
-                        <IconGear className="h-[18px] w-[18px] text-muted" />
-                        Configuración
-                      </NavLink>
-                    </>
-                  )}
-                  <button
-                    type="button"
-                    role="menuitem"
-                    onClick={handleSignOut}
-                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm font-semibold text-red hover:bg-red-tint"
-                  >
-                    <IconLogout className="h-[18px] w-[18px]" />
-                    Cerrar sesión
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+        {/* Encabezado (móvil): logo y nombre del negocio, y la cuenta */}
+        <header className="flex h-[52px] shrink-0 items-center gap-2.5 border-b border-borde bg-superficie pl-4 pr-1.5 md:hidden">
+          <Monograma nombre={nombreNegocio} className="h-[30px] w-[30px] rounded-[7px] text-xs" />
+          <div className="min-w-0 flex-1 truncate text-[15px] font-semibold">{nombreNegocio}</div>
+          <MenuCuenta enLateral={false} novedades={menuNovedades} />
         </header>
 
         {/* Contenido de la sección */}
-        <main className="flex-1 overflow-y-auto px-5 py-5 md:px-[34px] md:py-6">
+        <main className="flex-1 overflow-y-auto px-4 py-5 md:px-8 md:py-6">
           <Outlet />
         </main>
 
-        {/* Bottom nav (móvil) */}
-        <nav className="flex shrink-0 border-t border-line bg-card px-2 pb-[22px] pt-2 md:hidden">
-          {navBottom.map(({ to, label, Icon, end }) => (
-            <NavLink key={to} to={to} end={end} className={bottomItemClass}>
-              <Icon className="h-[23px] w-[23px]" />
-              <span>{label}</span>
+        {/* Barra inferior (móvil) */}
+        <nav
+          aria-label="Menú principal"
+          className="flex h-[72px] shrink-0 border-t border-borde bg-superficie pb-3 md:hidden"
+        >
+          {navInferior.map(({ to, label, Icon, end }) => (
+            <NavLink key={to} to={to} end={end} className={itemInferior}>
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span className="absolute -top-px left-[30%] right-[30%] h-[3px] bg-marca" aria-hidden="true" />
+                  )}
+                  <Icon className="h-[21px] w-[21px]" />
+                  <span>{label}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
       </div>
+
+      {guiaAbierta && rol && (
+        <GuiaNovedades
+          pasos={pasosDe(novedades.fila?.version ?? VERSION_NOVEDADES, rol, escritorio ? 'computador' : 'celular')}
+          rol={rol}
+          pantalla={escritorio ? 'computador' : 'celular'}
+          yaVista={novedades.fila?.estado === 'vista'}
+          onEntendido={() => {
+            setGuiaDesdeMenu(false)
+            void novedades.marcarVista()
+          }}
+          onVerDespues={() => {
+            setGuiaDesdeMenu(false)
+            void novedades.verDespues()
+          }}
+        />
+      )}
     </div>
   )
 }

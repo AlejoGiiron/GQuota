@@ -212,7 +212,7 @@ export default function CronogramaCuotas({
                       <td className="px-1 py-2.5">
                         <span
                           className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${
-                            soloInteres ? 'bg-amber-tint text-[#b45309]' : 'bg-green-tint text-green-700'
+                            soloInteres ? 'bg-estado-por-vencer-fondo text-estado-por-vencer' : 'bg-green-tint text-green-700'
                           }`}
                         >
                           {soloInteres ? 'Solo interés' : 'Cuota'}
@@ -225,7 +225,7 @@ export default function CronogramaCuotas({
                       <td className="whitespace-nowrap px-1 py-2.5 text-right">
                         <button
                           type="button"
-                          className="text-xs font-semibold text-green-700 hover:underline disabled:opacity-50"
+                          className="-my-3 inline-flex min-h-11 items-center text-xs font-semibold text-green-700 hover:underline disabled:opacity-50 md:min-h-10"
                           onClick={() => enviarComprobante(m)}
                           disabled={enviandoId === m.id}
                         >

@@ -79,7 +79,7 @@ function CobroRow({
               href={wa}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary !h-9 gap-1.5 !px-3 !text-[13px]"
+              className="btn-secondary gap-1.5 !px-3 !text-[13px]"
             >
               {IconWhatsApp}
               WhatsApp
@@ -89,7 +89,7 @@ function CobroRow({
               type="button"
               disabled
               title="Este cliente no tiene teléfono registrado"
-              className="btn-secondary !h-9 gap-1.5 !px-3 !text-[13px] opacity-50"
+              className="btn-secondary gap-1.5 !px-3 !text-[13px] opacity-50"
             >
               {IconWhatsApp}
               WhatsApp
@@ -97,7 +97,7 @@ function CobroRow({
           )}
           <button
             type="button"
-            className="btn-primary !h-9 !px-3 !text-[13px]"
+            className="btn-primary !px-3 !text-[13px]"
             onClick={() => onRegistrar(prestamo)}
           >
             Registrar pago

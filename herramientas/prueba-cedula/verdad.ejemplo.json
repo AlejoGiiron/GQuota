@@ -1,0 +1,14 @@
+{
+  "c01": {
+    "numero": "1234567890",
+    "apellidos": "APELLIDO1 APELLIDO2",
+    "nombres": "NOMBRE1 NOMBRE2",
+    "sexo": "M",
+    "fecha_nacimiento": "1990-01-31",
+    "lugar_nacimiento": "MUNICIPIO (DEPARTAMENTO)",
+    "rh": "O+",
+    "estatura": "1.72",
+    "fecha_expedicion": "2008-02-15",
+    "lugar_expedicion": "MUNICIPIO"
+  }
+}

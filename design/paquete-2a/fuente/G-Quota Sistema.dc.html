@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="./gq-comun.js"></script>
+<style>body{margin:0;background:#EDEEF1}a{color:#14181F}a:hover{color:#2446B8}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="padding:40px 44px 60px;display:flex;flex-direction:column;gap:28px;font-family:'IBM Plex Sans',sans-serif;color:#14181F;--marca:#127A3E;--marca-sobre:#FFFFFF;--marca-texto:#127A3E;--marca-suave:#E2EFE7;--acento:#F2B705;--acento-sobre:#17150F;--acento-texto:#8F6E0A">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:960px">
+    <div style="font-weight:600;font-size:26px">G-Quota · Sistema de diseño</div>
+    <div style="font-size:15px;color:#3B4452;line-height:1.55;text-wrap:pretty">Dirección 2a Contable. Hay dos tipos de tokens. Los de marca los configura cada negocio en Mi marca y la app los calcula. Los del sistema son fijos para todos los negocios. Todo se define como variables CSS y se conecta a Tailwind.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1360px">
+    <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;padding:18px 20px"><div style="font-size:12.5px;font-weight:600;color:#5B6472">Regla 1</div><div style="font-weight:600;font-size:15.5px;margin-top:4px">La marca va en el marco</div><div style="font-size:14px;color:#3B4452;line-height:1.5;margin-top:6px">Logo, ítem activo del menú, botón principal, franja del comprobante y encabezado de las tarjetas. Nunca en estados, barras de datos ni cifras.</div></div>
+    <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;padding:18px 20px"><div style="font-size:12.5px;font-weight:600;color:#5B6472">Regla 2</div><div style="font-weight:600;font-size:15.5px;margin-top:4px">El contraste lo calcula la app</div><div style="font-size:14px;color:#3B4452;line-height:1.5;margin-top:6px">Texto sobre la marca: blanco o tinta, el que tenga más contraste. Si la marca se usa como texto sobre blanco y no llega a 4,5:1, se oscurece hacia la tinta hasta llegar.</div></div>
+    <div style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;padding:18px 20px"><div style="font-size:12.5px;font-weight:600;color:#5B6472">Regla 3</div><div style="font-weight:600;font-size:15.5px;margin-top:4px">Estado = ícono + etiqueta</div><div style="font-size:14px;color:#3B4452;line-height:1.5;margin-top:6px">Los colores de estado son fijos. Cada estado tiene su forma de ícono y su palabra, así que se distinguen aunque la marca sea verde o roja, y también sin color.</div></div>
+  </div>
+
+  <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;max-width:1360px">
+    <div style="padding:16px 22px;border-bottom:1px solid #E2E5EA"><div style="font-weight:600;font-size:18px">Tokens de marca · configurables</div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">El negocio elige dos colores. El resto sale de ahí. Ejemplo con las tres marcas de prueba.</div></div>
+    <div style="display:grid;grid-template-columns:170px minmax(0,1fr) repeat(3,190px);gap:16px;align-items:center;height:44px;padding:0 22px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472">
+      <span>Token</span><span>Cómo se obtiene</span>
+      <sc-for list="{{ marcas }}" as="m" hint-placeholder-count="3"><span style="display:flex;align-items:center;gap:8px;color:#14181F"><span style="width:22px;height:22px;border-radius:5px;background:{{ m.marca }};color:{{ m.sobre }};display:grid;place-items:center;font-size:9.5px;font-weight:700">{{ m.mono }}</span>{{ m.nombre }}</span></sc-for>
+    </div>
+    <sc-for list="{{ tokRows }}" as="r" hint-placeholder-count="7">
+      <div style="display:grid;grid-template-columns:170px minmax(0,1fr) repeat(3,190px);gap:16px;align-items:center;min-height:52px;padding:8px 22px;box-sizing:border-box;border-bottom:1px solid #EDEFF2;font-size:14px">
+        <span style="font:500 13px 'IBM Plex Mono',monospace">{{ r.k }}</span><span style="color:#3B4452;line-height:1.4">{{ r.calc }}</span>
+        <sc-for list="{{ r.vals }}" as="v" hint-placeholder-count="3"><span style="display:flex;align-items:center;gap:10px"><span style="width:28px;height:28px;flex:none;border-radius:6px;background:{{ v.v }};box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)"></span><span style="font:400 12.5px/1.35 'IBM Plex Mono',monospace"><span style="display:block">{{ v.v }}</span><span style="display:block;color:#5B6472">{{ v.nota }}</span></span></span></sc-for>
+      </div>
+    </sc-for>
+    <div style="display:grid;grid-template-columns:170px minmax(0,1fr) repeat(3,190px);gap:16px;align-items:center;padding:14px 22px;background:#F8F9FA;font-size:14px">
+      <span style="font-weight:600">Resultado</span><span style="color:#3B4452">Botón principal y texto de enlace de cada marca</span>
+      <sc-for list="{{ marcas }}" as="m" hint-placeholder-count="3"><span style="display:flex;align-items:center;gap:12px"><span style="height:40px;padding:0 14px;border-radius:6px;background:{{ m.marca }};color:{{ m.sobre }};display:flex;align-items:center;font-weight:600;font-size:14px">Registrar pago</span><span style="font-weight:600;color:{{ m.texto }}">Ver todos</span></span></sc-for>
+    </div>
+  </section>
+
+  <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;max-width:1360px">
+    <div style="padding:16px 22px;border-bottom:1px solid #E2E5EA"><div style="font-weight:600;font-size:18px">Tokens del sistema · estados (fijos)</div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">Mismo color, ícono y palabra en todos los negocios.</div></div>
+    <div style="display:grid;grid-template-columns:190px 210px 200px minmax(0,1fr);gap:16px;align-items:center;height:44px;padding:0 22px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>Estado</span><span>Tokens</span><span>Contraste del texto</span><span>Cuándo se usa</span></div>
+    <sc-for list="{{ estados }}" as="e" hint-placeholder-count="6">
+      <div style="display:grid;grid-template-columns:190px 210px 200px minmax(0,1fr);gap:16px;align-items:center;min-height:58px;padding:10px 22px;box-sizing:border-box;border-bottom:1px solid #EDEFF2;font-size:14px">
+        <span><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px 0 8px;border-radius:13px;background:{{ e.st.bg }};color:{{ e.st.c }};font-weight:600;font-size:13px;white-space:nowrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="{{ e.st.shape }}" fill="{{ e.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ e.st.mark }}" fill="{{ e.st.markFill }}" stroke="{{ e.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ e.nombre }}</span></span>
+        <span style="font:400 12.5px/1.5 'IBM Plex Mono',monospace"><span style="display:block">{{ e.tk }} {{ e.st.c }}</span><span style="display:block;color:#5B6472">{{ e.tk }}-fondo {{ e.st.bg }}</span></span>
+        <span style="font-variant-numeric:tabular-nums;color:#3B4452">{{ e.r1 }} sobre su fondo<br>{{ e.r2 }} sobre blanco</span>
+        <span style="color:#3B4452;line-height:1.45">{{ e.regla }}</span>
+      </div>
+    </sc-for>
+  </section>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;max-width:1360px;align-items:start">
+    <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+      <div style="padding:16px 22px;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:18px">Tokens del sistema · neutros y forma</div>
+      <sc-for list="{{ neutros }}" as="n" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:36px 200px minmax(0,1fr);gap:14px;align-items:center;min-height:46px;padding:6px 22px;box-sizing:border-box;border-bottom:1px solid #EDEFF2;font-size:14px"><span style="width:28px;height:28px;border-radius:6px;background:{{ n.v }};box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)"></span><span style="font:400 12.5px/1.4 'IBM Plex Mono',monospace">{{ n.k }}<br><span style="color:#5B6472">{{ n.v }}</span></span><span style="color:#3B4452">{{ n.uso }}</span></div>
+      </sc-for>
+      <div style="padding:14px 22px;font-size:14px;color:#3B4452;line-height:1.6">Radios: 6 px en controles, 8 px en tarjetas y tablas, 12 px en insignias de estado.<br>Altura de controles: 40 px en escritorio, 44 a 54 px en el celular.<br>Filas de tabla: 44 a 56 px. Espaciado base de 4 px (8, 12, 16, 20, 24, 32).</div>
+    </section>
+
+    <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+      <div style="padding:16px 22px;border-bottom:1px solid #E2E5EA"><div style="font-weight:600;font-size:18px">Tipografía · IBM Plex Sans</div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">Todas las cifras con números tabulares. Los montos van alineados a la derecha.</div></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-weight:600;font-size:36px;font-variant-numeric:tabular-nums">$24.000</span><span style="font-size:12.5px;color:#5B6472">Monto del comprobante, pago registrado · 36/600</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-weight:600;font-size:26px;font-variant-numeric:tabular-nums">$18.450.000</span><span style="font-size:12.5px;color:#5B6472">Cifra de resumen · 26/600</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-weight:600;font-size:22px">Carmen Rincón</span><span style="font-size:12.5px;color:#5B6472">Nombre en la ficha · 22/600</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-weight:600;font-size:20px">Cobros de hoy</span><span style="font-size:12.5px;color:#5B6472">Título de pantalla · 20/600</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-weight:600;font-size:16px">Préstamos en mora</span><span style="font-size:12.5px;color:#5B6472">Título de sección · 16/600</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-size:14.5px;font-variant-numeric:tabular-nums">Cuota 30 de 40 · $1.250.000 · 23/09/2026</span><span style="font-size:12.5px;color:#5B6472">Cuerpo y celdas · 14,5/400</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px;border-bottom:1px solid #EDEFF2"><span style="font-size:13px;color:#5B6472">Restaurante El Fogón · 9:20 a. m.</span><span style="font-size:12.5px;color:#5B6472">Secundario · 13/400</span></div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:baseline;padding:14px 22px"><span style="font-weight:600;font-size:12.5px;color:#5B6472">Meta del día · Por cobrar</span><span style="font-size:12.5px;color:#5B6472">Encabezado de tabla · 12,5/600</span></div>
+    </section>
+  </div>
+
+  <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;max-width:1360px">
+    <div style="padding:16px 22px;border-bottom:1px solid #E2E5EA"><div style="font-weight:600;font-size:18px">Componentes</div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">Con la marca de muestra: {{ b.nombre }}. Cámbiela en Tweaks.</div></div>
+    <div style="display:grid;grid-template-columns:180px minmax(0,1fr);border-bottom:1px solid #EDEFF2">
+      <div style="padding:18px 22px;font-weight:600;font-size:15px">Botón</div>
+      <div style="padding:18px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+        <div style="height:40px;padding:0 16px;border-radius:6px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:14px">Principal</div>
+        <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;display:flex;align-items:center;font-weight:600;font-size:14px">Secundario</div>
+        <div style="font-weight:600;font-size:14px;color:var(--marca-texto)">Enlace</div>
+        <div style="height:40px;padding:0 16px;border-radius:6px;background:#EEF0F3;color:#5B6472;display:flex;align-items:center;font-weight:600;font-size:14px">Deshabilitado</div>
+        <div style="height:40px;padding:0 14px;box-sizing:border-box;border:1px solid #B3261E;border-radius:6px;color:#B3261E;display:flex;align-items:center;font-weight:600;font-size:14px">Deshacer pago</div>
+        <div style="height:54px;padding:0 22px;border-radius:8px;background:var(--marca);color:var(--marca-sobre);display:flex;align-items:center;font-weight:600;font-size:17px">Registrar $24.000</div>
+        <div style="height:44px;padding:0 12px;box-sizing:border-box;border:1px solid #9AA3AF;border-radius:8px;display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px;font-variant-numeric:tabular-nums"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>$24.000</div>
+        <div style="font-size:13px;color:#5B6472;flex-basis:100%">Escritorio 40 px. Celular 54 px para la acción principal. El botón de cobro lleva el monto adentro y cobra la cuota exacta con un toque.</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:180px minmax(0,1fr);border-bottom:1px solid #EDEFF2">
+      <div style="padding:18px 22px;font-weight:600;font-size:15px">Campo</div>
+      <div style="padding:18px 22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px">
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Normal</span><span style="height:40px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14.5px">Carmen Rincón</span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Con foco</span><span style="height:40px;box-sizing:border-box;border:2px solid var(--marca-texto);border-radius:6px;padding:0 11px;display:flex;align-items:center;font-size:14.5px">300 000 0001</span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Con error</span><span style="height:40px;box-sizing:border-box;border:1.5px solid #B3261E;border-radius:6px;padding:0 12px;display:flex;align-items:center;font-size:14.5px">31.456</span><span style="display:flex;align-items:center;gap:5px;font-size:12.5px;color:#B3261E"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1.8L14.8 13.9H1.2Z" fill="#B3261E"></path><path d="M8 6.3v3.1M8 11.7v.1" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"></path></svg>La cédula está incompleta</span></label>
+        <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;font-weight:600">Monto</span><span style="height:52px;box-sizing:border-box;border:1px solid #CDD2D9;border-radius:6px;padding:0 12px;display:flex;align-items:center;gap:6px;font-size:24px;font-weight:600;font-variant-numeric:tabular-nums"><span style="color:#5B6472;font-weight:500">$</span>50.000</span></label>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:180px minmax(0,1fr);border-bottom:1px solid #EDEFF2">
+      <div style="padding:18px 22px;font-weight:600;font-size:15px">Tarjeta de cobro<div style="font-weight:400;font-size:13px;color:#5B6472;margin-top:4px">Fila de la lista del cobrador</div></div>
+      <div style="padding:18px 22px">
+        <div style="width:390px;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden">
+          <sc-for list="{{ muestraCobro }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;min-height:66px;padding:10px 12px 10px 20px;box-sizing:border-box;border-bottom:1px solid #EDEFF2">
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:600;font-size:15.5px;line-height:1.25">{{ r.nombre }}</div>
+                <div style="font-size:13px;color:#5B6472;margin-top:1px">{{ r.sub }}</div>
+                <sc-if value="{{ r.badge }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-top:6px;font-size:13px"><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px 0 6px;border-radius:11px;background:{{ r.st.bg }};color:{{ r.st.c }};font-weight:600;font-size:12px;white-space:nowrap"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="{{ r.st.shape }}" fill="{{ r.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ r.st.mark }}" fill="{{ r.st.markFill }}" stroke="{{ r.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ r.label }}</span><span style="color:#3B4452">{{ r.extra }}</span></div></sc-if>
+              </div>
+              <sc-if value="{{ r.cobrar }}" hint-placeholder-val="{{ true }}"><div style="height:44px;flex:none;padding:0 12px;box-sizing:border-box;border:1px solid #9AA3AF;border-radius:8px;display:flex;align-items:center;gap:6px;font-weight:600;font-size:15px;font-variant-numeric:tabular-nums"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{ r.monto }}</div></sc-if>
+              <sc-if value="{{ r.noCobrar }}" hint-placeholder-val="{{ false }}"><div style="font-weight:600;font-size:15px;padding-right:8px;font-variant-numeric:tabular-nums;color:#3B4452">{{ r.monto }}</div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:180px minmax(0,1fr);border-bottom:1px solid #EDEFF2">
+      <div style="padding:18px 22px;font-weight:600;font-size:15px">Fila de cuota<div style="font-weight:400;font-size:13px;color:#5B6472;margin-top:4px">Tabla y cuadrícula</div></div>
+      <div style="padding:18px 22px;display:flex;flex-direction:column;gap:14px">
+        <div style="border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;max-width:860px">
+          <div style="display:grid;grid-template-columns:44px 160px 110px 100px 110px minmax(0,1fr);gap:12px;align-items:center;height:36px;padding:0 16px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>#</span><span>Vence</span><span style="text-align:right">Capital</span><span style="text-align:right">Interés</span><span style="text-align:right">Cuota</span><span>Cuotas pactadas</span></div>
+          <div style="display:grid;grid-template-columns:44px 160px 110px 100px 110px minmax(0,1fr);gap:12px;align-items:center;height:44px;padding:0 16px;background:#FFFAEE;font-size:14px;font-variant-numeric:tabular-nums"><span style="color:#5B6472">36</span><span><span style="display:inline-block;width:32px;color:#5B6472">mié</span>23/09/2026</span><span style="text-align:right;color:#5B6472">$20.000</span><span style="text-align:right;color:#5B6472">$4.000</span><span style="text-align:right;font-weight:500">$24.000</span><span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#FCF1D9;color:#8A5300;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#8A5300" stroke-width="1.6"></path><path d="M8 4.8V8l2.2 1.5" stroke="#8A5300" stroke-width="1.7" stroke-linecap="round"></path></svg>Vence hoy</span></span></div>
+        </div>
+        <div style="border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;max-width:860px">
+          <div style="display:grid;grid-template-columns:44px 160px 110px 100px 110px minmax(0,1fr);gap:12px;align-items:center;height:36px;padding:0 16px;background:#F8F9FA;border-bottom:1px solid #E2E5EA;font-weight:600;font-size:12.5px;color:#5B6472"><span>#</span><span>Vence</span><span style="text-align:right">Valor</span><span style="text-align:right">Abonado</span><span style="text-align:right">Falta</span><span>Cuota fija</span></div>
+          <div style="display:grid;grid-template-columns:44px 160px 110px 100px 110px minmax(0,1fr);gap:12px;align-items:center;height:44px;padding:0 16px;background:#F6F8FE;font-size:14px;font-variant-numeric:tabular-nums"><span style="color:#5B6472">19</span><span><span style="display:inline-block;width:32px;color:#5B6472">mié</span>23/09/2026</span><span style="text-align:right;color:#5B6472">$50.000</span><span style="text-align:right">$30.000</span><span style="text-align:right;font-weight:500">$20.000</span><span><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px 0 7px;border-radius:12px;background:#E8EDFB;color:#2446B8;font-weight:600;font-size:12.5px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.6a6.4 6.4 0 1 1 0 12.8a6.4 6.4 0 1 1 0-12.8Z" stroke="#2446B8" stroke-width="1.6"></path><path d="M8 1.6a6.4 6.4 0 0 0 0 12.8Z" fill="#2446B8"></path></svg>Parcial</span></span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,86px);gap:6px">
+          <sc-for list="{{ muestraTiles }}" as="q" hint-placeholder-count="5">
+            <div style="box-sizing:border-box;border-radius:8px;background:{{ q.tileBg }};border:{{ q.tileBd }};padding:7px 8px 8px;font-variant-numeric:tabular-nums">
+              <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-weight:600;font-size:12.5px">{{ q.n }}</span><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="color:{{ q.st.c }}"><path d="{{ q.st.shape }}" fill="{{ q.st.fill }}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path><path d="{{ q.st.mark }}" fill="{{ q.st.markFill }}" stroke="{{ q.st.markC }}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+              <div style="font-size:12.5px;margin-top:5px">{{ q.dia }} {{ q.fechaC }}</div>
+              <div style="font-size:12px;color:#3B4452">{{ q.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13px;color:#5B6472;line-height:1.5">Cuotas pactadas: capital, interés y cuota; estados pagada, vencida, vence hoy y pendiente. Cuota fija: valor, abonado y falta; estados pagada, parcial y pendiente. Abierto no tiene cronograma: usa la tabla de movimientos.</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:180px minmax(0,1fr)">
+      <div style="padding:18px 22px;font-weight:600;font-size:15px">Comprobante</div>
+      <div style="padding:18px 22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;font-size:13.5px;line-height:1.45;color:#3B4452">
+        <div><div style="font-weight:600;color:#14181F">Encabezado</div>Franja de 6 px con la marca, logo o monograma, nombre y WhatsApp.</div>
+        <div><div style="font-weight:600;color:#14181F">Cuerpo</div>Título, estado Pagado, N.º y fecha. Recibimos de, La suma de, el monto en letras.</div>
+        <div><div style="font-weight:600;color:#14181F">Detalle</div>Concepto, método, saldo, para quedar al día, cobrador y avance de cuotas.</div>
+        <div><div style="font-weight:600;color:#14181F">Pie</div>Texto del negocio, dirección y NIT si los hay, y «con G-Quota».</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#FFFFFF;border:1px solid #E2E5EA;border-radius:8px;overflow:hidden;max-width:1360px">
+    <div style="padding:16px 22px;border-bottom:1px solid #E2E5EA"><div style="font-weight:600;font-size:18px">Para el código · React + Tailwind</div><div style="font-size:13.5px;color:#5B6472;margin-top:2px">Los tokens de marca se escriben en el elemento raíz cuando carga el negocio. Los del sistema viven en la hoja base.</div></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+      <pre style="margin:0;padding:18px 22px;font:400 12.5px/1.6 'IBM Plex Mono',monospace;color:#14181F;background:#F8F9FA;border-right:1px solid #E2E5EA;white-space:pre-wrap">/* tokens.css: sistema, fijos */
+:root {
+  --fondo: #F5F6F8;        --superficie: #FFFFFF;
+  --superficie-2: #F8F9FA; --borde: #E2E5EA;
+  --borde-fila: #EDEFF2;   --borde-control: #CDD2D9;
+  --tinta: #14181F;        --tinta-2: #3B4452;
+  --tinta-3: #5B6472;
+
+  --estado-pagado: #1A7431;    --estado-pagado-fondo: #E7F3EA;
+  --estado-al-dia: #1A7431;    --estado-al-dia-fondo: #E7F3EA;
+  --estado-por-vencer: #8A5300; --estado-por-vencer-fondo: #FCF1D9;
+  --estado-mora: #B3261E;      --estado-mora-fondo: #FBE8E6;
+  --estado-parcial: #2446B8;   --estado-parcial-fondo: #E8EDFB;
+  --estado-pendiente: #5B6472; --estado-pendiente-fondo: #EEF0F3;
+}
+
+/* marca: valores por defecto, la app los reemplaza */
+:root {
+  --marca: #127A3E;  --marca-sobre: #FFFFFF;
+  --marca-texto: #127A3E; --marca-suave: #E2EFE7;
+  --acento: #F2B705; --acento-sobre: #17150F;
+  --acento-texto: #8F6E0A;
+}</pre>
+      <pre style="margin:0;padding:18px 22px;font:400 12.5px/1.6 'IBM Plex Mono',monospace;color:#14181F;background:#F8F9FA;white-space:pre-wrap">// tailwind.config.ts
+colors: {
+  marca: { DEFAULT: 'var(--marca)', sobre: 'var(--marca-sobre)',
+           texto: 'var(--marca-texto)', suave: 'var(--marca-suave)' },
+  acento: { DEFAULT: 'var(--acento)', sobre: 'var(--acento-sobre)' },
+  estado: { pagado: 'var(--estado-pagado)', mora: 'var(--estado-mora)', ... },
+  tinta: { DEFAULT: 'var(--tinta)', 2: 'var(--tinta-2)', 3: 'var(--tinta-3)' },
+}
+
+// marca.ts: se llama al cargar el negocio
+export function aplicarMarca(principal: string, acento: string) {
+  const r = document.documentElement.style;
+  r.setProperty('--marca', principal);
+  r.setProperty('--marca-sobre', sobre(principal));        // blanco o tinta
+  r.setProperty('--marca-texto', comoTexto(principal));    // ≥ 4,5:1 sobre blanco
+  r.setProperty('--marca-suave', mezcla(principal, '#FFFFFF', 0.88));
+  r.setProperty('--acento', acento);
+  r.setProperty('--acento-sobre', sobre(acento));
+  r.setProperty('--acento-texto', comoTexto(acento));
+}
+// sobre(c): el de mayor contraste WCAG entre #FFFFFF y #17150F
+// comoTexto(c): mezcla c con la tinta en pasos de 5 % hasta 4,5:1</pre>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;marca&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Créditos La 14 · verde&quot;,&quot;Inversiones Morales · azul marino&quot;,&quot;Préstamos Doña Rosa · amarillo&quot;,&quot;Créditos Ramírez · rojo&quot;,&quot;Multicréditos Yeni · fucsia&quot;],&quot;default&quot;:&quot;Créditos La 14 · verde&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca de prueba&quot;}}">
+const BR = ['Créditos La 14 · verde', 'Inversiones Morales · azul marino', 'Préstamos Doña Rosa · amarillo'];
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  componentDidMount() { this.esperar(); }
+  componentWillUnmount() { clearTimeout(this.t); }
+  componentDidUpdate() { this.aplicar(); }
+  esperar() { if (window.GQ) { this.forceUpdate(); this.aplicar(); } else this.t = setTimeout(() => this.esperar(), 40); }
+  aplicar() { const G = window.GQ; if (G) G.aplicar(this.rootRef.current, G.marca(this.props.marca)); }
+  renderVals() {
+    const G = window.GQ;
+    if (!G) return { rootRef: this.rootRef, b: {} };
+    const ms = BR.map(k => { const m = G.marca(k); const t = G.tokens(m.marca, m.acento); return { ...m, t, sobre: t['--marca-sobre'], texto: t['--marca-texto'] }; });
+    const fila = (k, calc, nota) => ({ k, calc, vals: ms.map(m => ({ v: m.t[k], nota: nota ? nota(m) : '' })) });
+    const T = G.TINTA;
+    const nombreT = c => (c === '#FFFFFF' ? 'blanco' : 'tinta');
+    const E = G.E;
+    const est = [
+      ['pagado', 'Pagado', '--estado-pagado', 'Cuota o cobro completo. También «Pagada» y «Cobrado».'],
+      ['aldia', 'Al día', '--estado-al-dia', 'Préstamo sin cuotas vencidas.'],
+      ['hoy', 'Por vencer', '--estado-por-vencer', 'Cuota que vence hoy y no se ha pagado. En la tabla dice «Vence hoy».'],
+      ['mora', 'En mora', '--estado-mora', 'Vencida: pasó la fecha. En mora: más de 5 días de gracia, contados desde la cuota vencida más antigua. Los días de gracia y el recargo los define la plantilla en los tres tipos; en el abierto cuenta desde su día de cobro del mes.'],
+      ['parcial', 'Parcial', '--estado-parcial', 'Solo en cuota fija: la cuota tiene un abono pero no está completa.'],
+      ['pendiente', 'Pendiente', '--estado-pendiente', 'Cuota futura. Con el mismo estilo: «Sin asignar» e «Inactivo» (con su propio ícono).'],
+    ].map(([k, nombre, tk, regla]) => ({ st: E[k], nombre, tk, regla, r1: G.ratio(E[k].c, E[k].bg), r2: G.ratio(E[k].c, '#FFFFFF') }));
+    const secs = G.SECCIONES;
+    return {
+      rootRef: this.rootRef, b: G.marca(this.props.marca),
+      marcas: ms,
+      tokRows: [
+        fila('--marca', 'Color principal que elige el negocio.'),
+        fila('--marca-sobre', 'Texto e íconos sobre el principal: blanco o tinta, el de mayor contraste.', m => nombreT(m.t['--marca-sobre']) + ' · ' + G.ratio(m.t['--marca-sobre'], m.marca)),
+        fila('--marca-texto', 'El principal usado como texto sobre blanco. Se oscurece si no llega a 4,5:1.', m => G.ratio(m.t['--marca-texto'], '#FFFFFF')),
+        fila('--marca-suave', 'Principal al 12 % sobre blanco. Fondo del ítem activo y de filas seleccionadas.'),
+        fila('--acento', 'Segundo color que elige el negocio. Uso mínimo: marcas de «hoy».'),
+        fila('--acento-sobre', 'Texto sobre el acento: blanco o tinta.', m => nombreT(m.t['--acento-sobre']) + ' · ' + G.ratio(m.t['--acento-sobre'], m.acento)),
+        fila('--acento-texto', 'El acento usado como texto sobre blanco, con la misma regla.', m => G.ratio(m.t['--acento-texto'], '#FFFFFF')),
+      ],
+      estados: est,
+      neutros: [
+        ['--fondo', '#F5F6F8', 'Fondo de la app'], ['--superficie', '#FFFFFF', 'Tarjetas, tablas, comprobante'], ['--superficie-2', '#F8F9FA', 'Encabezado y totales de tabla'],
+        ['--borde', '#E2E5EA', 'Bordes de tarjetas'], ['--borde-fila', '#EDEFF2', 'Separador de filas'], ['--borde-control', '#CDD2D9', 'Campos y botones secundarios'],
+        ['--tinta', '#14181F', 'Texto principal y cifras'], ['--tinta-2', '#3B4452', 'Texto de apoyo y barras de datos'], ['--tinta-3', '#5B6472', 'Etiquetas y texto secundario (6,1:1)'],
+        ['--tinta-sobre-marca', T, 'Tinta que se usa sobre marcas claras'],
+      ].map(([k, v, uso]) => ({ k, v, uso })),
+      muestraCobro: [secs[0].rows[0], secs[1].rows[0], secs[1].rows[1], secs[2].rows[0]],
+      muestraTiles: [G.CRONO_P[28], G.CRONO_P[30], G.CRONO_P[35], G.CRONO_P[37], G.CRONO_F[18]],
+    };
+  }
+}
+</script>
+</body>
+</html>

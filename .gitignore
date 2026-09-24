@@ -10,3 +10,7 @@ dist
 
 # Supabase CLI: archivos locales del link/proyecto (no van al repo)
 supabase/.temp/
+
+# Prueba de lectura de cédula: fotos, verdad y lecturas con datos personales (NUNCA al repo)
+herramientas/prueba-cedula/fotos/
+herramientas/prueba-cedula/resultados/

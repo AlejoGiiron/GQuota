@@ -22,6 +22,8 @@ export const METODOS_PAGO: ReadonlyArray<{ valor: string; label: string }> = [
 export interface ConfiguracionInput {
   nombre_negocio: string | null
   metodos_pago: string[]
+  /** Contacto para datos personales (WhatsApp o correo). undefined = no se toca; null = vacío. */
+  contacto_datos?: string | null
 }
 
 /** Rol del miembro dentro del negocio (Fase de roles). */
@@ -41,6 +43,8 @@ interface ConfiguracionContextValue {
   nombreNegocio: string
   /** Métodos de pago activos; si no hay negocio, el catálogo completo. */
   metodosActivos: string[]
+  /** Solicitudes por enlace activas en el negocio (negocios.solicitudes_activas, migración 038). */
+  solicitudesActivas: boolean
   guardar: (input: ConfiguracionInput) => Promise<{ error: string | null }>
   /**
    * Registro self-service: el usuario autenticado crea su negocio y queda como
@@ -99,7 +103,11 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
         .from('negocios')
         // `nombre` es NOT NULL: el nombre vacío se guarda como '' (no null),
         // que el getter nombreNegocio muestra como 'G-Quota'.
-        .update({ nombre: input.nombre_negocio?.trim() ?? '', metodos_pago: input.metodos_pago })
+        .update({
+          nombre: input.nombre_negocio?.trim() ?? '',
+          metodos_pago: input.metodos_pago,
+          ...(input.contacto_datos !== undefined ? { contacto_datos: input.contacto_datos } : {}),
+        })
         .eq('id', negocio.id)
         .select()
         .single()
@@ -143,6 +151,7 @@ export function ConfiguracionProvider({ children }: { children: ReactNode }) {
       loading,
       nombreNegocio: negocio?.nombre?.trim() || NOMBRE_POR_DEFECTO,
       metodosActivos: metodos,
+      solicitudesActivas: negocio?.solicitudes_activas === true,
       guardar,
       crearNegocio,
       refrescar: cargar,
