@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Solicitud } from '@/types/db'
 
-/** Columnas que usa la lista (sin token_hash ni lo de las fases 1B/1C). */
+/** Columnas que usa la lista (sin token_hash ni los datos del prospecto). */
 export type SolicitudLista = Pick<
   Solicitud,
-  'id' | 'telefono' | 'nombre_referencia' | 'estado' | 'expira_en' | 'created_at' | 'completada_en' | 'revisada_en'
+  'id' | 'telefono' | 'nombre_referencia' | 'estado' | 'expira_en' | 'created_at' | 'completada_en' | 'revisada_en' | 'cliente_id'
 >
 
 /** Lo que devuelve crear_solicitud. El token solo existe aquí: no se guarda en ningún lado. */
@@ -35,7 +35,7 @@ export function useSolicitudes(habilitado: boolean) {
     setLoading(true)
     const { data, error: err } = await supabase
       .from('solicitudes')
-      .select('id, telefono, nombre_referencia, estado, expira_en, created_at, completada_en, revisada_en')
+      .select('id, telefono, nombre_referencia, estado, expira_en, created_at, completada_en, revisada_en, cliente_id')
       .neq('estado', 'anulada')
       .order('created_at', { ascending: false })
     setError(err ? 'No pudimos cargar las solicitudes. Intenta de nuevo.' : null)

@@ -19,10 +19,13 @@ export type Database = {
           created_at: string
           direccion: string | null
           documento: string | null
+          ficha: Json | null
+          ficha_origen: Json | null
           id: string
           negocio_id: string
           nombre: string
           notas: string | null
+          solicitud_id: string | null
           telefono: string | null
           user_id: string
         }
@@ -30,10 +33,13 @@ export type Database = {
           created_at?: string
           direccion?: string | null
           documento?: string | null
+          ficha?: Json | null
+          ficha_origen?: Json | null
           id?: string
           negocio_id?: string
           nombre: string
           notas?: string | null
+          solicitud_id?: string | null
           telefono?: string | null
           user_id: string
         }
@@ -41,10 +47,13 @@ export type Database = {
           created_at?: string
           direccion?: string | null
           documento?: string | null
+          ficha?: Json | null
+          ficha_origen?: Json | null
           id?: string
           negocio_id?: string
           nombre?: string
           notas?: string | null
+          solicitud_id?: string | null
           telefono?: string | null
           user_id?: string
         }
@@ -54,6 +63,13 @@ export type Database = {
             columns: ["negocio_id"]
             isOneToOne: false
             referencedRelation: "negocios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clientes_solicitud_id_fkey"
+            columns: ["solicitud_id"]
+            isOneToOne: false
+            referencedRelation: "solicitudes"
             referencedColumns: ["id"]
           },
         ]
@@ -401,7 +417,9 @@ export type Database = {
           estado: string
           expira_en: string
           fotos: Json | null
+          fotos_borradas_en: string | null
           id: string
+          motivo_rechazo: string | null
           negocio_id: string
           nombre_referencia: string | null
           origen: Json | null
@@ -409,6 +427,9 @@ export type Database = {
           revisada_por: string | null
           telefono: string
           token_hash: string
+          verificacion: string | null
+          verificacion_detalle: Json | null
+          verificacion_en: string | null
         }
         Insert: {
           autorizacion_en?: string | null
@@ -422,7 +443,9 @@ export type Database = {
           estado?: string
           expira_en: string
           fotos?: Json | null
+          fotos_borradas_en?: string | null
           id?: string
+          motivo_rechazo?: string | null
           negocio_id: string
           nombre_referencia?: string | null
           origen?: Json | null
@@ -430,6 +453,9 @@ export type Database = {
           revisada_por?: string | null
           telefono: string
           token_hash: string
+          verificacion?: string | null
+          verificacion_detalle?: Json | null
+          verificacion_en?: string | null
         }
         Update: {
           autorizacion_en?: string | null
@@ -443,7 +469,9 @@ export type Database = {
           estado?: string
           expira_en?: string
           fotos?: Json | null
+          fotos_borradas_en?: string | null
           id?: string
+          motivo_rechazo?: string | null
           negocio_id?: string
           nombre_referencia?: string | null
           origen?: Json | null
@@ -451,6 +479,9 @@ export type Database = {
           revisada_por?: string | null
           telefono?: string
           token_hash?: string
+          verificacion?: string | null
+          verificacion_detalle?: Json | null
+          verificacion_en?: string | null
         }
         Relationships: [
           {
@@ -474,6 +505,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      aprobar_solicitud: {
+        Args: {
+          p_cliente_existente?: string
+          p_datos: Json
+          p_solicitud: string
+        }
+        Returns: Json
+      }
       asignar_cobrador: {
         Args: { p_cobrador_id?: string; p_prestamo_id: string }
         Returns: {
@@ -672,6 +711,14 @@ export type Database = {
         Returns: boolean
       }
       ficha_config_valida: { Args: { c: Json }; Returns: boolean }
+      guardar_verificacion: {
+        Args: { p_detalle?: Json; p_resultado: string; p_solicitud: string }
+        Returns: undefined
+      }
+      limpiar_solicitudes: {
+        Args: { p_solicitud?: string }
+        Returns: undefined
+      }
       marcar_cuotas_vencidas: { Args: never; Returns: number }
       marcar_mora: { Args: never; Returns: number }
       mi_miembro_id: { Args: never; Returns: string }
@@ -679,6 +726,10 @@ export type Database = {
       mi_rol: { Args: never; Returns: string }
       normalizar_celular_co: { Args: { p: string }; Returns: string }
       puedo_ver_prestamo: { Args: { p_prestamo_id: string }; Returns: boolean }
+      rechazar_solicitud: {
+        Args: { p_motivo?: string; p_solicitud: string }
+        Returns: undefined
+      }
       registrar_pago: {
         Args: {
           p_interes_pendiente_restante: number

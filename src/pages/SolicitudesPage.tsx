@@ -103,12 +103,18 @@ export default function SolicitudesPage() {
         </button>
       )
     }
-    // Revisar, ver cliente y ver una rechazada llegan con la revisión (fase 1C).
-    const texto = s.visual === 'por_revisar' ? 'Revisar' : s.visual === 'aprobada' ? 'Ver cliente' : 'Ver'
+    // Revisión (fase 1C): revisar una completada, ver el cliente de una aprobada o ver una rechazada.
+    if (s.visual === 'aprobada' && s.cliente_id) {
+      return (
+        <Link to={`/clientes/${s.cliente_id}`} className={clase}>
+          Ver cliente
+        </Link>
+      )
+    }
     return (
-      <button type="button" className={clase} disabled title="Llega con la revisión de solicitudes">
-        {texto}
-      </button>
+      <Link to={`/solicitudes/${s.id}`} className={clase}>
+        {s.visual === 'por_revisar' ? 'Revisar' : 'Ver'}
+      </Link>
     )
   }
 
