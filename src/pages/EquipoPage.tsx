@@ -172,7 +172,7 @@ export default function EquipoPage() {
                       {m.nombre ?? 'Sin nombre'}
                     </span>
                     <span
-                      className={`badge ${m.rol === 'dueno' ? 'badge--pagado' : 'badge--porvenc'}`}
+                      className={`badge ${m.rol === 'dueno' ? 'badge--pagado' : 'border border-borde-control bg-superficie text-tinta-2'}`}
                     >
                       {m.rol === 'dueno' ? 'Dueño' : 'Cobrador'}
                     </span>

@@ -52,14 +52,14 @@ function fechaLarga(d: Date): string {
 type Tono = 'verde' | 'pizarra' | 'ambar' | 'rojo'
 const CHIP: Record<Tono, string> = {
   verde: 'bg-green-tint text-green',
-  pizarra: 'bg-[#eef2f0] text-[#3f5b50]',
-  ambar: 'bg-amber-tint text-amber',
+  pizarra: 'bg-estado-pendiente-fondo text-estado-pendiente',
+  ambar: 'bg-estado-por-vencer-fondo text-estado-por-vencer',
   rojo: 'bg-red-tint-2 text-red',
 }
 const VALOR: Record<Tono, string> = {
   verde: 'text-text',
   pizarra: 'text-text',
-  ambar: 'text-amber',
+  ambar: 'text-estado-por-vencer',
   rojo: 'text-red',
 }
 
@@ -253,7 +253,7 @@ export default function InicioPage() {
               </span>
               <div className="h-2 w-[150px] overflow-hidden rounded-full bg-line">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#10b981] to-green"
+                  className="h-full rounded-full bg-tinta-2"
                   style={{ width: `${pct}%` }}
                 />
               </div>

@@ -95,7 +95,7 @@ export default function EstadoDeCuenta({
           <span className="mono">{fmtCOP(interesPeriodo)}</span>
         </Resumen>
         <Resumen etiqueta="Interés pendiente">
-          <span className="mono text-amber">{fmtCOP(prestamo.interes_pendiente)}</span>
+          <span className="mono text-estado-por-vencer">{fmtCOP(prestamo.interes_pendiente)}</span>
         </Resumen>
         <Resumen etiqueta="Estado">
           <EstadoBadge estado={prestamo.estado} />

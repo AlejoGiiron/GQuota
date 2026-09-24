@@ -15,7 +15,7 @@ import type { Movimiento, Prestamo } from '@/types/db'
 
 const ESTADO_CUOTA: Record<string, { label: string; cls: string }> = {
   pendiente: { label: 'Pendiente', cls: 'bg-bg text-text-2' },
-  parcial: { label: 'Parcial', cls: 'bg-amber-tint text-[#b45309]' },
+  parcial: { label: 'Parcial', cls: 'bg-estado-parcial-fondo text-estado-parcial' },
   pagada: { label: 'Pagada', cls: 'bg-green-tint text-green-700' },
 }
 
@@ -158,7 +158,7 @@ export default function CronogramaCuotaFija({
                       <td className="mono whitespace-nowrap px-1 py-2.5 text-right text-text">{fmtCOP(c.capital)}</td>
                       <td className="mono whitespace-nowrap px-1 py-2.5 text-right">
                         {c.estado === 'parcial' ? (
-                          <span className="font-bold text-[#b45309]">{fmtCOP(c.abonado)}</span>
+                          <span className="font-bold text-estado-parcial">{fmtCOP(c.abonado)}</span>
                         ) : (
                           <span className="text-text">{fmtCOP(c.abonado)}</span>
                         )}

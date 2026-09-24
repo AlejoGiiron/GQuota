@@ -67,7 +67,7 @@ export default function SinNegocioPage() {
     <div className="grid min-h-screen place-items-center bg-bg px-5 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center justify-center gap-2.5">
-          <div className="grid h-[38px] w-[38px] place-items-center rounded-[11px] bg-gradient-to-br from-[#10b981] to-green text-[19px] font-extrabold text-white shadow-[0_4px_12px_rgba(4,120,87,0.35)]">
+          <div className="grid h-[38px] w-[38px] place-items-center rounded-tarjeta bg-marca text-[19px] font-bold text-marca-sobre">
             G
           </div>
           <div className="text-xl font-extrabold tracking-tight text-text">

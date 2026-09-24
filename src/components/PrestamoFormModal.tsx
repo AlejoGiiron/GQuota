@@ -13,7 +13,7 @@ import type { ModoInteres } from '@/lib/motor-prestamos'
 import type { Cliente } from '@/types/db'
 
 const selectClass =
-  'w-full h-[52px] rounded-xl border-[1.5px] border-line bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-green focus:shadow-[0_0_0_4px_rgba(4,120,87,0.12)]'
+  'w-full h-[52px] rounded-control border border-borde-control bg-card px-4 text-[15px] font-medium text-text outline-none transition-colors focus:border-marca-texto focus:shadow-[inset_0_0_0_1px_var(--marca-texto)]'
 
 const FRECUENCIAS: ReadonlyArray<{ valor: FrecuenciaCuota; label: string }> = [
   { valor: 'diaria', label: 'Diaria' },

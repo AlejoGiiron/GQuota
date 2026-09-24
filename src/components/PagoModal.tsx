@@ -266,7 +266,7 @@ export default function PagoModal({
               {previo.excedente > 0 && (
                 <li className="flex justify-between">
                   <span className="text-text-2">Sobrante (saldo a favor)</span>
-                  <span className="mono font-semibold text-amber">{fmtCOP(previo.excedente)}</span>
+                  <span className="mono font-semibold text-estado-por-vencer">{fmtCOP(previo.excedente)}</span>
                 </li>
               )}
               <li className="flex justify-between border-t border-line pt-1.5">

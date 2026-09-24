@@ -1,57 +1,102 @@
-# G-Quota — Guía de diseño (design-system.md)
+# G-Quota — Sistema de diseño 2a Contable (design-system.md)
 
-> Esta guía es la **dirección inicial** del proyecto. Una vez Claude Design genere las pantallas, extrae los tokens reales (colores y medidas exactas) de su código y actualiza este archivo para que sea 100% fiel. A partir de ahí, este archivo **manda**: ningún componente nuevo inventa estilos.
+> **Este archivo manda.** Antes de crear o modificar un componente o una pantalla, léelo. No inventes colores, tipografías ni estilos: usa los tokens y componentes de aquí.
+> Referencia visual y de origen: `design/paquete-2a/` (abrir los `.html` en el navegador; la fuente con tokens y reglas está en `fuente/G-Quota Sistema.dc.html` y `fuente/gq-comun.js`).
 
-G-Quota es una app de dinero usada por prestamistas, muchas veces personas no técnicas y desde el celular. Las dos prioridades visuales son: **confianza** (se ve serio y ordenado) y **legibilidad de las cifras** (los montos se leen en un vistazo).
+G-Quota es una app de dinero para prestamistas, muchas veces personas no técnicas y desde el celular. La dirección **2a Contable** es sobria y plana: superficies blancas con borde, sin sombras, cifras grandes y tabulares. Es **marca blanca**: cada negocio pone sus dos colores y la app se ve con su marca.
 
-## Colores
+## Las tres reglas
 
-- **Sidebar / superficie oscura:** verde tinta muy oscuro `#0c1f1a`
-- **Fondo principal:** blanco hueso `#faf9f7`
-- **Tarjetas:** blanco `#ffffff`
-- **Primario (acción):** verde esmeralda `#047857` · hover `#065f46`
-- **Acento (valor/dinero destacado):** ámbar `#d97706` — usar con moderación
-- **Texto principal:** `#1c2b27`
-- **Texto secundario:** `#6b7770`
-- **Bordes:** `#e7e5e0`
-- **Estados:** activo/al día verde `#16a34a` · en mora (por vencer) ámbar `#d97706` · vencido rojo `#dc2626` · pagado/inactivo gris `#9ca3af`
+1. **La marca va en el marco.** Logo/monograma, ítem activo del menú, botón principal, franja del comprobante y enlaces. **Nunca** en estados, barras de datos ni cifras.
+2. **El contraste lo calcula la app.** Texto sobre la marca: blanco o tinta, el de mayor contraste. Si la marca se usa como texto sobre blanco y no llega a 4,5:1, se oscurece hacia la tinta hasta llegar. Nunca se escribe un color derivado a mano.
+3. **Estado = ícono + palabra.** Los colores de estado son fijos para todos los negocios y cada estado tiene su forma de ícono y su palabra: se distinguen aunque la marca sea verde o roja, y también sin color.
 
-## Tipografía
+## Tokens
 
-- **Interfaz:** Plus Jakarta Sans
-- **Montos y cifras:** JetBrains Mono (tabular, para que las columnas de dinero alineen)
-- **Pesos:** títulos 600–700, cuerpo 400–500
+Todos viven como variables CSS en `:root` (src/index.css) — **única fuente de verdad**. Tailwind (`tailwind.config.js`) apunta a esas variables; no copia valores.
 
-## Implementación (Tailwind + tokens)
+### Marca (configurable por negocio)
 
-- Los tokens viven en `:root` (src/index.css) y son la **única fuente de verdad**. Tailwind está conectado a esas variables en `tailwind.config.js` (no duplica valores).
-- **Usa utilidades de Tailwind** conectadas a los tokens: colores (`bg-green`, `text-ink`, `text-text-2`, `border-line`, `bg-card`…), radios (`rounded` = `--r`, `rounded-lg` = `--r-lg`, `rounded-sm` = `--r-sm`), sombras (`shadow-card`, `shadow-pop`) y fuentes (`font-ui`, `font-mono`).
-- Los **primitivos** del design system son clases compartidas (en `@layer components`, src/index.css), una sola definición por primitivo: `.btn-primary` · `.btn-secondary` · `.btn-destructive` · `.input` · `.card` · `.badge` con `.badge--aldia` / `.badge--porvenc` / `.badge--vencido` / `.badge--pagado`. Reutilízalos; no redefinas un botón o input por pantalla.
-- El **CSS plano queda solo para lo bespoke** de una pantalla concreta (p. ej. el panel de marca del login en src/pages/login.css). No inventes tokens ni valores nuevos.
+| Token | Tailwind | Qué es |
+|---|---|---|
+| `--marca` | `bg-marca` | Color principal que elige el negocio |
+| `--marca-sobre` | `text-marca-sobre` | Texto e íconos sobre la marca (blanco o tinta) |
+| `--marca-texto` | `text-marca-texto` | La marca como texto sobre blanco (≥ 4,5:1) — enlaces, foco |
+| `--marca-suave` | `bg-marca-suave` | Marca al 12 % sobre blanco — fondo del ítem activo |
+| `--acento` | `bg-acento` | Segundo color del negocio. Uso mínimo (marcas de «hoy») |
+| `--acento-sobre` / `--acento-texto` | `text-acento-sobre` / `text-acento-texto` | Igual que los de la marca |
 
-## Componentes establecidos
+Los derivados se calculan con **`tokensDeMarca(principal, acento)`** de `src/lib/marca.ts` (lógica pura, con pruebas contra las tres marcas del paquete). **Por ahora la marca es fija** (verde `#047857` y ámbar `#D97706` de G-Quota) y sus valores están en index.css; una prueba verifica que coincidan con la función. Con «Mi marca» la app escribirá estas variables en `document.documentElement` al cargar el negocio.
 
-- **Tarjeta de préstamo:** nombre del cliente, saldo en mono grande, badge del modo de interés (Sobre saldo / Fijo), badge de estado con color, y el próximo cobro.
-- **Sidebar:** fondo verde tinta, items en gris claro; activo en verde esmeralda sólido con texto blanco y sombra (igual al Dashboard V2 aprobado).
-- **Botón primario:** verde esmeralda, texto blanco, `rounded-lg`, hover más oscuro.
-- **Botón secundario:** borde gris, fondo blanco. **Destructivo:** rojo.
-- **Inputs:** borde gris, `focus` con ring verde. Los inputs de dinero van alineados a la derecha y en mono.
-- **Modales:** fondo blanco, header con título en bold, footer con botones alineados a la derecha.
-- **Badges de estado:** verde (al día), ámbar (por vencer), rojo (vencido), gris (pagado).
-- **Ledger de movimientos:** tabla con fecha, tipo, interés, capital y saldo; las cifras en mono alineadas a la derecha.
+### Sistema (fijos)
 
-## Patrones de layout
+| Token | Tailwind | Uso |
+|---|---|---|
+| `--fondo` `#F5F6F8` | `bg-fondo` | Fondo de la app |
+| `--superficie` `#FFFFFF` | `bg-superficie` | Tarjetas, tablas, modales |
+| `--superficie-2` `#F8F9FA` | `bg-superficie-2` | Encabezado y totales de tabla, hover |
+| `--borde` `#E2E5EA` | `border-borde` | Bordes de tarjetas |
+| `--borde-fila` `#EDEFF2` | `border-borde-fila` | Separador de filas |
+| `--borde-control` `#CDD2D9` | `border-borde-control` | Campos y botones secundarios |
+| `--tinta` `#14181F` | `text-tinta` | Texto principal y cifras |
+| `--tinta-2` `#3B4452` | `text-tinta-2` / `bg-tinta-2` | Texto de apoyo y **barras de datos** |
+| `--tinta-3` `#5B6472` | `text-tinta-3` | Etiquetas y texto secundario (6,1:1) |
+| `--tinta-sobre-marca` `#17150F` | `text-tinta-sobre-marca` | Tinta sobre marcas claras |
 
-- **Lista + detalle:** 60/40 en desktop; apilado en móvil.
-- **Dashboard:** grid responsive de tarjetas de métricas.
-- **Móvil:** navegación inferior (Inicio, Clientes, Préstamos, Cobros) con objetivos táctiles grandes.
-- **Spacing:** padding interno de tarjetas `p-4`/`p-5`, `gap-4` entre tarjetas, grids de 3 columnas en desktop.
+### Estados (fijos: color + fondo + ícono + palabra)
 
-## Patrones de UX
+| Estado | Tokens | Palabra | Cuándo |
+|---|---|---|---|
+| Pagado | `--estado-pagado` / `-fondo` | Pagado (Pagada, Cobrado) | Cuota o cobro completo |
+| Al día | `--estado-al-dia` / `-fondo` | Al día | Préstamo sin cuotas vencidas |
+| Por vencer | `--estado-por-vencer` / `-fondo` | Por vencer (Vence hoy) | Cuota que vence hoy sin pagar |
+| En mora | `--estado-mora` / `-fondo` | En mora (Vencida) | Pasó la fecha; mora = más de 5 días de gracia |
+| Parcial | `--estado-parcial` / `-fondo` | Parcial | Solo cuota fija: abono incompleto |
+| Pendiente | `--estado-pendiente` / `-fondo` | Pendiente (Inactivo, Sin asignar) | Cuota futura; neutros |
 
-- **Dinero siempre** con `Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })` → `$1.000.000`.
-- **Todo el texto en español.** Fechas en formato local `dd/mm/aaaa`.
-- **Estados obligatorios** en cualquier vista con datos: skeleton al cargar, estado vacío con botón de acción, error con mensaje claro.
+En Tailwind: `text-estado-mora`, `bg-estado-mora-fondo`, etc.
+
+### Forma y tipografía
+
+- **Fuente:** IBM Plex Sans (400/500/600/700), servida desde el proyecto con `@fontsource/ibm-plex-sans` (sin CDN). **Todas las cifras con números tabulares** (`.cifra`, o `.mono` en código viejo) y los montos alineados a la derecha. Ya no hay fuente monoespaciada.
+- **Escala:** comprobante 36/600 · cifra de resumen 26/600 · nombre en ficha 22/600 · título de pantalla 20/600 · título de sección 16/600 · cuerpo y celdas 14,5/400 · secundario 13/400 · encabezado de tabla 12,5/600.
+- **Radios:** 6 px controles (`rounded-control`) · 8 px tarjetas, tablas y modales (`rounded-tarjeta`) · 12 px insignias de estado (`rounded-estado`).
+- **Alturas:** controles 44 px en el celular y 40 px en escritorio; acción principal del celular 54 px (`btn-grande`). Filas de tabla 44 a 56 px.
+- **Espaciado** base de 4 px (8, 12, 16, 20, 24, 32).
+- **Sombras:** solo lo que flota (modal, menús): `shadow-flotante`. Las tarjetas van con borde, sin sombra.
+
+## Componentes base
+
+Clases en `@layer components` (src/index.css) y componentes React en `src/components/ui/` que las usan. Reutilízalos; no redefinas un botón o un campo por pantalla.
+
+| Componente | React | Clases |
+|---|---|---|
+| Botón | `<Boton variante="principal · secundario · destructivo · enlace" grande>` | `.btn-primary` `.btn-secondary` `.btn-destructive` (contorno rojo) `.btn-enlace` `.btn-grande` |
+| Campo | `<Campo etiqueta ayuda error>{(p) => <input className="input" {...p} />}</Campo>` — enlaza etiqueta, ayuda y error (aria) | `.campo` `.input` (foco: borde 2 px `--marca-texto`; error: `aria-invalid`) |
+| Monto | `<EntradaMonto>` (52 px, cifra 24/600, `$` delante) | `.input-monto` |
+| Selector | `<Selector>` (select nativo con la flecha del sistema) | `.select` |
+| Control segmentado | `<ControlSegmentado opciones valor alCambiar etiquetaAccesible>` — la opción elegida va en tinta sólida | `.segmentado` |
+| Etiqueta de estado | `<EtiquetaEstado estado="mora">En mora · 6 días</EtiquetaEstado>` — **siempre** ícono + palabra; `<IconoEstado>` para cuadrículas | `.estado--*` |
+| Tarjeta | `<Tarjeta titulo acciones sinRelleno>` | `.tarjeta` (`.card` en código viejo) |
+| Tabla | `<Tabla columnas filas claveFila etiqueta>` — `numerica` alinea a la derecha; `total` en una columna agrega la fila de totales | `.tabla` `.num` |
+| Modal | `src/components/Modal.tsx` — velo de tinta, título 18/600, cuerpo con scroll, pie fijo con botones a la derecha | — |
+
+**Tailwind y clases dinámicas:** Tailwind purga de `@layer components` las clases que no encuentra escritas literalmente. Nunca armes `estado--${x}`: usa un mapa con los nombres completos (como `EtiquetaEstado`).
+
+## Layout
+
+- **Escritorio (≥ 768 px):** menú lateral blanco de 232 px — monograma de la marca, nombre del negocio y rol; ítems de 40 px con ícono; el activo lleva `--marca-suave` y una barra de 3 px de la marca a la izquierda. Abajo, la cuenta (correo, rol, cerrar sesión) y «con G-Quota». Sin barra superior: cada página pone su título.
+- **Móvil:** encabezado de 52 px (monograma, nombre del negocio, cuenta) y **barra inferior** con lo operativo; el activo lleva una raya de 3 px de la marca arriba. Equipo y Configuración van en el menú de la cuenta.
+- **Permisos:** el dueño ve Inicio, Cobros, Clientes, Préstamos, Equipo y Configuración; el cobrador, Cobros, Clientes y Préstamos. Solicitudes, Plantillas y Mi marca llegan con sus fases.
+- **Lista + detalle:** 60/40 en escritorio; apilado en móvil.
+
+## Tokens viejos (transición)
+
+Las pantallas anteriores al sistema 2a usan nombres viejos (`bg-green`, `text-text-2`, `border-line`, `text-muted`, `.badge--*`…). En index.css esas variables **apuntan a las nuevas** (`--green` → `--marca`, `--text-2` → `--tinta-2`, `--muted` → `--tinta-3`, `--red` → `--estado-mora`…), así que siguen funcionando y se ven con el sistema nuevo. **No los uses en código nuevo**; se retiran a medida que cada pantalla se rediseñe.
+
+## Patrones de UX (sin cambios)
+
+- **Dinero** siempre con `fmtCOP()` y **fechas** con `fmtFecha()` (src/lib/formatters.ts). Todo el texto en español.
+- **Estados obligatorios** en toda vista con datos: cargando (skeleton), vacío (con acción), error (mensaje claro).
 - **Confirmación** antes de eliminar o cancelar. **Toast** de éxito/error tras cada mutación.
-- Al crear un préstamo, **mostrar siempre la tasa efectiva anual equivalente** y alertar si supera el tope de usura configurado.
-- **Cifras grandes y legibles**: la app se usa a veces en la calle, desde el celular.
+- **Cifras grandes y legibles**: la app se usa en la calle, desde el celular. Texto normal ≥ 4,5:1 contra su fondo.
