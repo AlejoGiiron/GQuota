@@ -275,7 +275,7 @@ export default function InicioPage() {
                   <div className="min-w-0 flex-1 leading-tight">
                     <Link
                       to={`/prestamos/${prestamo.id}`}
-                      className="truncate text-[15px] font-bold text-text hover:underline"
+                      className="block truncate text-[15px] font-bold text-text hover:underline"
                     >
                       {nombreDe(prestamo)}
                     </Link>

@@ -162,7 +162,7 @@
 .lg-brand-foot {
   position: relative;
   font-size: 12.5px;
-  color: #5e7d72;
+  color: #7f9a90; /* 5,9:1 sobre la tinta (antes 3,9:1) */
   font-weight: 500;
   display: flex;
   align-items: center;
