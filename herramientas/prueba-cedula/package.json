@@ -1,0 +1,19 @@
+{
+  "name": "prueba-cedula",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prueba técnica de lectura de la cédula colombiana (fuera de la app; ver README.md)",
+  "type": "module",
+  "scripts": {
+    "autoprueba": "node metodo-a.mjs --autoprueba",
+    "metodo-a": "node metodo-a.mjs",
+    "metodo-b": "node metodo-b.mjs",
+    "comparar": "node comparar.mjs",
+    "limpiar": "node limpiar.mjs --todo"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "sharp": "^0.35.4",
+    "zxing-wasm": "^3.1.4"
+  }
+}

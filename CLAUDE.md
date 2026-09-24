@@ -50,7 +50,7 @@ Prueba técnica (sin tocar la base ni producción) para leer la cédula colombia
 
 **Evidencia (limitada):** 1 cédula amarilla, 2 fotos reenviadas por WhatsApp (1600 px, comprimidas). El método A decodificó el respaldo al primer intento (sin preprocesado, ~0,25 s, sin red) y leyó **6/6 campos correctos** contra la verdad: número, apellidos, nombres, sexo, fecha de nacimiento, RH. Autoprueba con códigos sintéticos: 12/12 byte a byte, pero el PDF417 NO se lee con ~8° de inclinación sin enderezar (se resolvió probando giros de ±3° a ±20°; el QR aguanta 20° solo).
 
-**NO probado (riesgos abiertos):** fotos originales de cámara, fotos inclinadas con perspectiva, poca luz/reflejos, la **cédula digital** (se desconoce qué código trae y si sus datos vienen legibles o firmados/cifrados), y más de una cédula amarilla (las posiciones de los campos salen de UNA sola; confirmar con un solo apellido y nombres largos). Antes de dar la función por buena, probar al menos eso.
+**NO probado (riesgos abiertos):** fotos originales de cámara, fotos inclinadas con perspectiva, poca luz/reflejos, la **cédula digital** (se desconoce qué código trae y si sus datos vienen legibles o firmados/cifrados), y más de una cédula amarilla (las posiciones de los campos salen de UNA sola; confirmar con un solo apellido y nombres largos). **No bloquean la construcción:** si la lectura falla, entra la captura a mano marcada "sin verificar". Probar cuando haya una cédula digital disponible (con `herramientas/prueba-cedula/`).
 
 **Reglas para producción (obligatorias):**
 - La lectura corre en el navegador del prospecto; la foto no sale del dispositivo. Al backend solo llegan los campos extraídos.
@@ -60,7 +60,7 @@ Prueba técnica (sin tocar la base ni producción) para leer la cédula colombia
 - El código NO trae estatura ni fecha/lugar de expedición. El lugar de nacimiento (viene como código) NO se captura: no hace falta para el préstamo.
 - Ley 1581 de 2012 (habeas data): aunque la imagen no salga del dispositivo, los datos extraídos llegan al backend; se necesita la autorización del titular para su tratamiento.
 
-**Scripts de la prueba:** en `pruebas-cedula/` (IGNORADO por git: solo existe en el equipo donde se hizo). `metodo-a.mjs` (con `--autoprueba`), `metodo-b.mjs`, `comparar.mjs`, `convertir-verdad.mjs`, `limpiar.mjs`. Las fotos y resultados con datos personales se borraron al cerrar la prueba.
+**Scripts de la prueba:** en `herramientas/prueba-cedula/` (en el repo, con su propio `package.json` y README; no es parte de la app). Solo sus subcarpetas `fotos/` (fotos, `verdad.json`, `origen-fotos.json`) y `resultados/` están ignoradas por git: nada con datos personales fuera de ellas. Las fotos y resultados de la prueba del 2026-09-24 se borraron al cerrarla.
 
 ## Design system
 Antes de crear o modificar cualquier componente o pantalla, leer src/design-system.md y seguir esos patrones. No inventar colores, tipografías ni estilos nuevos. Ese archivo es la fuente de verdad visual.
@@ -78,7 +78,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 ### Funcionalidad pendiente (pedida por el negocio, aplazada)
 - [ ] (prioridad ALTA al abrir el registro al público) "Olvidé contraseña": hoy muestra "disponible pronto" (src/pages/LoginPage.tsx). Un usuario que olvida la clave queda fuera sin salida (hoy el dueño sí puede resetear la de sus cobradores desde Equipo). Depende de configurar Resend (o SMTP) en Supabase Auth para enviar el correo de recuperación.
-- [ ] Lectura automática de la cédula en el onboarding del prospecto (método A, ver "Decisiones de arquitectura" 2026-09-24): PDF417 del respaldo con zxing en el navegador, sin CDN, huella descartada; si falla, captura manual marcada "sin verificar". Antes de construir: probar cédula digital, fotos de cámara inclinadas y con poca luz, y más cédulas amarillas.
+- [ ] Lectura automática de la cédula en el onboarding del prospecto (método A, ver "Decisiones de arquitectura" 2026-09-24): PDF417 del respaldo con zxing en el navegador, sin CDN, huella descartada; si falla, captura manual marcada "sin verificar". Pruebas pendientes NO bloqueantes: probar cuando haya una cédula digital disponible (también fotos de cámara inclinadas y con poca luz, y más cédulas amarillas).
 - [ ] Rutas de cobro: organizar a qué clientes visita cada cobrador y en qué orden. Fase propia, alcance por definir (¿fijas o por día?, ¿por zona?, ¿mapa o lista?).
 - [ ] Cancelar/archivar préstamos desde la app (hoy no hay borrado, intencional; falta un estado 'cancelado' accesible desde la ficha, sin borrado físico).
 - [ ] Recargo por mora: el modelo de cuotas y el abierto dejan el espacio reservado, pero aún no se cobra recargo. Definir con el negocio cuándo se active.
