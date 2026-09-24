@@ -39,7 +39,9 @@ const IconoReloj = (
 )
 
 export default function SolicitudesPage() {
-  const { loading: cargandoConfig, esDueno, nombreNegocio } = useConfiguracion()
+  const { loading: cargandoConfig, esDueno, nombreNegocio, negocio } = useConfiguracion()
+  // Sin contacto para datos personales no se puede pedir la autorización (Ley 1581).
+  const sinContacto = !cargandoConfig && !negocio?.contacto_datos
   const { solicitudes, loading, error, recargar, crearEnlace } = useSolicitudes(esDueno)
 
   const [filtro, setFiltro] = useState<Filtro>('todas')
@@ -95,7 +97,7 @@ export default function SolicitudesPage() {
     const clase = 'btn-enlace -my-3 min-h-11 md:min-h-10'
     if (s.visual === 'enviada' || s.visual === 'vencida') {
       return (
-        <button type="button" className={clase} disabled={regenerando === s.id} onClick={() => regenerar(s)}>
+        <button type="button" className={clase} disabled={regenerando === s.id || sinContacto} onClick={() => regenerar(s)}>
           {regenerando === s.id ? 'Generando…' : s.visual === 'enviada' ? 'Reenviar' : 'Generar otro'}
         </button>
       )
@@ -161,12 +163,27 @@ export default function SolicitudesPage() {
           <Link to="/solicitudes/ficha" className="btn-secondary flex-1 md:flex-none">
             Configurar la ficha
           </Link>
-          <Boton className="flex-1 md:flex-none" onClick={abrirNuevo}>
+          <Boton className="flex-1 md:flex-none" onClick={abrirNuevo} disabled={sinContacto}>
             {IconoMas}
             Nuevo prospecto
           </Boton>
         </div>
       </header>
+
+      {sinContacto && (
+        <div className="flex flex-col gap-3 rounded-tarjeta border border-estado-por-vencer bg-estado-por-vencer-fondo p-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="font-semibold text-estado-por-vencer">Antes de enviar enlaces, agregue el contacto para datos personales</p>
+            <p className="mt-0.5 text-sm text-tinta-2">
+              Es el WhatsApp o correo al que sus prospectos le escriben para conocer, corregir o borrar sus datos. Aparece en la
+              autorización que aceptan antes de llenar la ficha.
+            </p>
+          </div>
+          <Link to="/configuracion" className="btn-primary shrink-0">
+            Ir a Configuración
+          </Link>
+        </div>
+      )}
 
       <section className="tarjeta overflow-hidden">
         <div className="flex flex-col gap-3 border-b border-borde p-3 md:flex-row md:items-center md:px-4">
@@ -214,7 +231,7 @@ export default function SolicitudesPage() {
             <p className="max-w-sm text-sm text-tinta-2">
               Genere un enlace para que un prospecto llene su ficha desde el celular.
             </p>
-            <Boton onClick={abrirNuevo}>
+            <Boton onClick={abrirNuevo} disabled={sinContacto}>
               {IconoMas}
               Nuevo prospecto
             </Boton>

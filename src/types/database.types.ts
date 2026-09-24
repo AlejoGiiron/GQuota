@@ -245,6 +245,7 @@ export type Database = {
       }
       negocios: {
         Row: {
+          contacto_datos: string | null
           created_at: string
           ficha_config: Json
           id: string
@@ -252,6 +253,7 @@ export type Database = {
           nombre: string
         }
         Insert: {
+          contacto_datos?: string | null
           created_at?: string
           ficha_config?: Json
           id?: string
@@ -259,6 +261,7 @@ export type Database = {
           nombre: string
         }
         Update: {
+          contacto_datos?: string | null
           created_at?: string
           ficha_config?: Json
           id?: string
@@ -364,6 +367,7 @@ export type Database = {
       solicitudes: {
         Row: {
           autorizacion_en: string | null
+          autorizacion_respaldo: boolean | null
           autorizacion_version: string | null
           cliente_id: string | null
           completada_en: string | null
@@ -384,6 +388,7 @@ export type Database = {
         }
         Insert: {
           autorizacion_en?: string | null
+          autorizacion_respaldo?: boolean | null
           autorizacion_version?: string | null
           cliente_id?: string | null
           completada_en?: string | null
@@ -404,6 +409,7 @@ export type Database = {
         }
         Update: {
           autorizacion_en?: string | null
+          autorizacion_respaldo?: boolean | null
           autorizacion_version?: string | null
           cliente_id?: string | null
           completada_en?: string | null
@@ -483,6 +489,7 @@ export type Database = {
       crear_mi_negocio: {
         Args: { p_nombre: string }
         Returns: {
+          contacto_datos: string | null
           created_at: string
           ficha_config: Json
           id: string

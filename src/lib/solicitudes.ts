@@ -19,6 +19,18 @@ export function normalizarCelular(texto: string): string | null {
   return null
 }
 
+/**
+ * Contacto para datos personales del negocio (negocios.contacto_datos): un
+ * WhatsApp colombiano o un correo. Devuelve el texto normalizado para guardar
+ * ('300 123 4567' o el correo en minúsculas), o null si no es ninguno de los dos.
+ */
+export function normalizarContacto(texto: string): string | null {
+  const t = texto.trim()
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t) && t.length <= 120) return t.toLowerCase()
+  const celular = normalizarCelular(t)
+  return celular ? formatearCelular(celular) : null
+}
+
 /** '573001234567' → '300 123 4567' (para mostrar). */
 export function formatearCelular(telefono: string): string {
   const d = telefono.replace(/\D/g, '').replace(/^57(?=3\d{9}$)/, '')

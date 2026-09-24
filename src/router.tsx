@@ -15,12 +15,15 @@ import ConfiguracionPage from '@/pages/ConfiguracionPage'
 import EquipoPage from '@/pages/EquipoPage'
 import SolicitudesPage from '@/pages/SolicitudesPage'
 import ConfigurarFichaPage from '@/pages/ConfigurarFichaPage'
-import FichaPublicaPage from '@/pages/FichaPublicaPage'
 
 export const router = createBrowserRouter([
   // Enlace de la ficha para el prospecto: público, sin login ni negocio (tampoco
-  // redirige si quien lo abre tiene sesión).
-  { path: '/s/:token', element: <FichaPublicaPage /> },
+  // redirige si quien lo abre tiene sesión). Carga perezosa: la página y el
+  // lector de la cédula (zxing) no entran al bundle de la app del dueño.
+  {
+    path: '/s/:token',
+    lazy: async () => ({ Component: (await import('@/pages/FichaPublicaPage')).default }),
+  },
   {
     element: <PublicOnlyRoute />,
     children: [

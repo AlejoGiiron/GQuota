@@ -5,6 +5,7 @@ import {
   hora,
   mensajeFicha,
   normalizarCelular,
+  normalizarContacto,
   textoEnlace,
   textoVencimiento,
   tiempoRestante,
@@ -27,6 +28,16 @@ describe('normalizarCelular (réplica de normalizar_celular_co)', () => {
   it('formatea para mostrar', () => {
     expect(formatearCelular('573001234567')).toBe('300 123 4567')
   })
+})
+
+describe('normalizarContacto (contacto para datos personales)', () => {
+  it.each([
+    ['300 123 4567', '300 123 4567'],
+    ['+57 3001234567', '300 123 4567'],
+    [' Datos@Ejemplo.com ', 'datos@ejemplo.com'],
+  ])('%s → %s', (entrada, esperado) => expect(normalizarContacto(entrada)).toBe(esperado))
+
+  it.each(['', '6012345', 'correo@', 'hola'])('rechaza "%s"', (entrada) => expect(normalizarContacto(entrada)).toBeNull())
 })
 
 describe('estado visual', () => {

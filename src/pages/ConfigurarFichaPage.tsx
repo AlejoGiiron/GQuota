@@ -13,6 +13,7 @@ import {
   contarModos,
   leerFicha,
   mismaFicha,
+  modosPermitidos,
   pasosFormulario,
   type CampoFicha,
   type FichaConfig,
@@ -54,7 +55,16 @@ export default function ConfigurarFichaPage() {
 
   const cambiar = (campo: CampoFicha, modo: ModoCampo) =>
     setConfig((c) => aplicarReglas({ ...c, campos: { ...c.campos, [campo]: modo } }))
-  const cambiarLectura = (activa: boolean) => setConfig((c) => aplicarReglas({ ...c, lectura_automatica: activa }))
+  // Activar la lectura necesita la foto del respaldo: si estaba apagada, pasa a opcional.
+  // (Apagar el respaldo apaga la lectura: lo hace aplicarReglas.)
+  const cambiarLectura = (activa: boolean) =>
+    setConfig((c) =>
+      aplicarReglas({
+        ...c,
+        lectura_automatica: activa,
+        campos: activa && c.campos.cedula_reverso === 'apagado' ? { ...c.campos, cedula_reverso: 'opcional' } : c.campos,
+      }),
+    )
 
   async function guardar() {
     if (!negocio) return
@@ -116,7 +126,7 @@ export default function ConfigurarFichaPage() {
               {s.id === 'fotos' && (
                 <FilaDato
                   nombre="Lectura automática"
-                  detalle="Lee número, nombres, apellidos y fecha de nacimiento del código de barras del respaldo"
+                  detalle="Lee número, nombres, apellidos y fecha de nacimiento del código de barras del respaldo, si el prospecto autoriza esa foto"
                 >
                   <ControlSegmentado
                     etiquetaAccesible="Lectura automática"
@@ -131,10 +141,7 @@ export default function ConfigurarFichaPage() {
               )}
               {s.filas.map((f) => {
                 const motivo = bloqueo(config, f.campo)
-                const detalle =
-                  f.campo === 'cedula_reverso' && motivo
-                    ? 'Tiene el código de barras. Obligatoria mientras la lectura esté activa.'
-                    : f.detalle
+                const detalle = f.detalle
                 return (
                   <FilaDato key={f.campo} nombre={f.nombre} detalle={detalle} apagado={config.campos[f.campo] === 'apagado'}>
                     {motivo ? (
@@ -147,7 +154,7 @@ export default function ConfigurarFichaPage() {
                         etiquetaAccesible={f.nombre}
                         valor={config.campos[f.campo]}
                         alCambiar={(m) => cambiar(f.campo, m)}
-                        opciones={OPCIONES_MODO}
+                        opciones={OPCIONES_MODO.filter((o) => modosPermitidos(f.campo).includes(o.valor))}
                       />
                     )}
                   </FilaDato>
