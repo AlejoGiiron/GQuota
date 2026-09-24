@@ -1,0 +1,9 @@
+# Configuración del CLI de Supabase para este repo.
+# Solo se declara lo que se aparta de los valores por defecto.
+project_id = "gquota"
+
+[functions.ficha-publica]
+# Pública: el prospecto abre el enlace /s/<token> sin cuenta, así que la función
+# no puede exigir JWT. Con esto basta `npx supabase functions deploy ficha-publica`
+# (sin acordarse de --no-verify-jwt). Las demás funciones siguen verificando JWT.
+verify_jwt = false

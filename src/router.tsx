@@ -13,8 +13,14 @@ import PrestamoFicha from '@/components/PrestamoFicha'
 import CobrosPage from '@/pages/CobrosPage'
 import ConfiguracionPage from '@/pages/ConfiguracionPage'
 import EquipoPage from '@/pages/EquipoPage'
+import SolicitudesPage from '@/pages/SolicitudesPage'
+import ConfigurarFichaPage from '@/pages/ConfigurarFichaPage'
+import FichaPublicaPage from '@/pages/FichaPublicaPage'
 
 export const router = createBrowserRouter([
+  // Enlace de la ficha para el prospecto: público, sin login ni negocio (tampoco
+  // redirige si quien lo abre tiene sesión).
+  { path: '/s/:token', element: <FichaPublicaPage /> },
   {
     element: <PublicOnlyRoute />,
     children: [
@@ -44,6 +50,8 @@ export const router = createBrowserRouter([
                 children: [{ path: ':prestamoId', element: <PrestamoFicha /> }],
               },
               { path: 'cobros', element: <CobrosPage /> },
+              { path: 'solicitudes', element: <SolicitudesPage /> },
+              { path: 'solicitudes/ficha', element: <ConfigurarFichaPage /> },
               { path: 'equipo', element: <EquipoPage /> },
               { path: 'configuracion', element: <ConfiguracionPage /> },
             ],

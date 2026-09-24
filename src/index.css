@@ -184,8 +184,12 @@ body {
     color: var(--marca-texto);
     font-size: 14px;
   }
-  .btn-enlace:hover {
+  .btn-enlace:hover:not(:disabled) {
     text-decoration: underline;
+  }
+  .btn-enlace:disabled {
+    color: var(--tinta-3);
+    cursor: not-allowed;
   }
   .btn-primary:focus-visible,
   .btn-secondary:focus-visible,

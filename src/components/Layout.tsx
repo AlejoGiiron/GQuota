@@ -20,6 +20,7 @@ const IconCobros = icono('M10 6h10M10 12h10M10 18h10M3.5 6l1.5 1.5L7.5 5M3.5 12l
 const IconClientes = icono(
   'M9 11.5a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7ZM2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.9c1.7.8 2.7 2.4 3 5.1',
 )
+const IconSolicitudes = icono('M6 3h9l4 4v14H6zM14 3v5h5M9 14l2 2 4-4')
 const IconPrestamos = icono('M2.5 6h19v12h-19zM12 9.4a2.6 2.6 0 1 0 0 5.2a2.6 2.6 0 1 0 0-5.2Z')
 const IconEquipo = icono('M4 3h16v18H4zM12 7a3 3 0 1 0 0 6a3 3 0 1 0 0-6ZM8 17c.8-1.8 2.2-2.6 4-2.6s3.2.8 4 2.6')
 const IconConfiguracion = icono(
@@ -35,19 +36,19 @@ type NavItem = {
   end?: boolean
 }
 
-// Mismos ítems de siempre, en el orden del sistema 2a. Solicitudes, Plantillas y
-// Mi marca llegan con sus fases.
+// En el orden del sistema 2a. Plantillas y Mi marca llegan con sus fases.
 const NAV: NavItem[] = [
   { to: '/', label: 'Inicio', Icon: IconInicio, end: true },
   { to: '/cobros', label: 'Cobros', Icon: IconCobros },
   { to: '/clientes', label: 'Clientes', Icon: IconClientes },
+  { to: '/solicitudes', label: 'Solicitudes', Icon: IconSolicitudes },
   { to: '/prestamos', label: 'Préstamos', Icon: IconPrestamos },
   { to: '/equipo', label: 'Equipo', Icon: IconEquipo },
   { to: '/configuracion', label: 'Configuración', Icon: IconConfiguracion },
 ]
-// El cobrador no ve Inicio (dashboard de ganancias), Equipo ni Configuración
-// (admin del negocio): su navegación es lo operativo (cobros, clientes, préstamos).
-const SOLO_DUENO = new Set(['/', '/equipo', '/configuracion'])
+// El cobrador no ve Inicio (dashboard de ganancias), Solicitudes (alta de
+// prospectos), Equipo ni Configuración: su navegación es lo operativo.
+const SOLO_DUENO = new Set(['/', '/solicitudes', '/equipo', '/configuracion'])
 // En móvil, Equipo y Configuración (admin) van en el menú de la cuenta, no en la
 // barra inferior: ahí solo lo operativo del día a día.
 const SOLO_MENU_CUENTA = new Set(['/equipo', '/configuracion'])
