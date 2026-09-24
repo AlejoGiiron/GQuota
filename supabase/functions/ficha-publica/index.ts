@@ -2,10 +2,11 @@
 //  Edge Function: ficha-publica  (Fase 1A · ficha de cliente por enlace)
 //
 //  El PROSPECTO abre el enlace /s/<token> sin cuenta. Esta función valida el
-//  token y dice en qué estado está el enlace. Es pública: se despliega SIN
-//  verificación de JWT (el prospecto no tiene sesión):
+//  token y dice en qué estado está el enlace. Es pública: NO verifica JWT (el
+//  prospecto no tiene sesión). Eso lo fija supabase/config.toml
+//  ([functions.ficha-publica] verify_jwt = false), así que basta con:
 //
-//    npx supabase functions deploy ficha-publica --no-verify-jwt
+//    npx supabase functions deploy ficha-publica --use-api
 //
 //  SEGURIDAD
 //    - En la base solo existe el HASH del token (sha256). Aquí se calcula el hash
