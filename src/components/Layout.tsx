@@ -3,7 +3,11 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 import { useConfiguracion } from '@/contexts/ConfiguracionContext'
+import GuiaNovedades from '@/components/novedades/GuiaNovedades'
+import { useEsEscritorio } from '@/hooks/useEsEscritorio'
+import { useNovedades } from '@/hooks/useNovedades'
 import { monograma } from '@/lib/marca'
+import { VERSION_NOVEDADES, pasosDe, seAbreSola } from '@/lib/novedades'
 
 /* Íconos de línea del sistema 2a (design/paquete-2a, GQ.NAV). */
 type IconProps = { className?: string }
@@ -26,6 +30,7 @@ const IconEquipo = icono('M4 3h16v18H4zM12 7a3 3 0 1 0 0 6a3 3 0 1 0 0-6ZM8 17c.
 const IconConfiguracion = icono(
   'M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6ZM12 2.5v2.5M12 19v2.5M21.5 12H19M5 12H2.5M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8M18.4 18.4l-1.8-1.8M7.4 7.4L5.6 5.6',
 )
+const IconNovedades = icono('M12 3.5l1.9 4.6 4.6 1.9-4.6 1.9L12 16.5l-1.9-4.6L5.5 10l4.6-1.9zM18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z')
 const IconSalir = icono('M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 17l5-5-5-5M15 12H3')
 const IconChevron = icono('M6 9l6 6 6-6')
 
@@ -36,13 +41,15 @@ type NavItem = {
   end?: boolean
 }
 
-// En el orden del sistema 2a. Plantillas y Mi marca llegan con sus fases.
+// El orden de siempre (el que los usuarios ya conocen de antes del sistema 2a):
+// Inicio, Clientes, Préstamos, Cobros. Solicitudes, si el negocio la activó, va
+// junto a Clientes. Plantillas y Mi marca llegan con sus fases.
 const NAV: NavItem[] = [
   { to: '/', label: 'Inicio', Icon: IconInicio, end: true },
-  { to: '/cobros', label: 'Cobros', Icon: IconCobros },
   { to: '/clientes', label: 'Clientes', Icon: IconClientes },
   { to: '/solicitudes', label: 'Solicitudes', Icon: IconSolicitudes },
   { to: '/prestamos', label: 'Préstamos', Icon: IconPrestamos },
+  { to: '/cobros', label: 'Cobros', Icon: IconCobros },
   { to: '/equipo', label: 'Equipo', Icon: IconEquipo },
   { to: '/configuracion', label: 'Configuración', Icon: IconConfiguracion },
 ]
@@ -78,8 +85,22 @@ function Monograma({ nombre, className }: { nombre: string; className: string })
   )
 }
 
-/** Menú de la cuenta: correo, rol, accesos de admin (en móvil) y cerrar sesión. */
-function MenuCuenta({ enLateral }: { enLateral: boolean }) {
+/** Lo que el menú de la cuenta necesita de la guía de novedades. */
+type NovedadesMenu = {
+  /** El usuario tiene una guía (creado antes de la versión): muestra "Novedades". */
+  hay: boolean
+  /** Todavía no la marcó como vista: lleva un punto. */
+  pendiente: boolean
+  abrir: () => void
+}
+
+/** Punto de "sin ver" (marca: es parte del marco, no un estado). */
+const PuntoNuevo = ({ className = '' }: { className?: string }) => (
+  <span className={`h-2 w-2 shrink-0 rounded-full bg-marca ${className}`} aria-hidden="true" />
+)
+
+/** Menú de la cuenta: correo, rol, accesos de admin (en móvil), novedades y cerrar sesión. */
+function MenuCuenta({ enLateral, novedades }: { enLateral: boolean; novedades: NovedadesMenu }) {
   const { user, signOut } = useAuth()
   const { esDueno } = useConfiguracion()
   const [abierto, setAbierto] = useState(false)
@@ -112,10 +133,11 @@ function MenuCuenta({ enLateral }: { enLateral: boolean }) {
         }
         aria-haspopup="menu"
         aria-expanded={abierto}
-        aria-label="Abrir menú de la cuenta"
+        aria-label={novedades.pendiente ? 'Abrir menú de la cuenta (hay novedades sin ver)' : 'Abrir menú de la cuenta'}
       >
-        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-borde-control bg-superficie-2 text-xs font-semibold text-tinta-2">
+        <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-full border border-borde-control bg-superficie-2 text-xs font-semibold text-tinta-2">
           {iniciales}
+          {novedades.pendiente && <PuntoNuevo className="absolute -right-0.5 -top-0.5 ring-2 ring-superficie" />}
         </span>
         {enLateral && (
           <>
@@ -153,6 +175,26 @@ function MenuCuenta({ enLateral }: { enLateral: boolean }) {
                 </NavLink>
               </>
             )}
+            {novedades.hay && (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setAbierto(false)
+                  novedades.abrir()
+                }}
+                className={itemMenu}
+              >
+                <IconNovedades className="h-[18px] w-[18px] text-tinta-3" />
+                Novedades
+                {novedades.pendiente && (
+                  <>
+                    <PuntoNuevo className="ml-auto" />
+                    <span className="sr-only">(sin ver)</span>
+                  </>
+                )}
+              </button>
+            )}
             <button
               type="button"
               role="menuitem"
@@ -170,10 +212,26 @@ function MenuCuenta({ enLateral }: { enLateral: boolean }) {
 }
 
 export default function Layout() {
-  const { nombreNegocio, esDueno } = useConfiguracion()
+  const { nombreNegocio, esDueno, rol, solicitudesActivas } = useConfiguracion()
+  const escritorio = useEsEscritorio()
 
-  const nav = esDueno ? NAV : NAV.filter((n) => !SOLO_DUENO.has(n.to))
+  // Solicitudes solo aparece si el negocio la activó (negocios.solicitudes_activas).
+  const nav = NAV.filter(
+    (n) => (esDueno || !SOLO_DUENO.has(n.to)) && (n.to !== '/solicitudes' || solicitudesActivas),
+  )
   const navInferior = nav.filter((n) => !SOLO_MENU_CUENTA.has(n.to))
+
+  // Guía de novedades: se abre sola si está pendiente y llegó su fecha; "Entendido"
+  // la marca vista y "Ver después" la corre a mañana, así que deja de abrirse sola.
+  // Desde el menú se puede volver a abrir cuando se quiera.
+  const novedades = useNovedades()
+  const [guiaDesdeMenu, setGuiaDesdeMenu] = useState(false)
+  const guiaAbierta = rol !== null && (guiaDesdeMenu || seAbreSola(novedades.fila, new Date()))
+  const menuNovedades: NovedadesMenu = {
+    hay: novedades.fila !== null,
+    pendiente: novedades.pendiente,
+    abrir: () => setGuiaDesdeMenu(true),
+  }
 
   return (
     <div className="flex h-screen bg-fondo text-tinta">
@@ -205,7 +263,7 @@ export default function Layout() {
         </nav>
 
         <div className="mt-auto flex flex-col gap-2 pt-4">
-          <MenuCuenta enLateral />
+          <MenuCuenta enLateral novedades={menuNovedades} />
           <div className="px-1.5 text-xs text-tinta-3">con G-Quota</div>
         </div>
       </aside>
@@ -216,7 +274,7 @@ export default function Layout() {
         <header className="flex h-[52px] shrink-0 items-center gap-2.5 border-b border-borde bg-superficie pl-4 pr-1.5 md:hidden">
           <Monograma nombre={nombreNegocio} className="h-[30px] w-[30px] rounded-[7px] text-xs" />
           <div className="min-w-0 flex-1 truncate text-[15px] font-semibold">{nombreNegocio}</div>
-          <MenuCuenta enLateral={false} />
+          <MenuCuenta enLateral={false} novedades={menuNovedades} />
         </header>
 
         {/* Contenido de la sección */}
@@ -244,6 +302,23 @@ export default function Layout() {
           ))}
         </nav>
       </div>
+
+      {guiaAbierta && rol && (
+        <GuiaNovedades
+          pasos={pasosDe(novedades.fila?.version ?? VERSION_NOVEDADES, rol, escritorio ? 'computador' : 'celular')}
+          rol={rol}
+          pantalla={escritorio ? 'computador' : 'celular'}
+          yaVista={novedades.fila?.estado === 'vista'}
+          onEntendido={() => {
+            setGuiaDesdeMenu(false)
+            void novedades.marcarVista()
+          }}
+          onVerDespues={() => {
+            setGuiaDesdeMenu(false)
+            void novedades.verDespues()
+          }}
+        />
+      )}
     </div>
   )
 }

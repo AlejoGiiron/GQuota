@@ -252,8 +252,10 @@ export default function InicioPage() {
                 <b className="text-green-700">{cobros.cobrados}</b> de {cobros.programados} cobrados
               </span>
               <div className="h-2 w-[150px] overflow-hidden rounded-full bg-line">
+                {/* El verde de siempre, con valores fijos: es una barra de datos y no
+                    sigue la marca del negocio (regla 1 del sistema 2a). */}
                 <div
-                  className="h-full rounded-full bg-tinta-2"
+                  className="h-full rounded-full bg-gradient-to-r from-[#10b981] to-[#047857]"
                   style={{ width: `${pct}%` }}
                 />
               </div>

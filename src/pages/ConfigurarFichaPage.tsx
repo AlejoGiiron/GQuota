@@ -41,13 +41,13 @@ const IconoInfo = (
 
 /** Configurar la ficha (solo dueño): qué datos se le piden al prospecto. Aplica a los enlaces nuevos. */
 export default function ConfigurarFichaPage() {
-  const { loading: cargandoConfig, esDueno, negocio, refrescar } = useConfiguracion()
+  const { loading: cargandoConfig, esDueno, negocio, refrescar, solicitudesActivas } = useConfiguracion()
   const guardada = useMemo(() => leerFicha(negocio?.ficha_config), [negocio?.ficha_config])
   const [config, setConfig] = useState<FichaConfig>(guardada)
   const [guardando, setGuardando] = useState(false)
   useEffect(() => setConfig(guardada), [guardada])
 
-  if (!cargandoConfig && !esDueno) return <Navigate to="/cobros" replace />
+  if (!cargandoConfig && (!esDueno || !solicitudesActivas)) return <Navigate to={esDueno ? '/' : '/cobros'} replace />
 
   const hayCambios = !mismaFicha(config, guardada)
   const n = contarModos(config)

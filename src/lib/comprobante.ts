@@ -9,6 +9,12 @@
 // Lo ve el CLIENTE: simple, SIN desglose interés/capital (info interna del negocio).
 
 import { fmtCOP } from '@/lib/formatters'
+// Fuentes del diseño anterior, solo para las imágenes (ver asegurarFuentes).
+import jakarta500 from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-500-normal.woff2?url'
+import jakarta600 from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2?url'
+import jakarta700 from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2?url'
+import jakarta800 from '@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2?url'
+import jetbrains700 from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2?url'
 
 /** Una fila etiqueta/valor del bloque "estado de su crédito". */
 export interface FilaComprobante {
@@ -63,24 +69,40 @@ const W = 720 // ancho lógico del ticket (vertical, se ve bien en un chat)
 const PAD = 56
 const CONTENT_W = W - PAD * 2
 
+/*
+ * Las imágenes que reciben los clientes (comprobante y cronograma) conservan las
+ * fuentes de antes del sistema 2a: Plus Jakarta Sans y JetBrains Mono. La app ya no
+ * las carga, así que se registran aquí, servidas desde el proyecto (sin CDN), y se
+ * descargan solo al generar la primera imagen. Pesos: los que usa el dibujo.
+ */
+const FUENTES_IMAGEN = [
+  { familia: 'Plus Jakarta Sans', peso: '500', url: jakarta500 },
+  { familia: 'Plus Jakarta Sans', peso: '600', url: jakarta600 },
+  { familia: 'Plus Jakarta Sans', peso: '700', url: jakarta700 },
+  { familia: 'Plus Jakarta Sans', peso: '800', url: jakarta800 },
+  { familia: 'JetBrains Mono', peso: '700', url: jetbrains700 },
+]
+let cargaFuentes: Promise<void> | null = null
+
 /**
- * Pide al navegador que cargue las fuentes del design-system ANTES de dibujar.
- * Sin esto, el primer comprobante puede salir con la fuente por defecto (las web
- * fonts cargan async): es el equivalente en canvas a la "primera captura en blanco".
+ * Carga las fuentes de las imágenes ANTES de dibujar. Sin esto, el canvas dibuja
+ * con la fuente del sistema (el equivalente en canvas a la "primera captura en
+ * blanco"). Se cargan una sola vez por sesión.
  */
 export async function asegurarFuentes(): Promise<void> {
-  if (typeof document === 'undefined' || !document.fonts) return
+  if (typeof document === 'undefined' || !document.fonts || typeof FontFace === 'undefined') return
+  cargaFuentes ??= Promise.all(
+    FUENTES_IMAGEN.map(async ({ familia, peso, url }) => {
+      const cara = new FontFace(familia, `url(${url}) format('woff2')`, { weight: peso })
+      document.fonts.add(await cara.load())
+    }),
+  ).then(() => undefined)
   try {
-    await Promise.all([
-      document.fonts.load(`800 32px ${FUENTE_UI}`),
-      document.fonts.load(`700 22px ${FUENTE_UI}`),
-      document.fonts.load(`600 13px ${FUENTE_UI}`),
-      document.fonts.load(`500 15px ${FUENTE_UI}`),
-      document.fonts.load(`700 50px ${FUENTE_MONO}`),
-    ])
-    await document.fonts.ready
+    await cargaFuentes
   } catch {
-    /* si falla, se dibuja con las fuentes disponibles (degradación aceptable) */
+    // Sin red o sin soporte: se dibuja con las fuentes disponibles (degradación
+    // aceptable) y la próxima imagen lo vuelve a intentar.
+    cargaFuentes = null
   }
 }
 

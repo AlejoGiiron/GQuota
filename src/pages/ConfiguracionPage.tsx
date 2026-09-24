@@ -7,7 +7,7 @@ import { normalizarContacto } from '@/lib/solicitudes'
 
 export default function ConfiguracionPage() {
   const { user, signOut } = useAuth()
-  const { negocio, loading, guardar, esDueno } = useConfiguracion()
+  const { negocio, loading, guardar, esDueno, solicitudesActivas } = useConfiguracion()
 
   const [nombre, setNombre] = useState('')
   const [contacto, setContacto] = useState('')
@@ -38,9 +38,10 @@ export default function ConfiguracionPage() {
       toast.error('Activa al menos un método de pago.')
       return
     }
-    // Opcional al guardar (solo se exige para crear enlaces de solicitud).
+    // Opcional al guardar (solo se exige para crear enlaces de solicitud). Si el
+    // negocio no tiene activas las solicitudes, el campo no se muestra ni se toca.
     const contactoNormalizado = contacto.trim() ? normalizarContacto(contacto) : null
-    if (contacto.trim() && !contactoNormalizado) {
+    if (solicitudesActivas && contacto.trim() && !contactoNormalizado) {
       setErrorContacto('Escriba un WhatsApp de 10 dígitos (empieza por 3) o un correo.')
       return
     }
@@ -49,7 +50,7 @@ export default function ConfiguracionPage() {
       nombre_negocio: nombre.trim() === '' ? null : nombre.trim(),
       // Conserva el orden del catálogo maestro.
       metodos_pago: METODOS_PAGO.map((m) => m.valor).filter((v) => metodos.includes(v)),
-      contacto_datos: contactoNormalizado,
+      contacto_datos: solicitudesActivas ? contactoNormalizado : undefined,
     })
     setGuardando(false)
     if (error) {
@@ -93,28 +94,30 @@ export default function ConfiguracionPage() {
               disabled={loading}
             />
           </div>
-          <div className="mt-4 flex flex-col gap-2">
-            <label htmlFor="cfg-contacto" className="text-[13px] font-semibold text-text-2">
-              Contacto para datos personales
-            </label>
-            <input
-              id="cfg-contacto"
-              className="input"
-              placeholder="WhatsApp o correo"
-              value={contacto}
-              onChange={(e) => {
-                setContacto(e.target.value)
-                setErrorContacto(null)
-              }}
-              aria-invalid={errorContacto ? true : undefined}
-              aria-describedby="cfg-contacto-ayuda"
-              disabled={loading}
-            />
-            <p id="cfg-contacto-ayuda" className={`text-xs ${errorContacto ? 'text-red' : 'text-text-2'}`}>
-              {errorContacto ??
-                'A dónde le escriben sus clientes para conocer, corregir o borrar sus datos (Ley 1581). Aparece en la autorización de la ficha por enlace y es necesario para enviar enlaces.'}
-            </p>
-          </div>
+          {solicitudesActivas && (
+            <div className="mt-4 flex flex-col gap-2">
+              <label htmlFor="cfg-contacto" className="text-[13px] font-semibold text-text-2">
+                Contacto para datos personales
+              </label>
+              <input
+                id="cfg-contacto"
+                className="input"
+                placeholder="WhatsApp o correo"
+                value={contacto}
+                onChange={(e) => {
+                  setContacto(e.target.value)
+                  setErrorContacto(null)
+                }}
+                aria-invalid={errorContacto ? true : undefined}
+                aria-describedby="cfg-contacto-ayuda"
+                disabled={loading}
+              />
+              <p id="cfg-contacto-ayuda" className={`text-xs ${errorContacto ? 'text-red' : 'text-text-2'}`}>
+                {errorContacto ??
+                  'A dónde le escriben sus clientes para conocer, corregir o borrar sus datos (Ley 1581). Aparece en la autorización de la ficha por enlace y es necesario para enviar enlaces.'}
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Métodos de pago */}
