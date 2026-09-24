@@ -125,7 +125,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 
 - FLUJO DE MIGRACIONES Y TIPOS (CLI conectado). El CLI de Supabase está vinculado al proyecto.
   - Migraciones nuevas: aplicar con `npx supabase db push` (ya NO copiar-pegar en el SQL Editor a mano). En ORDEN; cada una asume la anterior.
-  - Tras un cambio de esquema, regenerar tipos: `npx supabase gen types typescript --linked > src/types/database.types.ts`. Los alias de src/types/db.ts se actualizan solos (derivan de `Database`); no editar a mano database.types.ts ni los alias.
+  - Tras un cambio de esquema, regenerar tipos: `npx supabase gen types typescript --linked --schema public > src/types/database.types.ts`. Los alias de src/types/db.ts se actualizan solos (derivan de `Database`); no editar a mano database.types.ts ni los alias.
   - Verificar con `npm run build` (NO `tsc --noEmit`: su caché incremental puede dejar pasar errores que el build limpio sí atrapa — lección del deploy; ver abajo).
 
 - MIGRACIONES NUEVAS, NO EDITAR LAS APLICADAS. Una migración ya aplicada no se reescribe; los cambios van en una nueva con create or replace. Mantiene la cadena íntegra.
