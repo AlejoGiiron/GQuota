@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { Link, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import FichaDelCliente from '@/components/solicitud/FichaDelCliente'
 import Avatar from '@/components/Avatar'
@@ -5,6 +6,7 @@ import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoB
 import { useConfiguracion } from '@/contexts/ConfiguracionContext'
 import { usePrestamos } from '@/hooks/usePrestamos'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
+import { separarPrestamos } from '@/lib/lista-prestamos'
 import type { Cliente } from '@/types/db'
 
 export interface ClientesOutletContext {
@@ -129,6 +131,9 @@ export default function ClienteFicha() {
 
 function PrestamosDelCliente({ clienteId }: { clienteId: string }) {
   const { prestamos, loading } = usePrestamos(clienteId)
+  // Los pagados quedan plegados: por defecto solo lo que falta cobrar (la mora primero).
+  const { porCobrar, pagados } = useMemo(() => separarPrestamos(prestamos), [prestamos])
+  const [verPagados, setVerPagados] = useState(false)
 
   if (loading) {
     return <div className="h-16 animate-pulse rounded-xl bg-line-soft" />
@@ -136,26 +141,40 @@ function PrestamosDelCliente({ clienteId }: { clienteId: string }) {
   if (prestamos.length === 0) {
     return <p className="text-sm text-text-2">Este cliente aún no tiene préstamos.</p>
   }
+  // Una fila de préstamo (la misma para los por cobrar y los pagados).
+  const fila = (p: (typeof prestamos)[number]) => (
+    <Link
+      key={p.id}
+      to={`/prestamos/${p.id}`}
+      className="flex items-center justify-between gap-3 rounded-xl border border-line px-4 py-3 transition-colors hover:bg-bg"
+    >
+      <div className="min-w-0">
+        <div className="mono text-sm font-bold text-text">{fmtCOP(p.saldo_capital)}</div>
+        <div className="text-xs text-muted">
+          de {fmtCOP(p.capital_inicial)} · {tasaMensualTexto(p.tasa_mensual)}
+        </div>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          <ModoBadge modo={p.modo_interes} />
+          <EstadoBadge estado={p.estado} />
+        </div>
+      </div>
+    </Link>
+  )
   return (
     <div className="flex flex-col gap-2">
-      {prestamos.map((p) => (
-        <Link
-          key={p.id}
-          to={`/prestamos/${p.id}`}
-          className="flex items-center justify-between gap-3 rounded-xl border border-line px-4 py-3 transition-colors hover:bg-bg"
+      {porCobrar.length === 0 && <p className="text-sm text-text-2">No tiene préstamos por cobrar.</p>}
+      {porCobrar.map(fila)}
+      {pagados.length > 0 && (
+        <button
+          type="button"
+          className="-my-1 inline-flex min-h-11 items-center self-start text-sm font-semibold text-green-700 hover:underline md:min-h-10"
+          aria-expanded={verPagados}
+          onClick={() => setVerPagados((v) => !v)}
         >
-          <div className="min-w-0">
-            <div className="mono text-sm font-bold text-text">{fmtCOP(p.saldo_capital)}</div>
-            <div className="text-xs text-muted">
-              de {fmtCOP(p.capital_inicial)} · {tasaMensualTexto(p.tasa_mensual)}
-            </div>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              <ModoBadge modo={p.modo_interes} />
-              <EstadoBadge estado={p.estado} />
-            </div>
-          </div>
-        </Link>
-      ))}
+          {verPagados ? 'Ocultar pagados' : `Ver ${pagados.length === 1 ? '1 pagado' : `${pagados.length} pagados`}`}
+        </button>
+      )}
+      {verPagados && pagados.map(fila)}
     </div>
   )
 }
