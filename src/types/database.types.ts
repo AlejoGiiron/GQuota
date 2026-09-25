@@ -327,6 +327,7 @@ export type Database = {
           modo_interes: string
           negocio_id: string
           notas: string | null
+          regla_mora: number
           saldo_capital: number
           tasa_mensual: number
           tipo: string
@@ -350,6 +351,7 @@ export type Database = {
           modo_interes?: string
           negocio_id?: string
           notas?: string | null
+          regla_mora?: number
           saldo_capital: number
           tasa_mensual: number
           tipo?: string
@@ -373,6 +375,7 @@ export type Database = {
           modo_interes?: string
           negocio_id?: string
           notas?: string | null
+          regla_mora?: number
           saldo_capital?: number
           tasa_mensual?: number
           tipo?: string
@@ -531,6 +534,7 @@ export type Database = {
           modo_interes: string
           negocio_id: string
           notas: string | null
+          regla_mora: number
           saldo_capital: number
           tasa_mensual: number
           tipo: string
@@ -595,6 +599,7 @@ export type Database = {
           modo_interes: string
           negocio_id: string
           notas: string | null
+          regla_mora: number
           saldo_capital: number
           tasa_mensual: number
           tipo: string
@@ -638,6 +643,7 @@ export type Database = {
           modo_interes: string
           negocio_id: string
           notas: string | null
+          regla_mora: number
           saldo_capital: number
           tasa_mensual: number
           tipo: string
@@ -681,6 +687,7 @@ export type Database = {
           modo_interes: string
           negocio_id: string
           notas: string | null
+          regla_mora: number
           saldo_capital: number
           tasa_mensual: number
           tipo: string

@@ -87,7 +87,7 @@ export interface ResumenCobrosHoy {
 
 // ── Criterio de "día de cobro" y "vencido" ──
 // IMPORTANTE: este es el MISMO criterio que replica la función SQL
-// public.marcar_mora() (migración 007). Si cambia aquí, cambiar allá.
+// public.marcar_mora() (migraciones 007 y 040). Si cambia aquí, cambiar allá.
 
 /** Fecha de cobro del mes en curso (aaaa-mm-dd): dia_cobro o el día del desembolso, acotado al mes. */
 function fechaCobroDelMes(p: Prestamo, hoy: Date): string {
@@ -96,6 +96,15 @@ function fechaCobroDelMes(p: Prestamo, hoy: Date): string {
   const mm = String(hoy.getMonth() + 1).padStart(2, '0')
   const dd = String(dia).padStart(2, '0')
   return `${hoy.getFullYear()}-${mm}-${dd}`
+}
+
+/**
+ * Regla de mora 2 (migración 040): en un préstamo abierto, el cobro del mes cuenta
+ * solo si es POSTERIOR al desembolso; el primer cobro es el mes siguiente. Los de
+ * regla 1 (los que ya existían) siguen como antes.
+ */
+function cobroAunNoEmpieza(p: Prestamo, cobroISO: string): boolean {
+  return p.regla_mora === 2 && cobroISO <= p.fecha_desembolso
 }
 
 /** ¿Hay un pago (interés/cuota) en este ciclo, es decir con fecha >= la de cobro? */
@@ -153,7 +162,7 @@ export function calcularCobrosHoy(
       if (c && c.fecha_vence === hoyISO) {
         items.push({ prestamo: p, montoACobrar: c.capital - c.abonado, cobrado: false })
       }
-    } else if (fechaCobroDelMes(p, hoy) === hoyISO) {
+    } else if (fechaCobroDelMes(p, hoy) === hoyISO && !cobroAunNoEmpieza(p, hoyISO)) {
       items.push({
         prestamo: p,
         montoACobrar: interesVigente(p),
@@ -219,7 +228,7 @@ export function calcularVencidos(
       }
     } else {
       const cobroISO = fechaCobroDelMes(p, hoy)
-      if (cobroISO < hoyISO && !pagadoEnCiclo(movimientos, p.id, cobroISO)) {
+      if (cobroISO < hoyISO && !cobroAunNoEmpieza(p, cobroISO) && !pagadoEnCiclo(movimientos, p.id, cobroISO)) {
         items.push({
           prestamo: p,
           montoACobrar: interesVigente(p),
