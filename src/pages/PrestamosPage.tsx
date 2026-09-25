@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { NavLink, Outlet, useMatch } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { NavLink, Outlet, useMatch, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PrestamoFormModal from '@/components/PrestamoFormModal'
@@ -60,6 +60,17 @@ export default function PrestamosPage() {
   const detalle = useMatch('/prestamos/:prestamoId')
 
   const [modalAbierto, setModalAbierto] = useState(false)
+  // "Crear préstamo" desde la ficha de un cliente recién aprobado (fase 1C):
+  // /prestamos?nuevo=<cliente> abre el formulario con ese cliente elegido.
+  const [params, setParams] = useSearchParams()
+  const [clienteInicial, setClienteInicial] = useState<string | undefined>(undefined)
+  const nuevo = params.get('nuevo')
+  useEffect(() => {
+    if (!nuevo || !esDueno) return
+    setClienteInicial(nuevo)
+    setModalAbierto(true)
+    setParams({}, { replace: true })
+  }, [nuevo, esDueno, setParams])
 
   const clientePorId = useMemo(() => {
     const map = new Map(clientes.map((c) => [c.id, c]))
@@ -225,7 +236,11 @@ export default function PrestamosPage() {
         open={modalAbierto}
         clientes={clientes}
         cobradores={cobradoresActivos}
-        onClose={() => setModalAbierto(false)}
+        clienteInicial={clienteInicial}
+        onClose={() => {
+          setModalAbierto(false)
+          setClienteInicial(undefined)
+        }}
         onGuardar={handleGuardar}
         onGuardarCuotas={handleGuardarCuotas}
         onGuardarCuotaFija={handleGuardarCuotaFija}

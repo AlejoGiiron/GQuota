@@ -55,6 +55,11 @@ export const router = createBrowserRouter([
               { path: 'cobros', element: <CobrosPage /> },
               { path: 'solicitudes', element: <SolicitudesPage /> },
               { path: 'solicitudes/ficha', element: <ConfigurarFichaPage /> },
+              // Revisar una solicitud (fase 1C). Perezosa: trae el lector de la cédula.
+              {
+                path: 'solicitudes/:solicitudId',
+                lazy: async () => ({ Component: (await import('@/pages/RevisarSolicitudPage')).default }),
+              },
               { path: 'equipo', element: <EquipoPage /> },
               { path: 'configuracion', element: <ConfiguracionPage /> },
             ],
