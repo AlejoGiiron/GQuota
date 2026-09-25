@@ -41,6 +41,22 @@ Luis, el negocio que usa la app hoy, recibe cada release como todos, sin versió
 - **Cuidado con las sobrecargas.** No se agrega una sobrecarga de una función existente con parámetros opcionales: PostgREST no sabe cuál elegir y la llamada que ya existía falla.
 - **Si una migración toca una de estas funciones,** se comprueba en una transacción con rollback que, con los mismos datos, el resultado es idéntico antes y después.
 
+## Novedades para los usuarios (parte de todo release a `main`, decisión del 2026-09-25)
+1. **Registro de novedades:** `docs/novedades-pendientes.md`.
+   - Cada cambio que un usuario pueda notar se anota ahí apenas entra a `main`, con:
+     - fecha y release;
+     - qué cambió, en lenguaje simple y sin términos técnicos;
+     - a quién afecta: dueño, cobrador o ambos;
+     - dónde se ve (pantalla);
+     - si el usuario tiene que hacer algo.
+   - Los arreglos internos que nadie nota no van.
+2. **Aviso al usuario activo (Luis):** cada informe de release a `main` termina con un mensaje de WhatsApp listo para que el dueño del proyecto se lo mande.
+   - Corto, de usted y sin tecnicismos.
+   - Dice qué cambió, qué tiene que hacer (si algo) y a quién escribir si algo se ve raro: `CONTACTO_SOPORTE`, en `src/lib/novedades.ts`.
+3. **Próxima guía:** cuando el registro tenga suficientes entradas, o cuando el dueño lo pida, se propone la guía de novedades siguiente con esos cambios.
+   - Usa el mismo mecanismo de la v1: versión nueva en `src/lib/novedades.ts`, pendiente en `novedades_usuario` para los usuarios existentes.
+   - Al publicarla, sus entradas pasan a la sección "Publicadas" del registro.
+
 ## Decisiones de arquitectura
 
 ### 2026-06-06 — Modelo de préstamos por cuotas
