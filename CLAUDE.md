@@ -161,6 +161,7 @@ Antes de crear o modificar cualquier componente o pantalla, leer src/design-syst
 - [ ] Rutas de cobro: organizar a qué clientes visita cada cobrador y en qué orden. Fase propia, alcance por definir (¿fijas o por día?, ¿por zona?, ¿mapa o lista?).
 - [ ] Cancelar/archivar préstamos desde la app (hoy no hay borrado, intencional; falta un estado 'cancelado' accesible desde la ficha, sin borrado físico).
 - [ ] Recargo por mora: el modelo de cuotas y el abierto dejan el espacio reservado, pero aún no se cobra recargo. Definir con el negocio cuándo se active.
+- [ ] (Mora, con "Préstamo existente") Las funciones de mora (`marcar_mora`, `marcar_cuotas_vencidas`) usan `current_date` en UTC: después de las 7:00 p. m. de Colombia ya cuentan el día siguiente (el cron de las 3:10/3:15 a. m. no lo sufre, pero una corrida o un recálculo de noche sí). Pasarlas a la fecha de America/Bogota SOLO en regla 2 (la regla 1 no cambia) y revisarlo junto con la opción "Préstamo existente".
 - [ ] (Fase 2 de la mora, aprobada) Opción "Préstamo existente" al crear: registrar lo ya pagado antes de hoy (cuotas pagadas o abonado; en el abierto, hasta qué mes pagó intereses y saldo actual) con una RPC nueva que llama a la de siempre, sin movimientos (no altera la caja ni los reportes de hoy). Primero el plan con las pantallas.
 - [ ] Mora multi-mes en producto "abierto": hoy el criterio es solo el ciclo del mes en curso, no rastrea ciclos atrasados de meses anteriores.
 
