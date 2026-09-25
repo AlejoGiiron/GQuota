@@ -3,6 +3,7 @@ import { NavLink, Outlet, useMatch, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import Avatar from '@/components/Avatar'
 import PrestamoFormModal from '@/components/PrestamoFormModal'
+import ControlSegmentado from '@/components/ui/ControlSegmentado'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import type { PrestamosOutletContext } from '@/components/PrestamoFicha'
 import { useClientes } from '@/hooks/useClientes'
@@ -15,6 +16,7 @@ import {
   type PrestamoInput,
 } from '@/hooks/usePrestamos'
 import { fmtCOP } from '@/lib/formatters'
+import { separarPrestamos, type FiltroPrestamos } from '@/lib/lista-prestamos'
 
 const IconMas = (
   <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -60,6 +62,10 @@ export default function PrestamosPage() {
   const detalle = useMatch('/prestamos/:prestamoId')
 
   const [modalAbierto, setModalAbierto] = useState(false)
+  // Por defecto solo lo que falta cobrar (la mora primero); los pagados, aparte.
+  const [filtro, setFiltro] = useState<FiltroPrestamos>('por_cobrar')
+  const { porCobrar, pagados } = useMemo(() => separarPrestamos(prestamos), [prestamos])
+  const visibles = filtro === 'por_cobrar' ? porCobrar : pagados
   // "Crear préstamo" desde la ficha de un cliente recién aprobado (fase 1C):
   // /prestamos?nuevo=<cliente> abre el formulario con ese cliente elegido.
   const [params, setParams] = useSearchParams()
@@ -170,51 +176,68 @@ export default function PrestamosPage() {
             )}
           </div>
         ) : (
-          <div className="card overflow-hidden">
-            {prestamos.map((p) => {
-              const nombre = clientePorId.get(p.cliente_id)?.nombre ?? 'Cliente'
-              return (
-                <NavLink
-                  key={p.id}
-                  to={`/prestamos/${p.id}`}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 border-t border-line-soft px-4 py-3 transition-colors first:border-t-0 ${
-                      isActive ? 'bg-green-tint' : 'hover:bg-bg'
-                    }`
-                  }
-                >
-                  <Avatar nombre={nombre} size={42} />
-                  <div className="min-w-0 flex-1 leading-tight">
-                    <div className="truncate text-[14.5px] font-bold text-text">{nombre}</div>
-                    <div className="truncate text-[12.5px] font-medium text-muted">
-                      {fmtCOP(p.capital_inicial)} ·{' '}
-                      {p.tipo === 'cuota_fija'
-                        ? `cuota ${fmtCOP(p.valor_cuota ?? 0)}`
-                        : tasaMensualTexto(p.tasa_mensual)}
-                    </div>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      <TipoOModoBadge tipo={p.tipo} modo={p.modo_interes} />
-                      <EstadoBadge estado={p.estado} />
-                    </div>
-                    {/* Cobrador asignado: solo el dueño lo ve (el cobrador ve solo lo suyo). */}
-                    {esDueno && (
-                      <div className="mt-1 truncate text-[11.5px] font-semibold text-muted">
-                        {p.cobrador_id
-                          ? `Cobrador: ${miembroPorId.get(p.cobrador_id)?.nombre ?? 'Cobrador'}${
-                              miembroPorId.get(p.cobrador_id)?.activo === false ? ' (inactivo)' : ''
-                            }`
-                          : 'Sin asignar'}
+          <>
+            <ControlSegmentado
+              etiquetaAccesible="Mostrar préstamos"
+              valor={filtro}
+              alCambiar={setFiltro}
+              opciones={[
+                { valor: 'por_cobrar', etiqueta: 'Por cobrar', cantidad: porCobrar.length },
+                { valor: 'pagados', etiqueta: 'Pagados', cantidad: pagados.length },
+              ]}
+            />
+            {visibles.length === 0 ? (
+              <div className="card px-6 py-10 text-center text-sm text-text-2">
+                {filtro === 'por_cobrar' ? 'No hay préstamos por cobrar.' : 'Aún no hay préstamos pagados.'}
+              </div>
+            ) : (
+              <div className="card overflow-hidden">
+                {visibles.map((p) => {
+                  const nombre = clientePorId.get(p.cliente_id)?.nombre ?? 'Cliente'
+                  return (
+                    <NavLink
+                      key={p.id}
+                      to={`/prestamos/${p.id}`}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 border-t border-line-soft px-4 py-3 transition-colors first:border-t-0 ${
+                          isActive ? 'bg-green-tint' : 'hover:bg-bg'
+                        }`
+                      }
+                    >
+                      <Avatar nombre={nombre} size={42} />
+                      <div className="min-w-0 flex-1 leading-tight">
+                        <div className="truncate text-[14.5px] font-bold text-text">{nombre}</div>
+                        <div className="truncate text-[12.5px] font-medium text-muted">
+                          {fmtCOP(p.capital_inicial)} ·{' '}
+                          {p.tipo === 'cuota_fija'
+                            ? `cuota ${fmtCOP(p.valor_cuota ?? 0)}`
+                            : tasaMensualTexto(p.tasa_mensual)}
+                        </div>
+                        <div className="mt-1 flex flex-wrap gap-1.5">
+                          <TipoOModoBadge tipo={p.tipo} modo={p.modo_interes} />
+                          <EstadoBadge estado={p.estado} />
+                        </div>
+                        {/* Cobrador asignado: solo el dueño lo ve (el cobrador ve solo lo suyo). */}
+                        {esDueno && (
+                          <div className="mt-1 truncate text-[11.5px] font-semibold text-muted">
+                            {p.cobrador_id
+                              ? `Cobrador: ${miembroPorId.get(p.cobrador_id)?.nombre ?? 'Cobrador'}${
+                                  miembroPorId.get(p.cobrador_id)?.activo === false ? ' (inactivo)' : ''
+                                }`
+                              : 'Sin asignar'}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div className="shrink-0 text-right leading-tight">
-                    <div className="mono text-[15.5px] font-bold text-text">{fmtCOP(p.saldo_capital)}</div>
-                    <div className="text-[11px] font-semibold text-muted">Saldo</div>
-                  </div>
-                </NavLink>
-              )
-            })}
-          </div>
+                      <div className="shrink-0 text-right leading-tight">
+                        <div className="mono text-[15.5px] font-bold text-text">{fmtCOP(p.saldo_capital)}</div>
+                        <div className="text-[11px] font-semibold text-muted">Saldo</div>
+                      </div>
+                    </NavLink>
+                  )
+                })}
+              </div>
+            )}
+          </>
         )}
       </section>
 
