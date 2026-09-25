@@ -19,11 +19,12 @@ const ESTADO_CUOTA: Record<string, { label: string; cls: string }> = {
   vencida: { label: 'Vencida', cls: 'bg-red-tint text-red' },
 }
 
-function EstadoCuotaBadge({ estado }: { estado: string }) {
+/** `antes`: pagada antes de registrar el préstamo en la app (préstamo existente). */
+function EstadoCuotaBadge({ estado, antes = false }: { estado: string; antes?: boolean }) {
   const info = ESTADO_CUOTA[estado] ?? { label: estado, cls: 'bg-bg text-text-2' }
   return (
     <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${info.cls}`}>
-      {info.label}
+      {antes && estado === 'pagada' ? 'Pagada (antes de la app)' : info.label}
     </span>
   )
 }
@@ -67,7 +68,9 @@ export default function CronogramaCuotas({
   const pagos = movimientos.filter((m) => m.tipo === 'interes' || m.tipo === 'cuota')
 
   const montoCuota = (c: CuotaDB) => c.capital + c.interes
-  const pagado = pagos.reduce((s, m) => s + m.monto_total, 0)
+  // Préstamo existente: lo pagado antes de la app no tiene movimientos (no entró en la caja).
+  const pagadoAntes = prestamo.pagado_antes ?? 0
+  const pagado = pagadoAntes + pagos.reduce((s, m) => s + m.monto_total, 0)
   const pendientes = cuotas.filter((c) => c.estado !== 'pagada')
   const saldo = pendientes.reduce((s, c) => s + montoCuota(c), 0)
   const total = pagado + saldo // cuadra por construcción
@@ -168,7 +171,7 @@ export default function CronogramaCuotas({
                         {pagada ? '—' : <span className="text-text">{fmtCOP(montoCuota(c))}</span>}
                       </td>
                       <td className="px-1 py-2.5 text-right">
-                        <EstadoCuotaBadge estado={c.estado} />
+                        <EstadoCuotaBadge estado={c.estado} antes={c.pagada_antes} />
                       </td>
                     </tr>
                   )
@@ -182,6 +185,12 @@ export default function CronogramaCuotas({
       {/* Pagos realizados (desde movimientos: lo que realmente se pagó) */}
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-bold text-text">Pagos realizados</h3>
+        {pagadoAntes > 0 && (
+          <p className="mb-3 text-[13px] text-text-2">
+            Antes de la app: <span className="mono font-semibold text-text">{fmtCOP(pagadoAntes)}</span>, sin fecha de
+            pago (no entró en la caja).
+          </p>
+        )}
         {cargandoMovs ? (
           <div className="flex flex-col gap-2">
             <div className="h-8 animate-pulse rounded bg-line-soft" />

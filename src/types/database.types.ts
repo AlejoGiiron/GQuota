@@ -109,6 +109,7 @@ export type Database = {
           interes: number
           negocio_id: string
           numero: number
+          pagada_antes: boolean
           prestamo_id: string
           user_id: string
         }
@@ -122,6 +123,7 @@ export type Database = {
           interes: number
           negocio_id?: string
           numero: number
+          pagada_antes?: boolean
           prestamo_id: string
           user_id: string
         }
@@ -135,6 +137,7 @@ export type Database = {
           interes?: number
           negocio_id?: string
           numero?: number
+          pagada_antes?: boolean
           prestamo_id?: string
           user_id?: string
         }
@@ -319,14 +322,17 @@ export type Database = {
           codeudor_nombre: string | null
           codeudor_telefono: string | null
           created_at: string
+          cuotas_pagadas_antes: number | null
           dia_cobro: number | null
           estado: string
           fecha_desembolso: string
           id: string
+          interes_pagado_hasta: string | null
           interes_pendiente: number
           modo_interes: string
           negocio_id: string
           notas: string | null
+          pagado_antes: number | null
           regla_mora: number
           saldo_capital: number
           tasa_mensual: number
@@ -343,14 +349,17 @@ export type Database = {
           codeudor_nombre?: string | null
           codeudor_telefono?: string | null
           created_at?: string
+          cuotas_pagadas_antes?: number | null
           dia_cobro?: number | null
           estado?: string
           fecha_desembolso: string
           id?: string
+          interes_pagado_hasta?: string | null
           interes_pendiente?: number
           modo_interes?: string
           negocio_id?: string
           notas?: string | null
+          pagado_antes?: number | null
           regla_mora?: number
           saldo_capital: number
           tasa_mensual: number
@@ -367,14 +376,17 @@ export type Database = {
           codeudor_nombre?: string | null
           codeudor_telefono?: string | null
           created_at?: string
+          cuotas_pagadas_antes?: number | null
           dia_cobro?: number | null
           estado?: string
           fecha_desembolso?: string
           id?: string
+          interes_pagado_hasta?: string | null
           interes_pendiente?: number
           modo_interes?: string
           negocio_id?: string
           notas?: string | null
+          pagado_antes?: number | null
           regla_mora?: number
           saldo_capital?: number
           tasa_mensual?: number
@@ -526,14 +538,17 @@ export type Database = {
           codeudor_nombre: string | null
           codeudor_telefono: string | null
           created_at: string
+          cuotas_pagadas_antes: number | null
           dia_cobro: number | null
           estado: string
           fecha_desembolso: string
           id: string
+          interes_pagado_hasta: string | null
           interes_pendiente: number
           modo_interes: string
           negocio_id: string
           notas: string | null
+          pagado_antes: number | null
           regla_mora: number
           saldo_capital: number
           tasa_mensual: number
@@ -591,14 +606,17 @@ export type Database = {
           codeudor_nombre: string | null
           codeudor_telefono: string | null
           created_at: string
+          cuotas_pagadas_antes: number | null
           dia_cobro: number | null
           estado: string
           fecha_desembolso: string
           id: string
+          interes_pagado_hasta: string | null
           interes_pendiente: number
           modo_interes: string
           negocio_id: string
           notas: string | null
+          pagado_antes: number | null
           regla_mora: number
           saldo_capital: number
           tasa_mensual: number
@@ -635,14 +653,17 @@ export type Database = {
           codeudor_nombre: string | null
           codeudor_telefono: string | null
           created_at: string
+          cuotas_pagadas_antes: number | null
           dia_cobro: number | null
           estado: string
           fecha_desembolso: string
           id: string
+          interes_pagado_hasta: string | null
           interes_pendiente: number
           modo_interes: string
           negocio_id: string
           notas: string | null
+          pagado_antes: number | null
           regla_mora: number
           saldo_capital: number
           tasa_mensual: number
@@ -679,14 +700,71 @@ export type Database = {
           codeudor_nombre: string | null
           codeudor_telefono: string | null
           created_at: string
+          cuotas_pagadas_antes: number | null
           dia_cobro: number | null
           estado: string
           fecha_desembolso: string
           id: string
+          interes_pagado_hasta: string | null
           interes_pendiente: number
           modo_interes: string
           negocio_id: string
           notas: string | null
+          pagado_antes: number | null
+          regla_mora: number
+          saldo_capital: number
+          tasa_mensual: number
+          tipo: string
+          ultimo_devengo: string | null
+          user_id: string
+          valor_cuota: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "prestamos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      crear_prestamo_existente: {
+        Args: {
+          p_abonado_siguiente?: number
+          p_capital: number
+          p_cliente_id: string
+          p_cobrador_id?: string
+          p_codeudor_documento?: string
+          p_codeudor_nombre?: string
+          p_codeudor_telefono?: string
+          p_cuotas_pagadas?: number
+          p_fecha_desembolso: string
+          p_frecuencia?: string
+          p_interes_pagado_hasta?: string
+          p_modo_interes?: string
+          p_n_cuotas?: number
+          p_saldo_capital?: number
+          p_tasa_mensual?: number
+          p_tipo: string
+          p_valor_cuota?: number
+        }
+        Returns: {
+          capital_inicial: number
+          cliente_id: string
+          cobrador_id: string | null
+          codeudor_documento: string | null
+          codeudor_nombre: string | null
+          codeudor_telefono: string | null
+          created_at: string
+          cuotas_pagadas_antes: number | null
+          dia_cobro: number | null
+          estado: string
+          fecha_desembolso: string
+          id: string
+          interes_pagado_hasta: string | null
+          interes_pendiente: number
+          modo_interes: string
+          negocio_id: string
+          notas: string | null
+          pagado_antes: number | null
           regla_mora: number
           saldo_capital: number
           tasa_mensual: number
@@ -727,7 +805,15 @@ export type Database = {
         Returns: undefined
       }
       marcar_cuotas_vencidas: { Args: never; Returns: number }
+      marcar_cuotas_vencidas_para: {
+        Args: { p_hoy_co: string; p_hoy_utc: string; p_prestamo?: string }
+        Returns: number
+      }
       marcar_mora: { Args: never; Returns: number }
+      marcar_mora_para: {
+        Args: { p_hoy_co: string; p_hoy_utc: string; p_prestamo?: string }
+        Returns: number
+      }
       mi_miembro_id: { Args: never; Returns: string }
       mi_negocio: { Args: never; Returns: string }
       mi_rol: { Args: never; Returns: string }

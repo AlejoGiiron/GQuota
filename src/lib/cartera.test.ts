@@ -9,7 +9,7 @@ function prestamo(parcial: Partial<Prestamo>): Prestamo {
     modo_interes: 'sobre_saldo', fecha_desembolso: '2026-09-25', dia_cobro: null, estado: 'activo', notas: null,
     created_at: '2026-09-25T15:00:00Z', interes_pendiente: 100_000, ultimo_devengo: '2026-09-25', tipo: 'abierto',
     codeudor_nombre: null, codeudor_telefono: null, codeudor_documento: null, valor_cuota: null, negocio_id: 'n',
-    cobrador_id: null, regla_mora: 2,
+    cobrador_id: null, regla_mora: 2, pagado_antes: null, cuotas_pagadas_antes: null, interes_pagado_hasta: null,
     ...parcial,
   } as Prestamo
 }
@@ -51,6 +51,26 @@ describe('abierto de regla 2 (préstamos nuevos, migración 040)', () => {
     expect(vencido(p31, '2026-01-31')).toBe(false)
     expect(cobroHoy(p31, '2026-02-28')).toBe(true)
     expect(cobroHoy(p31, '2026-03-31')).toBe(true) // en marzo el cobro es el 31
+  })
+})
+
+describe('abierto existente (migración 041): el cobro ya pagado antes de la app no cuenta', () => {
+  const p = prestamo({ fecha_desembolso: '2026-06-20', regla_mora: 2, interes_pagado_hasta: '2026-09-20', cuotas_pagadas_antes: 3 })
+
+  it('pagado hasta el cobro de este mes: ni vencido ni cobro de hoy', () => {
+    expect(vencido(p, '2026-09-25')).toBe(false)
+    expect(cobroHoy(p, '2026-09-20')).toBe(false)
+  })
+  it('el cobro siguiente sí cuenta: cobro de hoy y vencido si pasa sin pago', () => {
+    expect(cobroHoy(p, '2026-10-20')).toBe(true)
+    expect(vencido(p, '2026-10-21')).toBe(true)
+    expect(vencido(p, '2026-10-22', [pago('2026-10-20')])).toBe(false)
+  })
+  it('pagado solo hasta el mes pasado: el cobro de este mes sale vencido', () => {
+    expect(vencido({ ...p, interes_pagado_hasta: '2026-08-20' }, '2026-09-25')).toBe(true)
+  })
+  it('sin cobros pagados: el cobro de este mes sale vencido', () => {
+    expect(vencido({ ...p, interes_pagado_hasta: null }, '2026-09-25')).toBe(true)
   })
 })
 

@@ -12,6 +12,7 @@ import PagoCuotaFijaModal from '@/components/PagoCuotaFijaModal'
 import { EstadoBadge, TipoOModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import type { ResultadoPago } from '@/lib/motor-prestamos'
+import { textoHistorial } from '@/lib/prestamo-existente'
 import type { MiembroEquipo } from '@/hooks/useEquipo'
 import type { Cliente, Prestamo } from '@/types/db'
 
@@ -103,6 +104,7 @@ export default function PrestamoFicha() {
 
   const cliente = clientePorId.get(prestamo.cliente_id)
   const nombre = cliente?.nombre ?? 'Cliente'
+  const historial = textoHistorial(prestamo)
   const esCuotas = prestamo.tipo === 'cuotas'
   const esCuotaFija = prestamo.tipo === 'cuota_fija'
   const cobrable = prestamo.estado === 'activo' || prestamo.estado === 'en_mora'
@@ -182,6 +184,8 @@ export default function PrestamoFicha() {
             </div>
           </div>
         </div>
+        {/* Préstamo existente: qué pagó antes de registrarlo (no entró en la caja). */}
+        {historial && <p className="mt-4 rounded-lg bg-bg px-3 py-2.5 text-[13px] text-text-2">{historial}</p>}
         <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           {pagable && (
             <button

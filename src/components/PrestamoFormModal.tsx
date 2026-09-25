@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import Modal from '@/components/Modal'
+import ControlSegmentado from '@/components/ui/ControlSegmentado'
 import { fmtCOP, fmtFecha } from '@/lib/formatters'
 import {
   generarCronograma,
@@ -7,7 +8,18 @@ import {
   resumenCuotaFija,
   type FrecuenciaCuota,
 } from '@/lib/motor-prestamos'
-import type { PrestamoCuotasInput, PrestamoCuotaFijaInput } from '@/hooks/usePrestamos'
+import {
+  avisoAbierto,
+  avisoCuotas,
+  cobrosPasados,
+  hoyColombia,
+  proximoCobro,
+  resumenAbierto,
+  resumenCuotas,
+  type Aviso,
+  type CuotaPrevista,
+} from '@/lib/prestamo-existente'
+import type { PrestamoCuotasInput, PrestamoCuotaFijaInput, PrestamoExistenteInput } from '@/hooks/usePrestamos'
 import type { PrestamoInput } from '@/hooks/usePrestamos'
 import type { ModoInteres } from '@/lib/motor-prestamos'
 import type { Cliente } from '@/types/db'
@@ -57,6 +69,32 @@ function fechasCronograma(fechaISO: string, frecuencia: FrecuenciaCuota, nCuotas
 
 type TipoPrestamo = 'abierto' | 'cuotas' | 'cuota_fija'
 
+/** Valor del selector "Último cobro que le pagaron" cuando no pagó ninguno. */
+const NINGUNO = 'ninguno'
+
+function FilaResumen({ etiqueta, valor }: { etiqueta: string; valor: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 text-sm">
+      <span className="text-text-2">{etiqueta}</span>
+      <span className="mono text-right font-bold text-text">{valor}</span>
+    </div>
+  )
+}
+
+const TONO_AVISO: Record<Aviso['tono'], string> = {
+  ok: 'bg-green-tint text-green-700',
+  atraso: 'bg-estado-por-vencer-fondo text-estado-por-vencer',
+  mora: 'bg-red-tint text-red',
+}
+
+function AvisoExistente({ aviso }: { aviso: Aviso }) {
+  return (
+    <p role={aviso.tono === 'ok' ? undefined : 'alert'} className={`rounded-lg px-3 py-2 text-xs font-semibold ${TONO_AVISO[aviso.tono]}`}>
+      {aviso.texto}
+    </p>
+  )
+}
+
 export default function PrestamoFormModal({
   open,
   clientes,
@@ -66,6 +104,7 @@ export default function PrestamoFormModal({
   onGuardar,
   onGuardarCuotas,
   onGuardarCuotaFija,
+  onGuardarExistente,
 }: {
   open: boolean
   clientes: Cliente[]
@@ -77,6 +116,8 @@ export default function PrestamoFormModal({
   onGuardar: (input: PrestamoInput) => Promise<boolean>
   onGuardarCuotas: (input: PrestamoCuotasInput) => Promise<boolean>
   onGuardarCuotaFija: (input: PrestamoCuotaFijaInput) => Promise<boolean>
+  /** Préstamo que ya venía pagándose antes de la app (fecha de desembolso pasada). */
+  onGuardarExistente: (input: PrestamoExistenteInput) => Promise<boolean>
 }) {
   const [tipo, setTipo] = useState<TipoPrestamo>('abierto')
   const [clienteId, setClienteId] = useState('')
@@ -91,8 +132,24 @@ export default function PrestamoFormModal({
   const [codeudorNombre, setCodeudorNombre] = useState('')
   const [codeudorTelefono, setCodeudorTelefono] = useState('')
   const [codeudorDocumento, setCodeudorDocumento] = useState('')
+  // Préstamo existente (solo con fecha de desembolso pasada).
+  const [existente, setExistente] = useState(false)
+  const [cuotasPagadas, setCuotasPagadas] = useState('')
+  const [abonoSiguiente, setAbonoSiguiente] = useState('')
+  const [saldoHoy, setSaldoHoy] = useState('') // '' = igual al capital
+  const [pagadoHasta, setPagadoHasta] = useState('') // '' = sin elegir · NINGUNO · aaaa-mm-dd
   const [errores, setErrores] = useState<Record<string, string>>({})
   const [guardando, setGuardando] = useState(false)
+
+  // En los campos del préstamo existente, el error se quita al corregir el dato.
+  function quitarError(campo: string) {
+    setErrores((prev) => {
+      if (!(campo in prev)) return prev
+      const resto = { ...prev }
+      delete resto[campo]
+      return resto
+    })
+  }
 
   useEffect(() => {
     if (!open) return
@@ -109,6 +166,11 @@ export default function PrestamoFormModal({
     setCodeudorNombre('')
     setCodeudorTelefono('')
     setCodeudorDocumento('')
+    setExistente(false)
+    setCuotasPagadas('')
+    setAbonoSiguiente('')
+    setSaldoHoy('')
+    setPagadoHasta('')
     setErrores({})
     setGuardando(false)
   }, [open, clienteInicial])
@@ -152,6 +214,54 @@ export default function PrestamoFormModal({
     return cuotas.map((c, i) => ({ ...c, fecha: fechas[i] }))
   }, [tipo, nNum, valorNum, frecuencia, fecha])
 
+  // ── Préstamo existente: solo si la fecha de desembolso es anterior a hoy (Colombia) ──
+  const hoy = hoyColombia()
+  const fechaPasada = fecha !== '' && fecha < hoy
+  const esExistente = existente && fechaPasada
+  const pagadasNum = Number(cuotasPagadas)
+  const abonoNum = abonoSiguiente === '' ? 0 : Number(abonoSiguiente)
+  const saldoNum = saldoHoy === '' ? capitalNum : Number(saldoHoy)
+  const cobros = useMemo(
+    () => (fechaPasada && tipo === 'abierto' ? cobrosPasados(fecha, hoy) : []),
+    [fechaPasada, tipo, fecha, hoy],
+  )
+  // Si cambió la fecha, un cobro elegido antes puede ya no estar en la lista.
+  const pagadoHastaValido = pagadoHasta === NINGUNO || cobros.includes(pagadoHasta) ? pagadoHasta : ''
+  const pagadoHastaFecha = pagadoHastaValido === '' || pagadoHastaValido === NINGUNO ? null : pagadoHastaValido
+
+  // Resumen en vivo del préstamo existente (con el aviso si algo queda atrasado).
+  const resumenExistenteCuotas = useMemo(() => {
+    if (!esExistente || tipo === 'abierto') return null
+    const lista: CuotaPrevista[] | null =
+      tipo === 'cuotas'
+        ? preview?.map((c) => ({ numero: c.numero, fecha: c.fecha, valor: c.capital + c.interes })) ?? null
+        : previewFija?.map((c) => ({ numero: c.numero, fecha: c.fecha, valor: c.valor })) ?? null
+    if (!lista) return null
+    if (cuotasPagadas === '' || !Number.isInteger(pagadasNum) || pagadasNum < 0 || pagadasNum >= lista.length) return null
+    const abono = tipo === 'cuota_fija' ? abonoNum : 0
+    if (Number.isNaN(abono) || abono < 0 || (tipo === 'cuota_fija' && abono >= valorNum)) return null
+    const r = resumenCuotas(lista, pagadasNum, abono, hoy)
+    return { ...r, aviso: avisoCuotas(r, abono) }
+  }, [esExistente, tipo, preview, previewFija, cuotasPagadas, pagadasNum, abonoNum, valorNum, hoy])
+
+  const resumenExistenteAbierto = useMemo(() => {
+    if (!esExistente || tipo !== 'abierto') return null
+    if (!capital || Number.isNaN(capitalNum) || capitalNum <= 0) return null
+    if (tasa === '' || Number.isNaN(tasaNum) || tasaNum < 0) return null
+    if (Number.isNaN(saldoNum) || saldoNum <= 0 || saldoNum > capitalNum) return null
+    if (cobros.length > 0 && pagadoHastaValido === '') return null
+    const r = resumenAbierto({
+      capital: capitalNum,
+      saldo: saldoNum,
+      tasa: tasaNum / 100,
+      modo,
+      fechaDesembolso: fecha,
+      pagadoHasta: pagadoHastaFecha,
+      hoy,
+    })
+    return { ...r, aviso: avisoAbierto(r) }
+  }, [esExistente, tipo, capital, capitalNum, tasa, tasaNum, saldoNum, cobros, pagadoHastaValido, pagadoHastaFecha, modo, fecha, hoy])
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const nuevos: Record<string, string> = {}
@@ -174,6 +284,21 @@ export default function PrestamoFormModal({
     if ((codTelefono || codDocumento) && !codNombre)
       nuevos.codeudor = 'Ingresa el nombre del codeudor.'
 
+    // Préstamo existente: lo que ya pagó.
+    if (esExistente && (tipo === 'cuotas' || tipo === 'cuota_fija')) {
+      const nValido = Number.isInteger(nNum) && nNum >= 1
+      if (cuotasPagadas === '' || !Number.isInteger(pagadasNum) || pagadasNum < 0 || (nValido && pagadasNum >= nNum))
+        nuevos.cuotasPagadas = 'Ingresa las cuotas que ya pagó: deben ser menos que el total de cuotas.'
+      if (tipo === 'cuota_fija' && (Number.isNaN(abonoNum) || abonoNum < 0 || (valorNum > 0 && abonoNum >= valorNum)))
+        nuevos.abono = 'El abono debe ser menor que el valor de la cuota.'
+    }
+    if (esExistente && tipo === 'abierto') {
+      if (Number.isNaN(saldoNum) || saldoNum <= 0 || (capitalNum > 0 && saldoNum > capitalNum))
+        nuevos.saldo = 'El saldo debe ser mayor a cero y no superar el capital prestado.'
+      if (cobros.length > 0 && pagadoHastaValido === '')
+        nuevos.pagadoHasta = 'Elige el último cobro de intereses que le pagaron.'
+    }
+
     setErrores(nuevos)
     if (Object.keys(nuevos).length > 0) return
 
@@ -190,7 +315,16 @@ export default function PrestamoFormModal({
 
     setGuardando(true)
     let ok: boolean
-    if (tipo === 'cuotas') {
+    if (esExistente) {
+      const base = { tipo, cliente_id: clienteId, capital_inicial: capitalNum, fecha_desembolso: fecha, cobrador_id, ...codeudor }
+      ok = await onGuardarExistente(
+        tipo === 'abierto'
+          ? { ...base, tasa_mensual: tasaNum / 100, modo_interes: modo, saldo_capital: saldoNum, interes_pagado_hasta: pagadoHastaFecha }
+          : tipo === 'cuotas'
+            ? { ...base, tasa_mensual: tasaNum / 100, frecuencia, n_cuotas: nNum, cuotas_pagadas: pagadasNum }
+            : { ...base, frecuencia, n_cuotas: nNum, valor_cuota: valorNum, cuotas_pagadas: pagadasNum, abonado_siguiente: abonoNum },
+      )
+    } else if (tipo === 'cuotas') {
       ok = await onGuardarCuotas({
         cliente_id: clienteId,
         capital_inicial: capitalNum,
@@ -500,6 +634,173 @@ export default function PrestamoFormModal({
             />
             {errores.fecha && <p className="text-xs font-semibold text-red">{errores.fecha}</p>}
           </div>
+
+          {/* Préstamo existente (fecha pasada): lo ya pagado queda en el préstamo, no en la caja. */}
+          {fechaPasada && (
+            <div className="flex flex-col gap-4 rounded-xl border border-line bg-bg p-4">
+              <div className="flex flex-col gap-2">
+                <span className="text-[13px] font-semibold text-text-2">¿Es un préstamo que ya venía pagándose?</span>
+                <ControlSegmentado
+                  etiquetaAccesible="¿Es un préstamo que ya venía pagándose?"
+                  valor={existente ? 'si' : 'no'}
+                  alCambiar={(v) => setExistente(v === 'si')}
+                  opciones={[
+                    { valor: 'no', etiqueta: 'No' },
+                    { valor: 'si', etiqueta: 'Sí' },
+                  ]}
+                />
+                <p className="text-xs text-muted">
+                  {existente
+                    ? 'Lo que ya pagó queda registrado en el préstamo, pero no entra en la caja de hoy ni en la ganancia.'
+                    : 'Con «No» se crea desde esa fecha sin ningún pago.'}
+                </p>
+              </div>
+
+              {existente && (tipo === 'cuotas' || tipo === 'cuota_fija') && (
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="pr-pagadas" className="text-[13px] font-semibold text-text-2">
+                    {tipo === 'cuota_fija' ? 'Cuotas que ya pagó completas' : 'Cuotas que ya pagó'}{' '}
+                    <span className="text-red">*</span>
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      id="pr-pagadas"
+                      className="input w-[120px]"
+                      type="number"
+                      min="0"
+                      step="1"
+                      inputMode="numeric"
+                      placeholder="0"
+                      value={cuotasPagadas}
+                      onChange={(e) => {
+                        setCuotasPagadas(e.target.value)
+                        quitarError('cuotasPagadas')
+                      }}
+                    />
+                    {Number.isInteger(nNum) && nNum >= 1 && <span className="text-sm text-text-2">de {nNum}</span>}
+                  </div>
+                  {errores.cuotasPagadas && (
+                    <p className="text-xs font-semibold text-red">{errores.cuotasPagadas}</p>
+                  )}
+                </div>
+              )}
+
+              {existente && tipo === 'cuota_fija' && (
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="pr-abono" className="text-[13px] font-semibold text-text-2">
+                    Abonado a la cuota siguiente
+                  </label>
+                  <input
+                    id="pr-abono"
+                    className="input"
+                    type="number"
+                    min="0"
+                    inputMode="numeric"
+                    placeholder="0"
+                    value={abonoSiguiente}
+                    onChange={(e) => {
+                      setAbonoSiguiente(e.target.value)
+                      quitarError('abono')
+                    }}
+                  />
+                  <p className="text-xs text-muted">Opcional: lo que ya abonó a la cuota que sigue, sin completarla.</p>
+                  {errores.abono && <p className="text-xs font-semibold text-red">{errores.abono}</p>}
+                </div>
+              )}
+
+              {existente && tipo === 'abierto' && (
+                <>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="pr-saldo" className="text-[13px] font-semibold text-text-2">
+                      Saldo de capital hoy
+                    </label>
+                    <input
+                      id="pr-saldo"
+                      className="input"
+                      type="number"
+                      min="1"
+                      inputMode="numeric"
+                      placeholder={capitalNum > 0 ? String(capitalNum) : 'Igual al capital prestado'}
+                      value={saldoHoy}
+                      onChange={(e) => {
+                        setSaldoHoy(e.target.value)
+                        quitarError('saldo')
+                      }}
+                    />
+                    <p className="text-xs text-muted">
+                      Si no ha abonado a capital, déjalo vacío: queda igual al capital prestado.
+                    </p>
+                    {errores.saldo && <p className="text-xs font-semibold text-red">{errores.saldo}</p>}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="pr-pagado-hasta" className="text-[13px] font-semibold text-text-2">
+                      Último cobro de intereses que le pagaron {cobros.length > 0 && <span className="text-red">*</span>}
+                    </label>
+                    {cobros.length === 0 ? (
+                      <p className="text-sm text-text-2">
+                        Todavía no le ha tocado ningún cobro: el primero es el {fmtFecha(proximoCobro(fecha, hoy))}.
+                      </p>
+                    ) : (
+                      <select
+                        id="pr-pagado-hasta"
+                        className={selectClass}
+                        value={pagadoHastaValido}
+                        onChange={(e) => {
+                          setPagadoHasta(e.target.value)
+                          quitarError('pagadoHasta')
+                        }}
+                      >
+                        <option value="">Elige…</option>
+                        {cobros.map((c, i) => (
+                          <option key={c} value={c}>
+                            {fmtFecha(c)}
+                            {i === 0 ? ' · el más reciente' : ''}
+                          </option>
+                        ))}
+                        <option value={NINGUNO}>Ninguno</option>
+                      </select>
+                    )}
+                    {errores.pagadoHasta && <p className="text-xs font-semibold text-red">{errores.pagadoHasta}</p>}
+                  </div>
+                </>
+              )}
+
+              {/* Resumen en vivo antes de guardar */}
+              {resumenExistenteCuotas && (
+                <div className="flex flex-col gap-2 rounded-lg border border-line bg-card p-3">
+                  <FilaResumen etiqueta="Ya pagó (no entra en la caja)" valor={fmtCOP(resumenExistenteCuotas.pagadoAntes)} />
+                  <FilaResumen
+                    etiqueta={`Quedan ${resumenExistenteCuotas.cuotasRestantes} ${resumenExistenteCuotas.cuotasRestantes === 1 ? 'cuota' : 'cuotas'}`}
+                    valor={fmtCOP(resumenExistenteCuotas.saldo)}
+                  />
+                  {resumenExistenteCuotas.proxima && (
+                    <FilaResumen
+                      etiqueta="Próxima cuota"
+                      valor={`N.º ${resumenExistenteCuotas.proxima.numero} · ${fmtFecha(resumenExistenteCuotas.proxima.fecha)}`}
+                    />
+                  )}
+                  {resumenExistenteCuotas.proxima && tipo === 'cuota_fija' && abonoNum > 0 && (
+                    <FilaResumen etiqueta="Le falta a esa cuota" valor={fmtCOP(resumenExistenteCuotas.proxima.falta)} />
+                  )}
+                  <AvisoExistente aviso={resumenExistenteCuotas.aviso} />
+                </div>
+              )}
+              {resumenExistenteAbierto && (
+                <div className="flex flex-col gap-2 rounded-lg border border-line bg-card p-3">
+                  <FilaResumen etiqueta="Interés pendiente hoy" valor={fmtCOP(resumenExistenteAbierto.interesPendiente)} />
+                  {resumenExistenteAbierto.abonadoCapital > 0 && (
+                    <FilaResumen
+                      etiqueta="Abonado a capital (no entra en la caja)"
+                      valor={fmtCOP(resumenExistenteAbierto.abonadoCapital)}
+                    />
+                  )}
+                  <FilaResumen etiqueta="Próximo cobro" valor={fmtFecha(resumenExistenteAbierto.proximoCobro)} />
+                  <p className="text-xs text-muted">El interés pendiente se calcula con lo que declaraste; no se edita.</p>
+                  <AvisoExistente aviso={resumenExistenteAbierto.aviso} />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Codeudor (opcional) — datos sueltos del préstamo, no un cliente. */}
           <div className="flex flex-col gap-2 rounded-xl border border-line bg-bg p-4">

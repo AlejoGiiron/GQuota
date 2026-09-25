@@ -19,11 +19,12 @@ const ESTADO_CUOTA: Record<string, { label: string; cls: string }> = {
   pagada: { label: 'Pagada', cls: 'bg-green-tint text-green-700' },
 }
 
-function EstadoCuotaBadge({ estado }: { estado: string }) {
+/** `antes`: pagada antes de registrar el préstamo en la app (préstamo existente). */
+function EstadoCuotaBadge({ estado, antes = false }: { estado: string; antes?: boolean }) {
   const info = ESTADO_CUOTA[estado] ?? { label: estado, cls: 'bg-bg text-text-2' }
   return (
     <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${info.cls}`}>
-      {info.label}
+      {antes && estado === 'pagada' ? 'Pagada (antes de la app)' : info.label}
     </span>
   )
 }
@@ -70,6 +71,8 @@ export default function CronogramaCuotaFija({
   const pagado = total - saldo
   const ganancia = total - prestamo.capital_inicial
   const pendientes = cuotas.filter((c) => c.estado !== 'pagada')
+  // Préstamo existente: lo pagado antes de la app (ya está en las cuotas; sin movimientos).
+  const pagadoAntes = prestamo.pagado_antes ?? 0
 
   // Reenvío de comprobante desde el historial: usa el estado ACTUAL del crédito.
   async function enviarComprobante(m: Movimiento) {
@@ -164,7 +167,7 @@ export default function CronogramaCuotaFija({
                         )}
                       </td>
                       <td className="px-1 py-2.5 text-right">
-                        <EstadoCuotaBadge estado={c.estado} />
+                        <EstadoCuotaBadge estado={c.estado} antes={c.pagada_antes} />
                       </td>
                     </tr>
                   )
@@ -178,6 +181,12 @@ export default function CronogramaCuotaFija({
       {/* Pagos realizados */}
       <div className="card p-5">
         <h3 className="mb-3 text-sm font-bold text-text">Pagos realizados</h3>
+        {pagadoAntes > 0 && (
+          <p className="mb-3 text-[13px] text-text-2">
+            Antes de la app: <span className="mono font-semibold text-text">{fmtCOP(pagadoAntes)}</span>, sin fecha de
+            pago (no entró en la caja).
+          </p>
+        )}
         {cargandoMovs ? (
           <div className="flex flex-col gap-2">
             <div className="h-8 animate-pulse rounded bg-line-soft" />

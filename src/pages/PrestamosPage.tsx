@@ -13,6 +13,7 @@ import {
   usePrestamos,
   type PrestamoCuotasInput,
   type PrestamoCuotaFijaInput,
+  type PrestamoExistenteInput,
   type PrestamoInput,
 } from '@/hooks/usePrestamos'
 import { fmtCOP } from '@/lib/formatters'
@@ -50,6 +51,7 @@ export default function PrestamosPage() {
     crear,
     crearCuotas,
     crearCuotaFija,
+    crearExistente,
     registrarPago,
     registrarPagoCuotas,
     registrarPagoCuotaFija,
@@ -110,6 +112,16 @@ export default function PrestamosPage() {
       return false
     }
     toast.success('Préstamo de cuota fija creado.')
+    return true
+  }
+
+  async function handleGuardarExistente(input: PrestamoExistenteInput): Promise<boolean> {
+    const { error } = await crearExistente(input)
+    if (error) {
+      toast.error(error)
+      return false
+    }
+    toast.success('Préstamo existente cargado.')
     return true
   }
 
@@ -267,6 +279,7 @@ export default function PrestamosPage() {
         onGuardar={handleGuardar}
         onGuardarCuotas={handleGuardarCuotas}
         onGuardarCuotaFija={handleGuardarCuotaFija}
+        onGuardarExistente={handleGuardarExistente}
       />
     </div>
   )

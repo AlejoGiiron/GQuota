@@ -69,6 +69,35 @@ export interface PrestamoCuotaFijaInput extends CodeudorInput, AsignacionInput {
   fecha_desembolso: string
 }
 
+/**
+ * Datos de un "préstamo existente": ya venía pagándose antes de la app. Además de
+ * los datos del tipo, lo que ya pagó (no entra en la caja de hoy ni en la ganancia).
+ */
+export interface PrestamoExistenteInput extends CodeudorInput, AsignacionInput {
+  tipo: 'abierto' | 'cuotas' | 'cuota_fija'
+  cliente_id: string
+  capital_inicial: number
+  /** Anterior a hoy (fecha de Colombia). */
+  fecha_desembolso: string
+  /** Abierto y cuotas. Tasa mensual en decimal: 0.10 = 10%. */
+  tasa_mensual?: number
+  /** Abierto. */
+  modo_interes?: ModoInteres
+  /** Cuotas y cuota fija. */
+  frecuencia?: FrecuenciaCuota
+  n_cuotas?: number
+  /** Cuota fija. */
+  valor_cuota?: number
+  /** Cuotas y cuota fija: cuotas completas ya pagadas (menos que el total). */
+  cuotas_pagadas?: number
+  /** Cuota fija: abono a la cuota siguiente (menor que el valor de la cuota). */
+  abonado_siguiente?: number
+  /** Abierto: saldo de capital de hoy. */
+  saldo_capital?: number
+  /** Abierto: fecha del último cobro de intereses pagado (null = ninguno). */
+  interes_pagado_hasta?: string | null
+}
+
 export interface PrestamoMutacion {
   data: Prestamo | null
   error: string | null
@@ -173,6 +202,43 @@ export function usePrestamos(clienteId?: string) {
       })
       if (error || !data) {
         return { data: null, error: 'No pudimos crear el préstamo. Intenta de nuevo.' }
+      }
+      setPrestamos((prev) => [data, ...prev])
+      return { data, error: null }
+    },
+    [],
+  )
+
+  /**
+   * Crea un préstamo existente de forma atómica (RPC crear_prestamo_existente): el
+   * préstamo con la RPC de siempre, lo ya pagado sin movimientos de caja, y su estado
+   * de hoy. Si la RPC rechaza un dato, se muestra su mensaje (ya viene en español).
+   */
+  const crearExistente = useCallback(
+    async (input: PrestamoExistenteInput): Promise<PrestamoMutacion> => {
+      const { data, error } = await supabase.rpc('crear_prestamo_existente', {
+        p_tipo: input.tipo,
+        p_cliente_id: input.cliente_id,
+        p_capital: input.capital_inicial,
+        p_fecha_desembolso: input.fecha_desembolso,
+        p_tasa_mensual: input.tasa_mensual,
+        p_modo_interes: input.modo_interes,
+        p_frecuencia: input.frecuencia,
+        p_n_cuotas: input.n_cuotas,
+        p_valor_cuota: input.valor_cuota,
+        p_cuotas_pagadas: input.cuotas_pagadas,
+        p_abonado_siguiente: input.abonado_siguiente,
+        p_saldo_capital: input.saldo_capital,
+        p_interes_pagado_hasta: input.interes_pagado_hasta ?? undefined,
+        p_codeudor_nombre: input.codeudor_nombre ?? undefined,
+        p_codeudor_telefono: input.codeudor_telefono ?? undefined,
+        p_codeudor_documento: input.codeudor_documento ?? undefined,
+        p_cobrador_id: input.cobrador_id ?? undefined,
+      })
+      if (error || !data) {
+        // P0001 = raise exception de la RPC (validación con mensaje para el usuario).
+        const mensaje = error?.code === 'P0001' ? error.message : 'No pudimos crear el préstamo. Intenta de nuevo.'
+        return { data: null, error: mensaje }
       }
       setPrestamos((prev) => [data, ...prev])
       return { data, error: null }
@@ -304,6 +370,7 @@ export function usePrestamos(clienteId?: string) {
     crear,
     crearCuotas,
     crearCuotaFija,
+    crearExistente,
     registrarPago,
     registrarPagoCuotas,
     registrarPagoCuotaFija,
