@@ -61,6 +61,7 @@ export default function PrestamoFormModal({
   open,
   clientes,
   cobradores,
+  clienteInicial,
   onClose,
   onGuardar,
   onGuardarCuotas,
@@ -70,6 +71,8 @@ export default function PrestamoFormModal({
   clientes: Cliente[]
   /** Cobradores activos del negocio para asignar (solo dueño). */
   cobradores: ReadonlyArray<{ id: string; nombre: string | null }>
+  /** Cliente ya elegido al abrir (p. ej. recién aprobado desde una solicitud). */
+  clienteInicial?: string
   onClose: () => void
   onGuardar: (input: PrestamoInput) => Promise<boolean>
   onGuardarCuotas: (input: PrestamoCuotasInput) => Promise<boolean>
@@ -94,7 +97,7 @@ export default function PrestamoFormModal({
   useEffect(() => {
     if (!open) return
     setTipo('abierto')
-    setClienteId('')
+    setClienteId(clienteInicial ?? '')
     setCobradorId('')
     setCapital('')
     setTasa('')
@@ -108,7 +111,7 @@ export default function PrestamoFormModal({
     setCodeudorDocumento('')
     setErrores({})
     setGuardando(false)
-  }, [open])
+  }, [open, clienteInicial])
 
   const capitalNum = Number(capital)
   const tasaNum = Number(tasa)

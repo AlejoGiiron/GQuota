@@ -1,4 +1,5 @@
-import { Link, useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import { Link, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router-dom'
+import FichaDelCliente from '@/components/solicitud/FichaDelCliente'
 import Avatar from '@/components/Avatar'
 import { EstadoBadge, ModoBadge, tasaMensualTexto } from '@/components/PrestamoBadges'
 import { useConfiguracion } from '@/contexts/ConfiguracionContext'
@@ -34,6 +35,9 @@ export default function ClienteFicha() {
   const { esDueno } = useConfiguracion()
   const { clientes, loading, onEditar, onEliminar } = useOutletContext<ClientesOutletContext>()
   const cliente = clientes.find((c) => c.id === clienteId)
+  // Recién aprobado desde una solicitud (fase 1C): se ofrece crear el primer préstamo.
+  const [params] = useSearchParams()
+  const recien = params.has('aprobada') ? 'aprobada' : params.has('vinculada') ? 'vinculada' : null
 
   if (loading && !cliente) {
     return (
@@ -64,6 +68,19 @@ export default function ClienteFicha() {
       >
         {IconAtras} Volver
       </button>
+
+      {recien && esDueno && (
+        <div className="tarjeta flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between md:px-5" role="status">
+          <p className="text-[14.5px] text-tinta">
+            {recien === 'aprobada'
+              ? 'Cliente creado desde la solicitud.'
+              : 'La solicitud quedó vinculada a este cliente. Sus datos no cambiaron.'}
+          </p>
+          <Link to={`/prestamos?nuevo=${cliente.id}`} className="btn-primary">
+            Crear préstamo
+          </Link>
+        </div>
+      )}
 
       {/* Encabezado de la ficha */}
       <div className="card p-5">
@@ -97,6 +114,9 @@ export default function ClienteFicha() {
         <Dato etiqueta="Dirección" valor={cliente.direccion} />
         <Dato etiqueta="Notas" valor={cliente.notas} />
       </div>
+
+      {/* Ficha de la solicitud (solo clientes aprobados desde una solicitud) */}
+      <FichaDelCliente cliente={cliente} />
 
       {/* Préstamos del cliente */}
       <div className="card p-5">

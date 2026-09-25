@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import CampoFicha from '@/components/ficha/CampoFicha'
+import EscanerCedula from '@/components/ficha/EscanerCedula'
 import FotoFicha, { type EstadoFoto } from '@/components/ficha/FotoFicha'
+import RespaldoFicha, { type EstadoLectura } from '@/components/ficha/RespaldoFicha'
 import MarcoFicha from '@/components/ficha/MarcoFicha'
 import Boton from '@/components/ui/Boton'
 import Campo from '@/components/ui/Campo'
@@ -23,8 +25,8 @@ import {
   type Referencia,
 } from '@/lib/ficha'
 import { ErrorDeRed, abrirFicha, enviarFicha, subirFoto, type FotoFicha as NombreFoto } from '@/lib/ficha-publica'
-import { comprimirFoto } from '@/lib/imagen'
-import { leerCedulaDeFoto } from '@/lib/lector-cedula'
+import { LADO_MAXIMO_RESPALDO, comprimirFoto } from '@/lib/imagen'
+import { abrirFoto, leerCedulaDeImagen } from '@/lib/lector-cedula'
 import { formatearCelular, hora } from '@/lib/solicitudes'
 import { fmtCOP } from '@/lib/formatters'
 
@@ -240,6 +242,12 @@ function Formulario({
   const [leidos, setLeidos] = useState<CamposCedula | null>(null)
   const [origen, setOrigen] = useState<Partial<Record<CampoLeible, Origen>>>({})
   const [fotos, setFotos] = useState<Record<NombreFoto, EstadoFoto>>({ frente: VACIA, respaldo: VACIA, fachada: VACIA })
+  // Lectura del respaldo: escáner en vivo o foto; nunca pasa a mano sin que el prospecto lo elija.
+  const [lectura, setLectura] = useState<EstadoLectura>({ estado: 'pendiente' })
+  const [escaner, setEscaner] = useState(false)
+  const [sinCamara, setSinCamara] = useState(false)
+  const hayCamara = typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia && !sinCamara
+  const leeRespaldo = autorizaRespaldo && pideRespaldo && ficha.lectura_automatica
   const [errores, setErrores] = useState<Record<string, string>>({})
   const [enviando, setEnviando] = useState(false)
   const huboErrorDeRed = useRef(false)
@@ -248,31 +256,56 @@ function Formulario({
 
   const setFoto = (f: NombreFoto, e: EstadoFoto) => setFotos((x) => ({ ...x, [f]: e }))
 
-  /** Lee (si es el respaldo), comprime y sube. Ningún error de lectura bloquea. */
-  async function tomarFoto(nombre: NombreFoto, archivo: File) {
-    let campos: CamposCedula | null = null
-    if (nombre === 'respaldo' && ficha.lectura_automatica) {
-      setFoto(nombre, { estado: 'procesando', mensaje: 'Leyendo el código de barras…' })
-      campos = await leerCedulaDeFoto(archivo) // a resolución completa, antes de comprimir
+  /**
+   * Abre la foto (con su orientación EXIF), lee el código si es el respaldo (o usa
+   * lo que ya leyó el escáner), comprime y sube. Del respaldo, la lectura queda
+   * para confirmar; si falla, el prospecto elige cómo seguir.
+   */
+  async function tomarFoto(nombre: NombreFoto, archivo: Blob, leidoEnVivo?: CamposCedula) {
+    const leer = nombre === 'respaldo' && ficha.lectura_automatica
+    if (leer) setLeidos(null)
+    setFoto(nombre, { estado: 'procesando', mensaje: 'Abriendo la foto…' })
+    const imagen = await abrirFoto(archivo)
+    if (!imagen) {
+      const heic = /hei[cf]/i.test(archivo.type) || (archivo instanceof File && /\.hei[cf]$/i.test(archivo.name))
+      setFoto(nombre, {
+        estado: 'error',
+        mensaje: heic
+          ? 'Esta foto está en formato HEIC y este navegador no la abre. Tómela desde aquí con la cámara, o en el iPhone elija Ajustes › Cámara › Formatos › Más compatible.'
+          : 'No pudimos abrir esa foto. Tome otra.',
+      })
+      if (leer) setLectura({ estado: 'pendiente' })
+      return
     }
+    let campos: CamposCedula | null = leidoEnVivo ?? null
+    if (leer && !campos) {
+      setFoto(nombre, { estado: 'procesando', mensaje: 'Leyendo el código de barras…' })
+      campos = await leerCedulaDeImagen(imagen) // a resolución completa, antes de comprimir
+    }
+    imagen.close()
     setFoto(nombre, { estado: 'procesando', mensaje: 'Subiendo la foto…' })
     try {
-      const comprimida = await comprimirFoto(archivo)
+      // El respaldo va más grande: el dueño relee su código al revisar (1C).
+      const comprimida = await comprimirFoto(archivo, nombre === 'respaldo' ? LADO_MAXIMO_RESPALDO : undefined)
       await subirFoto(token, nombre, comprimida, autorizaRespaldo)
       const vista = URL.createObjectURL(comprimida)
       vistas.current.push(vista)
-      let nota: string | undefined
-      if (nombre === 'respaldo' && ficha.lectura_automatica) {
-        nota = campos ? 'Lista · leímos sus datos' : 'Lista · no pudimos leer el código: escribirá sus datos'
-        aplicarLectura(campos)
-      }
-      setFoto(nombre, { estado: 'lista', vistaPrevia: vista, nota })
+      setFoto(nombre, { estado: 'lista', vistaPrevia: vista })
+      if (leer) setLectura(campos ? { estado: 'leida', campos } : { estado: 'fallida' })
     } catch (e) {
+      if (leer) setLectura({ estado: 'pendiente' })
       setFoto(nombre, {
         estado: 'error',
         mensaje: e instanceof ErrorDeRed ? 'Sin conexión. Tome la foto otra vez.' : 'No se pudo subir. Tome la foto otra vez.',
       })
     }
+  }
+
+  /** El prospecto eligió escribir a mano (sabe que queda sin verificar). */
+  function escribirAMano() {
+    aplicarLectura(null)
+    setLectura({ estado: 'manual' })
+    setErrores((x) => sinClave(x, 'respaldo'))
   }
 
   /** Prellena lo leído. Solo pisa lo que estaba vacío o también venía de la cédula. */
@@ -312,6 +345,9 @@ function Formulario({
     if (p === 'fotos') {
       if (fotos.frente.estado !== 'lista') e.cedula_frente = 'Falta la foto de la cédula por delante.'
       if (fotos.frente.estado === 'procesando' || fotos.respaldo.estado === 'procesando') e.fotos = 'Espere a que terminen de subir las fotos.'
+      else if (leeRespaldo && lectura.estado === 'leida') e.respaldo = 'Confirme los datos que leímos de su cédula.'
+      else if (leeRespaldo && lectura.estado === 'fallida') e.respaldo = 'Elija cómo seguir: intente otra vez o escriba sus datos a mano.'
+      else if (leeRespaldo && lectura.estado === 'pendiente') e.respaldo = 'Escanee la cédula por detrás, o elija escribir sus datos a mano.'
     }
     if (p === 'datos' || p === 'vivienda' || p === 'trabajo') {
       for (const c of CAMPOS_PASO[p]) {
@@ -470,10 +506,29 @@ function Formulario({
           </p>
           <div className="rounded-tarjeta border border-borde px-3.5">
             <FotoFicha titulo="Cédula por delante" detalle="Falta" estado={fotos.frente} alElegir={(a) => void tomarFoto('frente', a)} />
-            {autorizaRespaldo && pideRespaldo && (
+            {leeRespaldo && (
+              <RespaldoFicha
+                foto={fotos.respaldo}
+                lectura={lectura}
+                camara={hayCamara}
+                sinCamara={sinCamara}
+                error={errores.respaldo}
+                alEscanear={() => setEscaner(true)}
+                alElegirFoto={(a) => void tomarFoto('respaldo', a)}
+                alConfirmar={() => {
+                  if (lectura.estado !== 'leida') return
+                  aplicarLectura(lectura.campos)
+                  setLectura({ estado: 'confirmada' })
+                  setErrores((x) => sinClave(x, 'respaldo'))
+                }}
+                alEscribirAMano={escribirAMano}
+                alReintentar={() => setLectura({ estado: 'pendiente' })}
+              />
+            )}
+            {autorizaRespaldo && pideRespaldo && !ficha.lectura_automatica && (
               <FotoFicha
                 titulo="Cédula por detrás"
-                detalle={ficha.lectura_automatica ? 'Falta · de aquí leemos sus datos' : 'Falta'}
+                detalle="Falta"
                 opcional
                 estado={fotos.respaldo}
                 alElegir={(a) => void tomarFoto('respaldo', a)}
@@ -481,6 +536,27 @@ function Formulario({
             )}
           </div>
           {(errores.cedula_frente || errores.fotos) && <p className="text-[13px] text-estado-mora">{errores.fotos ?? errores.cedula_frente}</p>}
+          {escaner && (
+            <EscanerCedula
+              alLeer={(campos, foto) => {
+                setEscaner(false)
+                void tomarFoto('respaldo', foto, campos)
+              }}
+              alCerrar={() => setEscaner(false)}
+              alSinCamara={() => {
+                setEscaner(false)
+                setSinCamara(true)
+              }}
+              alElegirFoto={(a) => {
+                setEscaner(false)
+                void tomarFoto('respaldo', a)
+              }}
+              alEscribirAMano={() => {
+                setEscaner(false)
+                escribirAMano()
+              }}
+            />
+          )}
           {pideRespaldo && !autorizaRespaldo && (
             <p className="text-[13px] text-tinta-3">No autorizó la foto de atrás: en el siguiente paso escribe sus datos a mano.</p>
           )}

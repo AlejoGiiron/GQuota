@@ -5,6 +5,13 @@
  */
 
 export const LADO_MAXIMO = 1600
+/**
+ * El respaldo se guarda más grande: el dueño vuelve a leer su código PDF417 al
+ * revisar (fase 1C). Medido con respaldos sintéticos de 12 MP: a 1600 px falla
+ * cuando la cédula ocupa la mitad del cuadro o menos; a 2000 px o más se leyeron
+ * todos. En el peor caso (mucha textura) pesa ~1,5 MB, lejos del límite de 3 MB.
+ */
+export const LADO_MAXIMO_RESPALDO = 2400
 /** El bucket acepta hasta 3 MB; se apunta por debajo. */
 const PESO_OBJETIVO = 2_800_000
 
@@ -17,10 +24,10 @@ export function dimensionesReducidas(ancho: number, alto: number, max = LADO_MAX
 }
 
 /** Recomprime a JPEG sin metadatos. Respeta la orientación que trae la foto. */
-export async function comprimirFoto(archivo: Blob): Promise<Blob> {
+export async function comprimirFoto(archivo: Blob, ladoMaximo = LADO_MAXIMO): Promise<Blob> {
   const bitmap = await createImageBitmap(archivo, { imageOrientation: 'from-image' })
   try {
-    const { ancho, alto } = dimensionesReducidas(bitmap.width, bitmap.height)
+    const { ancho, alto } = dimensionesReducidas(bitmap.width, bitmap.height, ladoMaximo)
     const canvas = document.createElement('canvas')
     canvas.width = ancho
     canvas.height = alto

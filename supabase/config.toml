@@ -5,5 +5,12 @@ project_id = "gquota"
 [functions.ficha-publica]
 # Pública: el prospecto abre el enlace /s/<token> sin cuenta, así que la función
 # no puede exigir JWT. Con esto basta `npx supabase functions deploy ficha-publica`
-# (sin acordarse de --no-verify-jwt). Las demás funciones siguen verificando JWT.
+# (sin acordarse de --no-verify-jwt). Las demás funciones siguen verificando JWT,
+# salvo limpiar-solicitudes (abajo).
+verify_jwt = false
+
+[functions.limpiar-solicitudes]
+# La llama la base con pg_net (al rechazar y cada noche con pg_cron), sin JWT de
+# usuario: exige la cabecera x-limpieza con el secreto LIMPIEZA_SECRETO, que
+# también está en Vault (nunca en el repo).
 verify_jwt = false
